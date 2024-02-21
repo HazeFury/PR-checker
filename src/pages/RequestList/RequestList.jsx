@@ -8,6 +8,7 @@ import styles from "./RequestList.module.css";
 export default function RequestList() {
   const [loading, setLoading] = useState(true);
   const [requestList, setRequestList] = useState([]);
+  const [projectName, setProjectName] = useState("");
 
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
@@ -22,9 +23,20 @@ export default function RequestList() {
     setLoading(false);
   }
 
+  async function getProjectName() {
+    const { data } = await supabase
+      .from("projects")
+      .select("name")
+      .eq("id", projectId)
+      .single();
+
+    setProjectName(data.name);
+  }
+
   useEffect(() => {
     getAllPr();
-  });
+    getProjectName();
+  }, []);
 
   if (loading)
     return (
@@ -35,6 +47,7 @@ export default function RequestList() {
 
   return (
     <div className={styles.request_list_container}>
+      <p>{projectName}</p>
       {requestList.length > 0 ? (
         requestList.map((request) => (
           <RequestCard key={request.id} request={request} />
