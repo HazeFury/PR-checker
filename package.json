@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "lint-staged",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prettierC": "prettier -c",
+    "prettierW": "prettier -w",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
