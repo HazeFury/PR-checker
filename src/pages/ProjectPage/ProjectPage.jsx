@@ -1,8 +1,8 @@
-import { supabase } from "../../services/client";
 import { useState, useEffect } from "react";
-import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
-import styles from "./ProjectPage.module.css";
 import CircularProgress from "@mui/material/CircularProgress";
+import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
+import supabase from "../../services/client";
+import styles from "./ProjectPage.module.css";
 
 export default function ProjectPage() {
   const [loading, setLoading] = useState(true);
@@ -24,8 +24,6 @@ export default function ProjectPage() {
 
     getProjects();
   }, []);
-
-  console.log("projects : ", projects);
 
   if (loading)
     return (

@@ -44,16 +44,16 @@ export default function Register() {
       password: Yup.string()
         .matches(
           "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{14,}$",
-          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)"
+          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)",
         )
         .required("Veuillez entrer un mot de passe"),
       confirm: Yup.string()
         .oneOf([Yup.ref("password")], "Les mots de passe ne correspondent pas")
         .required("Veuillez confirmer votre mot de passe"),
     }),
-    onSubmit: (values) => {
-      console.info(JSON.stringify(values, null, 2));
-    },
+    // onSubmit: (values) => {
+    //   console.info(JSON.stringify(values, null, 2));
+    // },
   });
 
   return (
@@ -167,7 +167,7 @@ export default function Register() {
             marginTop: "1rem",
           }}
         >
-          S'inscrire
+          S&#39;inscrire
         </Button>
       </form>
     </div>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { supabase } from "../../../services/client";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
@@ -11,6 +10,7 @@ import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
+import supabase from "../../../services/client";
 
 async function signOut() {
   await supabase.auth.signOut();

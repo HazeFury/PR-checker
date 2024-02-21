@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
-import { supabase } from "../../services/client";
 import { useState, useEffect } from "react";
-import RequestCard from "../../components/App-components/RequestCard/RequestCard";
+import { useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import RequestCard from "../../components/App-components/RequestCard/RequestCard";
+import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
 
 export default function RequestList() {

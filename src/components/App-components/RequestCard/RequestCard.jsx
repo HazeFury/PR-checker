@@ -8,19 +8,6 @@ import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
 
-// const requestInformations = [
-//   {
-//     id: 45,
-//     status: 5,
-//     member: "Marco",
-//     prname: "US_1",
-//     description: "Ma PR doit créer la requestCard",
-//     trelloUrl: "https://trello.com/c/4FCCLO3N/52-prio-requestcard",
-//     githubLink:
-//       "https://github.com/HazeFury/PR-checker/commit/8264ce9f6c6104279a5cceee0bcebaff37e84498",
-//   },
-// ];
-
 // Function to assign a color based on status
 function statusColor(status) {
   switch (status) {
@@ -78,7 +65,9 @@ export default function RequestCard({ request }) {
         </div>
         <div className={styles.informations}>
           <div className={styles.infos}>
-            <li className={styles.li_style}>Ouvert par : <b>Marco</b></li>
+            <li className={styles.li_style}>
+              Ouvert par : <b>Marco</b>
+            </li>
             <li className={styles.li_style}>
               Nom de la PR :<b> {request.title}</b>
             </li>

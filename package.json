@@ -41,5 +41,9 @@
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "vite": "^5.1.0"
+  },
+  "lint-staged": {
+    "*.{html,scss,css}": "prettier --check",
+    "*.{jsx,js}": "eslint"
   }
 }

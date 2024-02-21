@@ -2,7 +2,7 @@ import { useState } from "react";
 import Login from "../../components/App-components/Connection/Login/Login";
 import Register from "../../components/App-components/Connection/Register/Register";
 import Logo from "../../assets/logo.svg";
-import "../../App.css"
+import "../../App.css";
 import styles from "./Connection.module.css";
 
 export default function Connection() {
