@@ -41,7 +41,7 @@ export default function RequestList() {
         ))
       ) : (
         <p className={styles.no_content_text}>
-          Ce projet ne contient pas de demande de PR
+          Ce projet ne contient pas de demande de PR !
         </p>
       )}
     </div>
