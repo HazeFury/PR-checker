@@ -26,7 +26,6 @@ export default function RequestList() {
     getAllPr();
   });
 
-  console.log("toto");
   if (loading)
     return (
       <div className={styles.request_list_container}>
