@@ -1,0 +1,13 @@
+.request_list_container {
+    min-height: 70vh;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .no_content_text {
+    font-family: var(--global-font);
+    font-size: 2rem;
+  }

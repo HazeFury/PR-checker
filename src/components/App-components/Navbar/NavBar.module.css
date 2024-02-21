@@ -1,0 +1,13 @@
+.nav_container {
+  width: 100vw;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid white 1px;
+}
+
+.logo {
+  height: 60px;
+  margin-left: 40px;
+}

@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+
+  /* --- CSS Variables --- */
+
+  /* Colors */
+  --light: #e8e8e8; /* Used for inputs and PR cards */
+  --dark: #292929; /* Used for modals */
+  --action: #3883ba; /* Used for buttons and other interactive elements */
+  --background: #1d1d1d;
+  --error: #ed4337;
+
+  /* Fonts */
+  --global-font: "Montserrat", sans-serif;
+  --input-label: 400 1.1em var(--global-font);
+  --input-text: 400 0.9em var(--global-font);
+  --section-title: 600 2em var(--global-font);
+}
+
+body {
+  background: radial-gradient(circle, rgb(40, 40, 40) 0%, rgb(29, 29, 29) 100%);
+  min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+button {
+  color: var(--light);
+}

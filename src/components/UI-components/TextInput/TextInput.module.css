@@ -1,0 +1,31 @@
+.textInput {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.label {
+  font: var(--input-label);
+}
+
+.hideLabel {
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: rect(0 0 0 0);
+  position: absolute;
+}
+
+.input {
+  font: var(--input-text);
+  background-color: var(--light);
+  padding: 0.8rem;
+  border-radius: 0.25rem;
+  box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Fake border on hover */
+.input:hover {
+  box-shadow: 0 0 0 2px var(--action);
+}
