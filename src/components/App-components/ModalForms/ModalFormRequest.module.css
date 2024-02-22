@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 80%;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 80%;
+  margin-bottom: 3rem;
+  margin-top: 2rem;
+}
+
+.form h1 {
+  font: --section-title;
+  text-align: center;
+  border-bottom: solid 1px;
+  padding-bottom: 2rem;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+}
