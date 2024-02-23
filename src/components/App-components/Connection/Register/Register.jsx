@@ -5,6 +5,7 @@ import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Register.module.css";
 import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
 import ShowPassword from "../../../UI-components/MUIRemix/ShowPassword";
+import supabase from "../../../../services/client";
 
 export default function Register() {
   const revealPass = () => {
@@ -44,16 +45,31 @@ export default function Register() {
       password: Yup.string()
         .matches(
           "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{14,}$",
-          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)",
+          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)"
         )
         .required("Veuillez entrer un mot de passe"),
       confirm: Yup.string()
         .oneOf([Yup.ref("password")], "Les mots de passe ne correspondent pas")
         .required("Veuillez confirmer votre mot de passe"),
     }),
-    // onSubmit: (values) => {
-    //   console.info(JSON.stringify(values, null, 2));
-    // },
+    onSubmit: async (values) => {
+      try {
+        const { error } = await supabase.auth.signUp({
+          email: values.mail,
+          password: values.password,
+          options: {
+            data: {
+              first_name: values.firstname,
+              last_name: values.lastname,
+            },
+          },
+        });
+        if (error) throw error;
+      } catch (error) {
+        // Ajouter un toast d'erreur ICI
+        console.error(error);
+      }
+    },
   });
 
   return (
