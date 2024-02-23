@@ -10,11 +10,17 @@ import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/ModalForms/ModalFormRequest";
 
 export default function RequestList() {
+  // state for loader
   const [loading, setLoading] = useState(true);
+  // states for requestList
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
+  // state for modal
   const [open, setOpen] = useState(false);
 
+  // to manage the state of the modal
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   // To keep the id of the project
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
@@ -41,7 +47,16 @@ export default function RequestList() {
     setProjectName(data.name);
   }
 
-  // To show all pr and project name at the beggining of the page
+  // Function to add datas on PR table
+  async function addRequest(requestData) {
+    await supabase.from("pr_request").insert([requestData]);
+    await getAllPr();
+  }
+  // Function to add data when the form is submit
+  const handleSubmit = async (requestData) => {
+    await addRequest(requestData);
+    handleClose();
+  }; // To show all pr and project name at the beggining of the page
   useEffect(() => {
     getAllPr();
     getProjectName();
@@ -54,9 +69,8 @@ export default function RequestList() {
         <CircularProgress />
       </div>
     );
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
+  // modal style
   const style = {
     position: "absolute",
     top: "50%",
@@ -71,6 +85,7 @@ export default function RequestList() {
     display: "flex",
     justifyContent: "center",
   };
+
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
@@ -95,7 +110,11 @@ export default function RequestList() {
           >
             <Box sx={style}>
               {" "}
-              <ModalFormRequest title="Enregistrer" text="Enregistrer" />
+              <ModalFormRequest
+                title="Enregistrer"
+                text="Enregistrer"
+                onSubmit={handleSubmit}
+              />
             </Box>
           </Modal>
         </div>

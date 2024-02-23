@@ -7,7 +7,6 @@ export default function TextArea({
   id,
   placeholder,
   onChange,
-  onBlur,
   value,
 }) {
   return (
@@ -22,7 +21,6 @@ export default function TextArea({
         placeholder={placeholder}
         className={styles.input}
         onChange={onChange}
-        onBlur={onBlur}
         value={value}
       />
     </div>
@@ -35,6 +33,5 @@ TextArea.propTypes = {
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  onBlur: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
 };

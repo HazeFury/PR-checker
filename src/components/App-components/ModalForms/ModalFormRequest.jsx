@@ -4,7 +4,7 @@ import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
 import TextArea from "../../UI-components/TextArea/TextArea";
 
-export default function ModalFormRequest({ title, text }) {
+export default function ModalFormRequest({ title, text, onSubmit }) {
   return (
     <div className={styles.form}>
       <h1>{title}</h1>
@@ -37,6 +37,7 @@ export default function ModalFormRequest({ title, text }) {
       <div className={styles.button}>
         <Button
           variant="contained"
+          onSubmit={onSubmit}
           sx={{
             width: ["100%", "100%", "40%"],
             background: "#3883ba",
@@ -52,4 +53,5 @@ export default function ModalFormRequest({ title, text }) {
 ModalFormRequest.propTypes = {
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
