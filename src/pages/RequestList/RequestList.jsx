@@ -71,13 +71,20 @@ export default function RequestList() {
     display: "flex",
     justifyContent: "center",
   };
-
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
         <p>{projectName}</p>
         <div>
-          <Button variant="contained" onClick={handleOpen}>
+          <Button
+            variant="contained"
+            sx={{
+              width: ["100%", "100%", "100%"],
+              background: "#3883ba",
+              fontFamily: "Montserrat, sans serif",
+            }}
+            onClick={handleOpen}
+          >
             Nouvelle demande{" "}
           </Button>
           <Modal

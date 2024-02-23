@@ -35,7 +35,16 @@ export default function ModalFormRequest({ title, text }) {
         />
       </div>
       <div className={styles.button}>
-        <Button variant="contained">{text} </Button>
+        <Button
+          variant="contained"
+          sx={{
+            width: ["100%", "100%", "40%"],
+            background: "#3883ba",
+            fontFamily: "Montserrat, sans serif",
+          }}
+        >
+          {text}{" "}
+        </Button>
       </div>
     </div>
   );

@@ -9,9 +9,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  height: 80%;
-  margin-bottom: 3rem;
-  margin-top: 2rem;
+  height: 90%;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
 }
 
 .form h1 {
