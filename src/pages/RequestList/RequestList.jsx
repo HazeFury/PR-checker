@@ -47,16 +47,7 @@ export default function RequestList() {
     setProjectName(data.name);
   }
 
-  // Function to add datas on PR table
-  async function addRequest(requestData) {
-    await supabase.from("pr_request").insert([requestData]);
-    await getAllPr();
-  }
-  // Function to add data when the form is submit
-  const handleSubmit = async (requestData) => {
-    await addRequest(requestData);
-    handleClose();
-  }; // To show all pr and project name at the beggining of the page
+  // To show all pr and project name at the beggining of the page
   useEffect(() => {
     getAllPr();
     getProjectName();
@@ -110,11 +101,7 @@ export default function RequestList() {
           >
             <Box sx={style}>
               {" "}
-              <ModalFormRequest
-                title="Enregistrer"
-                text="Enregistrer"
-                onSubmit={handleSubmit}
-              />
+              <ModalFormRequest title="Enregistrer" text="Enregistrer" />
             </Box>
           </Modal>
         </div>
