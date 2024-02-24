@@ -18,7 +18,6 @@ export default function TextArea({
       <textarea
         type={type}
         id={id}
-        name={id}
         placeholder={placeholder}
         className={styles.input}
         onChange={onChange}

@@ -1,10 +1,8 @@
 import { Box, Button, Modal } from "@mui/material";
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
-
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/ModalForms/ModalFormRequest";
@@ -15,6 +13,7 @@ export default function RequestList() {
   // states for requestList
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
+  // const [userId, setUserId] = useState("");
   // state for modal
   const [open, setOpen] = useState(false);
 
@@ -47,7 +46,7 @@ export default function RequestList() {
     setProjectName(data.name);
   }
 
-  // To show all pr and project name at the beggining of the page
+  // To show all pr and project name at the beggining
   useEffect(() => {
     getAllPr();
     getProjectName();
@@ -101,7 +100,12 @@ export default function RequestList() {
           >
             <Box sx={style}>
               {" "}
-              <ModalFormRequest title="Enregistrer" text="Enregistrer" />
+              <ModalFormRequest
+                title="Enregistrer"
+                text="Enregistrer"
+                projectId={projectId}
+                // userId={userId}
+              />
             </Box>
           </Modal>
         </div>

@@ -5,22 +5,36 @@ import { useFormik } from "formik";
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
 import TextArea from "../../UI-components/TextArea/TextArea";
+import supabase from "../../../services/client";
 
-export default function ModalFormRequest({ title, text }) {
+export default function ModalFormRequest({ title, text, projectId, userId }) {
   const formik = useFormik({
     initialValues: {
-      name: "",
+      title: "",
       description: "",
       trello: "",
       github: "",
     },
 
     onSubmit: async (values) => {
-      console.error("Form values:", values);
+      try {
+        // Add project_uuid to the form data
+        const requestData = {
+          ...values,
+          project_uuid: projectId,
+          user_uuid: userId,
+        };
+
+        // Add data to pr_request table with Supabase
+        await supabase.from("pr_request").insert([requestData]);
+        console.info(requestData);
+      } catch (error) {
+        console.error("Error adding data:", error.message);
+      }
     },
   });
   const handleSaveClick = () => {
-    formik.handleSubmit(); // Trigger form submission
+    formik.handleSubmit();
   };
 
   return (
@@ -30,11 +44,11 @@ export default function ModalFormRequest({ title, text }) {
         <TextInput
           label="Nom de la PR"
           type="text"
-          id="name"
+          id="title"
           placeholder="Nommez votre PR"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          value={formik.values.name}
+          value={formik.values.title}
         />
         <TextArea
           label="Description"
@@ -83,4 +97,6 @@ export default function ModalFormRequest({ title, text }) {
 ModalFormRequest.propTypes = {
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
+  projectId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 };
