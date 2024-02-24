@@ -15,11 +15,11 @@ export default function RequestList() {
   const [projectName, setProjectName] = useState("");
   // const [userId, setUserId] = useState("");
   // state for modal
-  const [open, setOpen] = useState(false);
+  const [openModalToSave, setOpenModalToSave] = useState(false);
 
   // to manage the state of the modal
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpenModalToSave = () => setOpenModalToSave(true);
+  const handleCloseModalToSave = () => setOpenModalToSave(false);
   // To keep the id of the project
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
@@ -88,13 +88,13 @@ export default function RequestList() {
               background: "#3883ba",
               fontFamily: "Montserrat, sans serif",
             }}
-            onClick={handleOpen}
+            onClick={handleOpenModalToSave}
           >
             Nouvelle demande{" "}
           </Button>
           <Modal
-            open={open}
-            onClose={handleClose}
+            open={openModalToSave}
+            onClose={handleCloseModalToSave}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >

@@ -29,7 +29,7 @@ export default function ModalFormRequest({ title, text, projectId, userId }) {
         await supabase.from("pr_request").insert([requestData]);
         console.info(requestData);
       } catch (error) {
-        console.error("Error adding data:", error.message);
+        console.error("L'enregistrement n'a pas fonctionné");
       }
     },
   });
