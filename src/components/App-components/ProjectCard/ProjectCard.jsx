@@ -71,7 +71,7 @@ ProjectCard.propTypes = {
     project_users: PropTypes.arrayOf(
       PropTypes.shape({
         role: PropTypes.string.isRequired,
-      }),
+      })
     ).isRequired,
   }).isRequired,
 };
