@@ -13,7 +13,9 @@
   margin-bottom: 2rem;
   margin-top: 1rem;
 }
-
+.inputStyle {
+  position: relative;
+}
 .form h1 {
   font: --section-title;
   text-align: center;
