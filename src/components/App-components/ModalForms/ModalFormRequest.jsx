@@ -7,7 +7,7 @@ import styles from "./ModalFormRequest.module.css";
 import TextArea from "../../UI-components/TextArea/TextArea";
 import supabase from "../../../services/client";
 
-export default function ModalFormRequest({ title, text, projectId, userId }) {
+export default function ModalFormRequest({ title, text, projectId }) {
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -18,6 +18,9 @@ export default function ModalFormRequest({ title, text, projectId, userId }) {
 
     onSubmit: async (values) => {
       try {
+        // Catch user id for this session
+        const { data } = await supabase.auth.getSession();
+        const userId = data.session.user.id;
         // Add project_uuid to the form data
         const requestData = {
           ...values,
@@ -27,7 +30,6 @@ export default function ModalFormRequest({ title, text, projectId, userId }) {
 
         // Add data to pr_request table with Supabase
         await supabase.from("pr_request").insert([requestData]);
-        console.info(requestData);
       } catch (error) {
         console.error("L'enregistrement n'a pas fonctionné");
       }
@@ -98,5 +100,4 @@ ModalFormRequest.propTypes = {
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   projectId: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
 };
