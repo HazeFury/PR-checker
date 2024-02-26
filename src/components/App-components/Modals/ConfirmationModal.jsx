@@ -6,6 +6,9 @@ import styles from "./ConfirmationModal.module.css";
 export default function ConfirmationModal({
   handleCloseModals,
   handleOpenRequestModal,
+  title,
+  textButton1,
+  textButton2,
 }) {
   const style = {
     position: "absolute",
@@ -28,26 +31,23 @@ export default function ConfirmationModal({
   const buttonStyle = {
     bgcolor: "#A82B2B",
     "&:hover": {
-      bgcolor: "#8c2222", // Changez la couleur de fond au survol
+      bgcolor: "#8c2222",
     },
   };
   return (
     <div className={styles.backdrop}>
       <Box sx={style}>
-        <p>
-          Voulez-vous vraiment <br />
-          quitter l'enregistrement ?
-        </p>
+        <p>{title}</p>
         <div className={styles.buttonContainer}>
           <Button variant="contained" onClick={handleOpenRequestModal}>
-            Revenir à mon enregistrement
+            {textButton1}
           </Button>
           <Button
             variant="contained"
             sx={buttonStyle}
             onClick={handleCloseModals}
           >
-            Confirmer et quitter
+            {textButton2}
           </Button>
         </div>
       </Box>
@@ -55,6 +55,9 @@ export default function ConfirmationModal({
   );
 }
 ConfirmationModal.propTypes = {
+  title: PropTypes.string.isRequired,
+  textButton1: PropTypes.string.isRequired,
+  textButton2: PropTypes.string.isRequired,
   handleCloseModals: PropTypes.func.isRequired,
   handleOpenRequestModal: PropTypes.func.isRequired,
 };

@@ -119,9 +119,13 @@ export default function RequestList() {
                 projectId={projectId}
                 handleClose={handleCloseModals}
                 handleOpenConfirmationModal={handleOpenConfirmationModal}
+                refreshPr={() => getAllPr()}
               />
               {openConfirmationModal && (
                 <ConfirmationModal
+                  title="Voulez-vous vraimenter quitter votre enregistrement ?"
+                  textButton1="Revenir à mon enregistrement"
+                  textButton2="Confirmer et quitter"
                   handleCloseModals={() => {
                     handleCloseModals();
                   }}

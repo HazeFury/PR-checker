@@ -17,6 +17,7 @@ export default function ModalFormRequest({
   projectId,
   handleClose,
   handleOpenConfirmationModal,
+  refreshPr,
 }) {
   const formik = useFormik({
     initialValues: {
@@ -50,6 +51,7 @@ export default function ModalFormRequest({
         await supabase.from("pr_request").insert([requestData]);
         toast.success("Votre PR a bien été créée");
         handleClose();
+        refreshPr();
       } catch (error) {
         toast.error("L'enregistrement de la PR n'a pas fonctionné");
       }
@@ -169,4 +171,5 @@ ModalFormRequest.propTypes = {
   projectId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
+  refreshPr: PropTypes.func.isRequired,
 };
