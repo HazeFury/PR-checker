@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -9,6 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import styles from "./NavBar.module.css";
+import CreateProject from "../Project/CreateProject/CreateProject";
 import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
 
@@ -17,6 +20,18 @@ async function signOut() {
 }
 
 export default function NavBar() {
+  const location = useLocation();
+
+  const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+
+  const handleOpenCreateProjectModal = () => {
+    setOpenCreateProjectModal(true);
+  };
+
+  const handleCloseCreateProjectModal = () => {
+    setOpenCreateProjectModal(false);
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -30,10 +45,57 @@ export default function NavBar() {
     setAnchorEl(null);
   };
 
+  const isProjectPage = location.pathname === "/";
+
+  const renderExtraButton = () => {
+    if (isProjectPage) {
+      return (
+        <>
+          <Button
+            variant="contained"
+            style={{
+              backgroundColor: "#3883BA",
+              color: "white",
+              marginRight: "1rem",
+              minWidth: "17rem",
+              borderRadius: "0.5rem",
+              fontSize: "1rem",
+              fontFamily: "Montserrat",
+            }}
+          >
+            REJOINDRE UN PROJET
+          </Button>
+          <Button
+            onClick={handleOpenCreateProjectModal}
+            variant="contained"
+            style={{
+              backgroundColor: "#3883BA",
+              color: "white",
+              minWidth: "17rem",
+              borderRadius: "0.5rem",
+              fontSize: "1rem",
+              fontFamily: "Montserrat",
+            }}
+          >
+            Créer un projet
+          </Button>
+          <CreateProject
+            open={openCreateProjectModal}
+            onClose={handleCloseCreateProjectModal}
+          />
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
     <nav className={styles.nav_container}>
       <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+        {renderExtraButton()}
+
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}

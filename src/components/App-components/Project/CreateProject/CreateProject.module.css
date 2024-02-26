@@ -1,20 +1,3 @@
-.project_container {
-  min-height: 70vh;
-  height: fit-content;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.loading_container {
-  min-height: 70vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .form {
   display: flex;
   flex-direction: column;

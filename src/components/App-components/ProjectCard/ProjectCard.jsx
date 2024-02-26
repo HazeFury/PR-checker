@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import styles from "./ProjectCard.module.css";
 
@@ -71,7 +71,7 @@ ProjectCard.propTypes = {
     project_users: PropTypes.arrayOf(
       PropTypes.shape({
         role: PropTypes.string.isRequired,
-      }),
+      })
     ).isRequired,
   }).isRequired,
 };

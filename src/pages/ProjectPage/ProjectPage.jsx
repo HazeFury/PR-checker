@@ -6,19 +6,19 @@ import styles from "./ProjectPage.module.css";
 
 export default function ProjectPage() {
   const [loading, setLoading] = useState(true);
-  const [projects, setProject] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     async function getProjects() {
-      const { data } = await supabase.auth.getSession();
-      const userId = data.session.user.id;
+      const { data: userData } = await supabase.auth.getSession();
+      const userId = userData?.session.user.id;
 
       const { data: projectsData } = await supabase
         .from("projects")
         .select("*, project_users!inner(*)")
         .eq("project_users.user_uuid", userId);
 
-      setProject(projectsData);
+      setProjects(projectsData);
       setLoading(false);
     }
 
