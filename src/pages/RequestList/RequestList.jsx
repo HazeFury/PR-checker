@@ -5,7 +5,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
-import ModalFormRequest from "../../components/App-components/ModalForms/ModalFormRequest";
+import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
+import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
 
 export default function RequestList() {
   // state for loader
@@ -13,13 +14,23 @@ export default function RequestList() {
   // states for requestList
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
-  // const [userId, setUserId] = useState("");
-  // state for modal
+  // state for open request and confirmation modals
   const [openModalAboutRequest, setopenModalAboutRequest] = useState(false);
-
-  // to manage the state of the modal
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  // function to manage the state to open the modal about Request and modal for confirmation
   const handleOpenModalAboutRequest = () => setopenModalAboutRequest(true);
-  const handleCloseModalAboutRequest = () => setopenModalAboutRequest(false);
+  const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
+  // Function to close all modals at the same time after confirm the close
+  const handleCloseModals = () => {
+    setopenModalAboutRequest(false);
+    setOpenConfirmationModal(false);
+  };
+  // Function to re-open request modal after don't confirm the exit of the modal
+  const handleReOpenRequestModal = () => {
+    setOpenConfirmationModal(false);
+    setopenModalAboutRequest(true);
+  };
+
   // To keep the id of the project
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
@@ -67,7 +78,7 @@ export default function RequestList() {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 500,
-    height: 600,
+    height: 700,
     bgcolor: "#292929",
     borderRadius: "10px",
     boxShadow: 24,
@@ -94,7 +105,9 @@ export default function RequestList() {
           </Button>
           <Modal
             open={openModalAboutRequest}
-            onClose={handleCloseModalAboutRequest}
+            onClose={() => {
+              handleOpenConfirmationModal();
+            }}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -104,8 +117,23 @@ export default function RequestList() {
                 title="Enregistrer"
                 text="Enregistrer"
                 projectId={projectId}
-                // userId={userId}
+                handleClose={handleCloseModals}
+                handleOpenConfirmationModal={handleOpenConfirmationModal}
+                refreshPr={() => getAllPr()}
               />
+              {openConfirmationModal && (
+                <ConfirmationModal
+                  title="Voulez-vous vraiment quitter votre enregistrement ?"
+                  textButtonLeft="Revenir à mon enregistrement"
+                  textButtonRight="Quitter"
+                  handleCloseModals={() => {
+                    handleCloseModals();
+                  }}
+                  handleOpenRequestModal={() => {
+                    handleReOpenRequestModal();
+                  }}
+                />
+              )}
             </Box>
           </Modal>
         </div>
