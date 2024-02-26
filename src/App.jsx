@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-unresolved
+import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import "./App.css";
@@ -29,6 +31,7 @@ export default function App() {
     <div>
       <NavBar />
       <Outlet />
+      <Toaster richColors />
     </div>
   );
 }

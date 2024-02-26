@@ -2,6 +2,8 @@ import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Button, Box, Modal, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./JoinProject.module.css";
@@ -29,7 +31,7 @@ export default function JoinProject({ open, onClose }) {
           .single();
 
         if (!projectData) {
-          console.error("Le projet avec cet ID n'existe pas.");
+          toast.error("Le projet n'existe pas");
           return;
         }
 
@@ -44,11 +46,9 @@ export default function JoinProject({ open, onClose }) {
           .select();
 
         handleModalCloseJoin();
+        toast.success("Votre demande a bien été envoyée");
       } catch (error) {
-        console.error(
-          "Vous n'avez pas réussi à rejoindre le projet",
-          error.message
-        );
+        toast.error("Votre demande n'a pas fonctionnée");
       }
     },
   });

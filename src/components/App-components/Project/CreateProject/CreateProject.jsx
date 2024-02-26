@@ -1,8 +1,11 @@
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { Button, Box, Modal, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./CreateProject.module.css";
@@ -16,6 +19,11 @@ export default function CreateProject({ open, onClose }) {
     initialValues: {
       name: "",
     },
+    // validation form
+    validationSchema: Yup.object({
+      name: Yup.string().required("Un nom de projet est requis"),
+    }),
+
     onSubmit: async () => {
       try {
         // Get the userId
@@ -39,6 +47,8 @@ export default function CreateProject({ open, onClose }) {
           .insert({ name: formik.values.name, picture: newPictureForProject })
           .select();
 
+        toast.success("Le projet a bien été crée");
+
         const projectId = newProject[0].id;
         // create the first user related to the project newely created. This user is "role: owner" and "pending: false" by default
         await supabase
@@ -54,7 +64,7 @@ export default function CreateProject({ open, onClose }) {
         handleModalCloseCreate(); // close the modal
       } catch (error) {
         console.error("La création du projet n'a pas fonctionné");
-        // [TODO : toast pour l'erreur !]
+        toast.error("La création du projet a échoué");
       }
     },
   });
