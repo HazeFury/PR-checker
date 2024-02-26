@@ -2,8 +2,6 @@
   min-height: 70vh;
   height: fit-content;
   display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
 }
 
 .title {

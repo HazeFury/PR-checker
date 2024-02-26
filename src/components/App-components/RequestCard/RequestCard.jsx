@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-// import { useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 
 import styles from "./RequestCard.module.css";
@@ -7,6 +7,7 @@ import styles from "./RequestCard.module.css";
 import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
+import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -48,12 +49,16 @@ function statusName(status) {
 }
 export default function RequestCard({ request }) {
   // Function to open modal with infos on PR
-  /*
+
   const [modalOpen, setModalOpen] = useState(false);
   const handleButtonClick = () => {
     setModalOpen(true);
   };
-  */
+
+  const handleCloseDescriptionPRModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div className={styles.card}>
       <ul className={styles.ul_box}>
@@ -73,11 +78,7 @@ export default function RequestCard({ request }) {
             </li>
           </div>
           <div className={styles.logos}>
-            <button
-              type="button" /* 
-                onClick={handleButtonClick}
-            */
-            >
+            <button type="button" onClick={handleButtonClick}>
               <img src={info} alt="pr-description" />
             </button>
 
@@ -97,6 +98,10 @@ export default function RequestCard({ request }) {
           Administrer
         </Button>
       </ul>
+      <ModalDescriptionPR
+        open={modalOpen}
+        onClose={handleCloseDescriptionPRModal}
+      />
     </div>
   );
 }
