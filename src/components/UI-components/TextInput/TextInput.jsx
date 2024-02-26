@@ -1,5 +1,7 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import styles from "./TextInput.module.css";
+import ShowPassword from "../MUIRemix/ShowPassword";
 
 export default function TextInput({
   label,
@@ -11,6 +13,8 @@ export default function TextInput({
   onBlur,
   value,
 }) {
+  const [inputType, setInputType] = useState(type);
+
   return (
     <div className={styles.textInput}>
       <label
@@ -20,15 +24,22 @@ export default function TextInput({
         {label}
       </label>
       <input
-        type={type}
+        type={inputType}
         id={id}
         name={id}
         placeholder={placeholder}
-        className={styles.input}
+        className={
+          type === "password"
+            ? [styles.input, styles.password].join(" ")
+            : styles.input
+        }
         onChange={onChange}
         onBlur={onBlur}
         value={value}
       />
+      {type === "password" ? (
+        <ShowPassword inputType={inputType} setInputType={setInputType} />
+      ) : null}
     </div>
   );
 }

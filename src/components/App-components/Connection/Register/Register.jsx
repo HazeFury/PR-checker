@@ -4,30 +4,9 @@ import * as Yup from "yup";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Register.module.css";
 import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
-import ShowPassword from "../../../UI-components/MUIRemix/ShowPassword";
 import supabase from "../../../../services/client";
 
 export default function Register() {
-  const revealPass = () => {
-    const passwordInput = document.getElementById("password");
-    passwordInput.type = "text";
-  };
-
-  const hidePass = () => {
-    const passwordInput = document.getElementById("password");
-    passwordInput.type = "password";
-  };
-
-  const revealConfirm = () => {
-    const confirmInput = document.getElementById("confirm");
-    confirmInput.type = "text";
-  };
-
-  const hideConfirm = () => {
-    const confirmInput = document.getElementById("confirm");
-    confirmInput.type = "password";
-  };
-
   const formik = useFormik({
     initialValues: {
       lastname: "",
@@ -148,10 +127,9 @@ export default function Register() {
               <TooltipIconError
                 tooltip={formik.errors.password}
                 top="1px"
-                left="150px"
+                left="125px"
               />
             ) : null}
-            <ShowPassword reveal={revealPass} hide={hidePass} />
           </div>
           <div className={styles.input}>
             <TextInput
@@ -167,10 +145,9 @@ export default function Register() {
               <TooltipIconError
                 tooltip={formik.errors.confirm}
                 top="1px"
-                left="150px"
+                left="125px"
               />
             ) : null}
-            <ShowPassword reveal={revealConfirm} hide={hideConfirm} />
           </div>
         </div>
         <Button

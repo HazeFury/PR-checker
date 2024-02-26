@@ -3,21 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Login.module.css";
-import ShowPassword from "../../../UI-components/MUIRemix/ShowPassword";
 import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
 import supabase from "../../../../services/client";
 
 export default function Login() {
-  const revealPassLog = () => {
-    const passLog = document.getElementById("passwordLog");
-    passLog.type = "text";
-  };
-
-  const hidePassLog = () => {
-    const passLog = document.getElementById("passwordLog");
-    passLog.type = "password";
-  };
-
   const formik = useFormik({
     initialValues: {
       mailLog: "",
@@ -70,12 +59,11 @@ export default function Login() {
             onBlur={formik.handleBlur}
             value={formik.values.passwordLog}
           />
-          <ShowPassword reveal={revealPassLog} hide={hidePassLog} />
           {formik.touched.passwordLog && formik.errors.passwordLog ? (
             <TooltipIconError
               tooltip={formik.errors.passwordLog}
               top="0"
-              left="150px"
+              left="125px"
             />
           ) : null}
         </div>
