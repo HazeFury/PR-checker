@@ -1,11 +1,45 @@
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Box, Modal, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import supabase from "../../../../services/client";
 
 export default function ModalDescriptionPR({ open, onClose }) {
+  const [description, setDescriptions] = useState([]);
+
   const handleModalCloseCreate = () => {
     onClose(); // Appel de la fonction onClose pour fermer la modal
   };
+
+  useEffect(() => {
+    async function fetchDescriptions() {
+      try {
+        // Récupérer les données de la table pr_request (description)
+        const { data, error } = await supabase
+          .from("pr_request_id")
+          .select("description")
+          .eq("id", "pr_request_id")
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        // Mettre à jour l'état avec les descriptions récupérées
+        if (data) {
+          setDescriptions(data.description);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des descriptions:",
+          error.message
+        );
+      }
+    }
+
+    // Appeler la fonction pour récupérer les descriptions lorsque le composant est monté
+    fetchDescriptions();
+  }, []); // Le tableau vide en tant que dépendance signifie que ce code ne s'exécute qu'une seule fois après le montage initial du composant
 
   const style = {
     position: "absolute",
@@ -41,6 +75,8 @@ export default function ModalDescriptionPR({ open, onClose }) {
         >
           <CloseIcon style={{ color: "white" }} />
         </IconButton>
+        <h1>Descriptions des PR</h1>
+        <p>{description}</p>
       </Box>
     </Modal>
   );
