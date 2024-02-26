@@ -78,7 +78,7 @@ export default function RequestList() {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 500,
-    height: 600,
+    height: 700,
     bgcolor: "#292929",
     borderRadius: "10px",
     boxShadow: 24,
@@ -123,9 +123,9 @@ export default function RequestList() {
               />
               {openConfirmationModal && (
                 <ConfirmationModal
-                  title="Voulez-vous vraimenter quitter votre enregistrement ?"
-                  textButton1="Revenir à mon enregistrement"
-                  textButton2="Confirmer et quitter"
+                  title="Voulez-vous vraiment quitter votre enregistrement ?"
+                  textButtonLeft="Revenir à mon enregistrement"
+                  textButtonRight="Quitter"
                   handleCloseModals={() => {
                     handleCloseModals();
                   }}

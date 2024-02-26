@@ -7,8 +7,8 @@ export default function ConfirmationModal({
   handleCloseModals,
   handleOpenRequestModal,
   title,
-  textButton1,
-  textButton2,
+  textButtonLeft,
+  textButtonRight,
 }) {
   const style = {
     position: "absolute",
@@ -28,26 +28,35 @@ export default function ConfirmationModal({
     textAlign: "center",
   };
 
-  const buttonStyle = {
+  const buttonLeftStyle = {
     bgcolor: "#A82B2B",
+    width: "350px",
+
     "&:hover": {
       bgcolor: "#8c2222",
     },
+  };
+  const buttonRigthStyle = {
+    width: "350px",
   };
   return (
     <div className={styles.backdrop}>
       <Box sx={style}>
         <p>{title}</p>
         <div className={styles.buttonContainer}>
-          <Button variant="contained" onClick={handleOpenRequestModal}>
-            {textButton1}
+          <Button
+            variant="contained"
+            sx={buttonRigthStyle}
+            onClick={handleOpenRequestModal}
+          >
+            {textButtonLeft}
           </Button>
           <Button
             variant="contained"
-            sx={buttonStyle}
+            sx={buttonLeftStyle}
             onClick={handleCloseModals}
           >
-            {textButton2}
+            {textButtonRight}
           </Button>
         </div>
       </Box>
@@ -56,8 +65,8 @@ export default function ConfirmationModal({
 }
 ConfirmationModal.propTypes = {
   title: PropTypes.string.isRequired,
-  textButton1: PropTypes.string.isRequired,
-  textButton2: PropTypes.string.isRequired,
+  textButtonLeft: PropTypes.string.isRequired,
+  textButtonRight: PropTypes.string.isRequired,
   handleCloseModals: PropTypes.func.isRequired,
   handleOpenRequestModal: PropTypes.func.isRequired,
 };

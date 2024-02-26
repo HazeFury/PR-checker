@@ -19,7 +19,7 @@ export default function TextArea({
         type={type}
         id={id}
         placeholder={placeholder}
-        className={styles.input}
+        className={styles.inputArea}
         onChange={onChange}
         onBlur={onBlur}
         value={value}
