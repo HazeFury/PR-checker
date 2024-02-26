@@ -1,9 +1,22 @@
-.project_container {
+.container {
   min-height: 70vh;
   height: fit-content;
   display: flex;
-  justify-content: center;
   align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.title {
+  padding-left: 16rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 2.5rem;
+  margin-top: 2rem;
+}
+
+.project_container {
+  display: flex;
+  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
 }

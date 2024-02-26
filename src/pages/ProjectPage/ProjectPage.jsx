@@ -33,16 +33,19 @@ export default function ProjectPage() {
     );
 
   return (
-    <div className={styles.project_container}>
-      {projects.length > 0 ? (
-        projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))
-      ) : (
-        <p className={styles.no_content_text}>
-          Vous ne faites partie d&#39;aucun projet pour l&#39;instant
-        </p>
-      )}
+    <div className={styles.container}>
+      <h2 className={styles.title}>Mes projets</h2>
+      <div className={styles.project_container}>
+        {projects.length > 0 ? (
+          projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))
+        ) : (
+          <p className={styles.no_content_text}>
+            Vous ne faites partie d&#39;aucun projet pour l&#39;instant
+          </p>
+        )}
+      </div>
     </div>
   );
 }

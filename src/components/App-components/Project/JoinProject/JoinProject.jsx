@@ -1,64 +1,58 @@
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
-import axios from "axios";
 import { Button, Box, Modal, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
-import styles from "./CreateProject.module.css";
+import styles from "./JoinProject.module.css";
 
-export default function CreateProject({ open, onClose }) {
-  const handleModalCloseCreate = () => {
+export default function JoinProject({ open, onClose }) {
+  const handleModalCloseJoin = () => {
     onClose(); // Appel de la fonction onClose pour fermer la modal
   };
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      project_id: "",
     },
     onSubmit: async () => {
       try {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
-        console.info("le userId est : ", userId);
 
-        // To get the picture
-        const newPictureForProject = await axios
-          .get("https://source.unsplash.com/random?wallpapers")
-          .then((res) => {
-            return res.request.responseURL;
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-
-        // To create the project with name and picture
-        const { data: newProject } = await supabase
+        // Check if the project exists
+        const { data: projectData } = await supabase
           .from("projects")
-          .insert({ name: formik.values.name, picture: newPictureForProject })
-          .select();
+          .select("*")
+          .eq("id", formik.values.project_id)
+          .single();
 
-        const projectId = newProject[0].id;
-        // create the first user related to the project newely created. This user is "role: owner" and "pending: false" by default
+        if (!projectData) {
+          console.error("Le projet avec cet ID n'existe pas.");
+          return;
+        }
+
+        // Ask to join the project
         await supabase
           .from("project_users")
           .insert({
             user_uuid: userId,
-            project_uuid: projectId,
-            role: "owner",
-            pending: false,
+            project_uuid: formik.values.project_id,
+            pending: true, // Pending until accepted by project owner
           })
           .select();
 
-        handleModalCloseCreate(); // close the modal
+        handleModalCloseJoin();
       } catch (error) {
-        console.error("La création du projet n'a pas fonctionné");
-        // [TODO : toast pour l'erreur !]
+        console.error(
+          "Vous n'avez pas réussi à rejoindre le projet",
+          error.message
+        );
       }
     },
   });
-  const handleCreateProject = () => {
+  const handleJoinProject = () => {
     formik.handleSubmit();
   };
 
@@ -79,7 +73,7 @@ export default function CreateProject({ open, onClose }) {
   };
 
   return (
-    <Modal open={open} onClose={handleModalCloseCreate}>
+    <Modal open={open} onClose={handleModalCloseJoin}>
       <Box sx={style}>
         <IconButton
           style={{
@@ -91,29 +85,29 @@ export default function CreateProject({ open, onClose }) {
             height: "2.5rem",
             borderRadius: "0px 7px 0px 10px",
           }}
-          onClick={handleModalCloseCreate}
+          onClick={handleModalCloseJoin}
           aria-label="close"
         >
           <CloseIcon style={{ color: "white" }} />
         </IconButton>
         <form onSubmit={formik.handleSubmit} className={styles.form}>
-          <h2>Créer un projet</h2>
+          <h2>Rejoindre un projet</h2>
           <div className={styles.input}>
             <TextInput
-              label="Rentrez le nom du projet"
+              label="Rentrez l'ID du projet"
               type="text"
-              id="name"
-              placeholder="Nom du projet"
+              id="project_id"
+              placeholder="ID du projet"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.name}
+              value={formik.values.id}
               labelStyle={{ fontSize: "4rem", fontWeight: "bold" }}
             />
           </div>
           <div className={styles.button}>
             <Button
               variant="contained"
-              onClick={handleCreateProject}
+              onClick={handleJoinProject}
               sx={{
                 width: "12.625rem",
                 height: "3.813rem",
@@ -124,7 +118,7 @@ export default function CreateProject({ open, onClose }) {
                 top: "-25%",
               }}
             >
-              Créer
+              Rejoindre
             </Button>
           </div>
         </form>
@@ -133,7 +127,7 @@ export default function CreateProject({ open, onClose }) {
   );
 }
 
-CreateProject.propTypes = {
+JoinProject.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

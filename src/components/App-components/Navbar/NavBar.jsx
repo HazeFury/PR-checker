@@ -11,6 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import styles from "./NavBar.module.css";
+import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
@@ -23,6 +24,15 @@ export default function NavBar() {
   const location = useLocation();
 
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
+
+  const handleOpenJoinProjectModal = () => {
+    setOpenJoinProjectModal(true);
+  };
+
+  const handleCloseJoinProjectModal = () => {
+    setOpenJoinProjectModal(false);
+  };
 
   const handleOpenCreateProjectModal = () => {
     setOpenCreateProjectModal(true);
@@ -52,6 +62,7 @@ export default function NavBar() {
       return (
         <>
           <Button
+            onClick={handleOpenJoinProjectModal}
             variant="contained"
             style={{
               backgroundColor: "#3883BA",
@@ -79,6 +90,10 @@ export default function NavBar() {
           >
             Créer un projet
           </Button>
+          <JoinProject
+            open={openJoinProjectModal}
+            onClose={handleCloseJoinProjectModal}
+          />
           <CreateProject
             open={openCreateProjectModal}
             onClose={handleCloseCreateProjectModal}
