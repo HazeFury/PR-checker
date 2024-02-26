@@ -79,7 +79,7 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <p>{projectName}</p>
+        <h3>{projectName}</h3>
         <div>
           <Button
             variant="contained"

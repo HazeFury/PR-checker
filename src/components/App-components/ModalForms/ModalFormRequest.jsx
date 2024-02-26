@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
@@ -40,8 +42,9 @@ export default function ModalFormRequest({ title, text, projectId }) {
 
         // Add data to pr_request table with Supabase
         await supabase.from("pr_request").insert([requestData]);
+        toast.success("Votre PR a bien été créée");
       } catch (error) {
-        console.error("L'enregistrement n'a pas fonctionné");
+        toast.error("L'enregistrement de la PR n'a pas fonctionné");
       }
     },
   });
