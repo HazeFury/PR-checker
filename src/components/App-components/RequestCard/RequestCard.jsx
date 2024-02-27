@@ -101,6 +101,7 @@ export default function RequestCard({ request }) {
       <ModalDescriptionPR
         open={modalOpen}
         onClose={handleCloseDescriptionPRModal}
+        request={request}
       />
     </div>
   );
@@ -113,5 +114,6 @@ RequestCard.propTypes = {
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
   }).isRequired,
 };
