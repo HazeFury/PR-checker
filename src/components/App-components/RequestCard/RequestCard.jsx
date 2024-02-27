@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
 // import { useState } from "react";
-import Button from "@mui/material/Button";
 
 import styles from "./RequestCard.module.css";
 // Icons
 import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
+import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -93,9 +93,11 @@ export default function RequestCard({ request }) {
             </button>
           </div>
         </div>
-        <Button variant="contained" size="small">
-          Administrer
-        </Button>
+        <ManageRequestButton
+          buttonText="Administrer"
+          textItem1="Modifier"
+          textItem2="Supprimer"
+        />
       </ul>
     </div>
   );
