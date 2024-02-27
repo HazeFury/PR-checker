@@ -50,12 +50,10 @@ export default function ManageRequestButton({
           sx={{
             fontFamily: "Montserrat, sans-serif",
             fontSize: "12px",
-            borderBottom: "1px solid white",
             display: "flex",
             justifyContent: "center",
-            paddingBottom: "10px",
-            marginRight: "10px",
-            marginLeft: "10px",
+            marginBottom: "10px",
+
             "&:hover": {
               backgroundColor: "#3883BA",
               marginRight: "0px",
@@ -67,7 +65,14 @@ export default function ManageRequestButton({
           {textItem1}
         </MenuItem>
         <MenuItem
-          sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "15px",
+            margin: "0 5%",
+            borderTop: "2px solid #ABABAB",
+            boxSizing: "border-box",
+          }}
           onClick={handleClose}
         >
           <Button
@@ -76,8 +81,8 @@ export default function ManageRequestButton({
               backgroundColor: "#BA3838",
               color: "#FFFFFF",
               fontSize: "12px",
-              paddingLeft: "20px",
-              paddingRight: "20px",
+              paddingLeft: "30px",
+              paddingRight: "30px",
 
               "&:hover": {
                 backgroundColor: "#8c2222",
