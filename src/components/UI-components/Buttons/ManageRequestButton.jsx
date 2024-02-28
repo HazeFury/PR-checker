@@ -7,6 +7,7 @@ export default function ManageRequestButton({
   textItem1,
   textItem2,
   buttonText,
+  handleOpenModalAboutRequest,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -16,6 +17,7 @@ export default function ManageRequestButton({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <div>
       <Button
@@ -60,7 +62,7 @@ export default function ManageRequestButton({
               marginLeft: "0px",
             },
           }}
-          onClick={handleClose}
+          onClick={handleOpenModalAboutRequest}
         >
           {textItem1}
         </MenuItem>
@@ -100,4 +102,5 @@ ManageRequestButton.propTypes = {
   textItem1: PropTypes.string.isRequired,
   textItem2: PropTypes.string.isRequired,
   buttonText: PropTypes.string.isRequired,
+  handleOpenModalAboutRequest: PropTypes.func.isRequired,
 };

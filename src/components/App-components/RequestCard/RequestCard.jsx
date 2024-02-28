@@ -46,14 +46,7 @@ function statusName(status) {
       return styles.defaultColor;
   }
 }
-export default function RequestCard({ request }) {
-  // Function to open modal with infos on PR
-  /*
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleButtonClick = () => {
-    setModalOpen(true);
-  };
-  */
+export default function RequestCard({ request, handleOpenModalAboutRequest }) {
   return (
     <div className={styles.card}>
       <ul className={styles.ul_box}>
@@ -73,11 +66,7 @@ export default function RequestCard({ request }) {
             </li>
           </div>
           <div className={styles.logos}>
-            <button
-              type="button" /* 
-                onClick={handleButtonClick}
-            */
-            >
+            <button type="button">
               <img src={info} alt="pr-description" />
             </button>
 
@@ -97,6 +86,9 @@ export default function RequestCard({ request }) {
           buttonText="Administrer"
           textItem1="Modifier"
           textItem2="Supprimer"
+          handleOpenModalAboutRequest={() => {
+            handleOpenModalAboutRequest(request.id);
+          }}
         />
       </ul>
     </div>
@@ -111,4 +103,5 @@ RequestCard.propTypes = {
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
   }).isRequired,
+  handleOpenModalAboutRequest: PropTypes.func.isRequired,
 };

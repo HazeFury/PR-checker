@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
@@ -12,19 +13,47 @@ import supabase from "../../../services/client";
 import TooltipIconError from "../../UI-components/MUIRemix/TooltipIconError";
 
 export default function ModalFormRequest({
-  title,
-  text,
   projectId,
   handleClose,
   handleOpenConfirmationModal,
   refreshPr,
+  requestId,
 }) {
+  const [requestData, setRequestData] = useState(null);
+  useEffect(() => {
+    const fetchPRData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("pr_request")
+          .select("*")
+          .eq("id", requestId)
+          .limit(1);
+
+        if (error) {
+          console.error(
+            "Erreur lors de la récupération des données de la PR :",
+            error
+          );
+          return;
+        }
+        setRequestData(data);
+        console.info(data);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des données de la PR :",
+          error
+        );
+      }
+    };
+
+    fetchPRData();
+  }, []);
   const formik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
-      trello: "",
-      github: "",
+      title: requestData ? requestData.title : "",
+      description: requestData ? requestData.description : "",
+      trello: requestData ? requestData.trello : "",
+      github: requestData ? requestData.github : "",
     },
 
     // validation form
@@ -41,14 +70,14 @@ export default function ModalFormRequest({
         const { data } = await supabase.auth.getSession();
         const userId = data.session.user.id;
         // Add project_uuid to the form data
-        const requestData = {
+        const formData = {
           ...values,
           project_uuid: projectId,
           user_uuid: userId,
         };
 
         // Add data to pr_request table with Supabase
-        await supabase.from("pr_request").insert([requestData]);
+        await supabase.from("pr_request").insert([formData]);
         toast.success("Votre PR a bien été créée");
         handleClose();
         refreshPr();
@@ -73,7 +102,7 @@ export default function ModalFormRequest({
         X
       </button>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
-        <h1>{title}</h1>
+        <h1> </h1>
         <div className={styles.input}>
           <div className={styles.inputStyle}>
             <TextInput
@@ -83,7 +112,7 @@ export default function ModalFormRequest({
               placeholder="Nommez votre PR"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.title}
+              value={requestData ? requestData.title : formik.values.title}
             />
             {formik.touched.title && formik.errors.title ? (
               <TooltipIconError
@@ -101,7 +130,11 @@ export default function ModalFormRequest({
               placeholder="Décrivez votre PR"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.description}
+              value={
+                requestData
+                  ? requestData.description
+                  : formik.values.description
+              }
             />
             {formik.touched.description && formik.errors.description ? (
               <TooltipIconError
@@ -119,7 +152,7 @@ export default function ModalFormRequest({
               placeholder="Insérez le lien vers Trello"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.trello}
+              value={requestData ? requestData.trello : formik.values.trello}
             />
             {formik.touched.trello && formik.errors.trello ? (
               <TooltipIconError
@@ -137,7 +170,7 @@ export default function ModalFormRequest({
               placeholder="Insérez le lien vers Github"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.github}
+              value={requestData ? requestData.github : formik.values.github}
             />
             {formik.touched.github && formik.errors.github ? (
               <TooltipIconError
@@ -158,7 +191,7 @@ export default function ModalFormRequest({
               fontFamily: "Montserrat, sans serif",
             }}
           >
-            {text}{" "}
+            {" "}
           </Button>
         </div>
       </form>
@@ -166,10 +199,9 @@ export default function ModalFormRequest({
   );
 }
 ModalFormRequest.propTypes = {
-  title: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
   projectId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
   refreshPr: PropTypes.func.isRequired,
+  requestId: PropTypes.number.isRequired,
 };
