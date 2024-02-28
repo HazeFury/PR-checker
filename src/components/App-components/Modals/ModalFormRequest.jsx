@@ -19,7 +19,10 @@ export default function ModalFormRequest({
   refreshPr,
   requestId,
 }) {
+  // state to manage the data of request
   const [requestData, setRequestData] = useState(null);
+
+  // function to fetch data of the PR which is used
   useEffect(() => {
     const fetchPRData = async () => {
       try {
@@ -29,7 +32,6 @@ export default function ModalFormRequest({
           .eq("id", requestId);
 
         setRequestData(data[0]);
-        console.info(data);
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des données de la PR",
@@ -40,12 +42,17 @@ export default function ModalFormRequest({
 
     fetchPRData();
   }, []);
+
+  // to manage the title of the modal and of the button if it's edit or create form
+  const modalTitle = requestData ? "Modifier" : "Enregistrer";
+
+  // initialize the initialesValues with Formik
   const formik = useFormik({
     initialValues: {
-      title: requestData ? requestData.title : "",
-      description: requestData ? requestData.description : "",
-      trello: requestData ? requestData.trello : "",
-      github: requestData ? requestData.github : "",
+      title: "",
+      description: "",
+      trello: "",
+      github: "",
     },
 
     // validation form
@@ -78,9 +85,26 @@ export default function ModalFormRequest({
       }
     },
   });
+
   const handleSaveClick = () => {
     formik.handleSubmit();
   };
+  // function to update form values with formik
+  const updateFormValues = (newData) => {
+    formik.setValues(newData);
+  };
+
+  // Update form values when initialValues change
+  useEffect(() => {
+    if (requestData) {
+      updateFormValues({
+        title: requestData.title,
+        description: requestData.description,
+        trello: requestData.trello,
+        github: requestData.github,
+      });
+    }
+  }, [requestData]);
 
   return (
     <div className={styles.formStyle}>
@@ -94,7 +118,7 @@ export default function ModalFormRequest({
         X
       </button>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
-        <h1> </h1>
+        <h1>{modalTitle} </h1>
         <div className={styles.input}>
           <div className={styles.inputStyle}>
             <TextInput
@@ -104,7 +128,8 @@ export default function ModalFormRequest({
               placeholder="Nommez votre PR"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={requestData ? requestData.title : formik.values.title}
+              value={formik.values.title}
+              readOnly={false}
             />
             {formik.touched.title && formik.errors.title ? (
               <TooltipIconError
@@ -122,11 +147,7 @@ export default function ModalFormRequest({
               placeholder="Décrivez votre PR"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={
-                requestData
-                  ? requestData.description
-                  : formik.values.description
-              }
+              value={formik.values.description}
             />
             {formik.touched.description && formik.errors.description ? (
               <TooltipIconError
@@ -144,7 +165,7 @@ export default function ModalFormRequest({
               placeholder="Insérez le lien vers Trello"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={requestData ? requestData.trello : formik.values.trello}
+              value={formik.values.trello}
             />
             {formik.touched.trello && formik.errors.trello ? (
               <TooltipIconError
@@ -162,7 +183,7 @@ export default function ModalFormRequest({
               placeholder="Insérez le lien vers Github"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={requestData ? requestData.github : formik.values.github}
+              value={formik.values.github}
             />
             {formik.touched.github && formik.errors.github ? (
               <TooltipIconError
@@ -183,7 +204,7 @@ export default function ModalFormRequest({
               fontFamily: "Montserrat, sans serif",
             }}
           >
-            {" "}
+            {modalTitle}
           </Button>
         </div>
       </form>

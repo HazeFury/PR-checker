@@ -62,7 +62,10 @@ export default function ManageRequestButton({
               marginLeft: "0px",
             },
           }}
-          onClick={handleOpenModalAboutRequest}
+          onClick={() => {
+            handleClose();
+            handleOpenModalAboutRequest();
+          }}
         >
           {textItem1}
         </MenuItem>
