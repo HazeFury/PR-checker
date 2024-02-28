@@ -23,24 +23,16 @@ export default function ModalFormRequest({
   useEffect(() => {
     const fetchPRData = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("pr_request")
           .select("*")
-          .eq("id", requestId)
-          .limit(1);
+          .eq("id", requestId);
 
-        if (error) {
-          console.error(
-            "Erreur lors de la récupération des données de la PR :",
-            error
-          );
-          return;
-        }
-        setRequestData(data);
+        setRequestData(data[0]);
         console.info(data);
       } catch (error) {
         console.error(
-          "Erreur lors de la récupération des données de la PR :",
+          "Erreur lors de la récupération des données de la PR",
           error
         );
       }
