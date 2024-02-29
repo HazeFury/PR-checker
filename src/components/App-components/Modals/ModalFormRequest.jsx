@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
@@ -12,13 +13,37 @@ import supabase from "../../../services/client";
 import TooltipIconError from "../../UI-components/MUIRemix/TooltipIconError";
 
 export default function ModalFormRequest({
-  title,
-  text,
   projectId,
   handleClose,
   handleOpenConfirmationModal,
   refreshPr,
+  requestId,
 }) {
+  // state to manage the data of request
+  const [requestData, setRequestData] = useState(null);
+
+  // function to fetch data of the PR which is used
+  useEffect(() => {
+    const fetchPRData = async () => {
+      try {
+        const { data } = await supabase
+          .from("pr_request")
+          .select("*")
+          .eq("id", requestId);
+
+        setRequestData(data[0]);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données de la PR");
+      }
+    };
+
+    fetchPRData();
+  }, []);
+
+  // to manage the title of the modal and of the button if it's edit or create form
+  const modalTitle = requestData ? "Modifier" : "Enregistrer";
+
+  // initialize the initialesValues with Formik
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -41,25 +66,51 @@ export default function ModalFormRequest({
         const { data } = await supabase.auth.getSession();
         const userId = data.session.user.id;
         // Add project_uuid to the form data
-        const requestData = {
+        const formData = {
           ...values,
           project_uuid: projectId,
           user_uuid: userId,
         };
+        if (requestData) {
+          // update data to pr_request table with supabase
+          await supabase
+            .from("pr_request")
+            .update([formData])
+            .eq("id", requestId);
 
-        // Add data to pr_request table with Supabase
-        await supabase.from("pr_request").insert([requestData]);
-        toast.success("Votre PR a bien été créée");
-        handleClose();
-        refreshPr();
+          toast.success("Votre PR a bien été mise à jour");
+        } else {
+          // Add data to pr_request table with Supabase
+          await supabase.from("pr_request").insert([formData]);
+          toast.success("Votre PR a bien été créée");
+        }
       } catch (error) {
         toast.error("L'enregistrement de la PR n'a pas fonctionné");
       }
+      handleClose();
+      refreshPr();
     },
   });
+
   const handleSaveClick = () => {
     formik.handleSubmit();
   };
+  // function to update form values with formik
+  const updateFormValues = (newData) => {
+    formik.setValues(newData);
+  };
+
+  // Update form values when initialValues change
+  useEffect(() => {
+    if (requestData) {
+      updateFormValues({
+        title: requestData.title,
+        description: requestData.description,
+        trello: requestData.trello,
+        github: requestData.github,
+      });
+    }
+  }, [requestData]);
 
   return (
     <div className={styles.formStyle}>
@@ -73,7 +124,7 @@ export default function ModalFormRequest({
         X
       </button>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
-        <h1>{title}</h1>
+        <h1>{modalTitle} </h1>
         <div className={styles.input}>
           <div className={styles.inputStyle}>
             <TextInput
@@ -84,6 +135,7 @@ export default function ModalFormRequest({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.title}
+              readOnly={false}
             />
             {formik.touched.title && formik.errors.title ? (
               <TooltipIconError
@@ -158,7 +210,7 @@ export default function ModalFormRequest({
               fontFamily: "Montserrat, sans serif",
             }}
           >
-            {text}{" "}
+            {modalTitle}
           </Button>
         </div>
       </form>
@@ -166,10 +218,9 @@ export default function ModalFormRequest({
   );
 }
 ModalFormRequest.propTypes = {
-  title: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
   projectId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
   refreshPr: PropTypes.func.isRequired,
+  requestId: PropTypes.number.isRequired,
 };

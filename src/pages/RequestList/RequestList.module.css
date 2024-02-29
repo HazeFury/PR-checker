@@ -22,3 +22,19 @@
 .modal {
   background-color: #292929;
 }
+
+@media screen and (max-width: 1290px) {
+  .request_list_container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 790px) {
+  .request_list_container {
+    display: flex;
+    flex-direction: column;
+  }
+}

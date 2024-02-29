@@ -14,11 +14,17 @@ export default function RequestList() {
   // states for requestList
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
+  // state to save the Id of the PR that will be used
+  const [requestId, setRequestId] = useState(null);
   // state for open request and confirmation modals
   const [openModalAboutRequest, setopenModalAboutRequest] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   // function to manage the state to open the modal about Request and modal for confirmation
-  const handleOpenModalAboutRequest = () => setopenModalAboutRequest(true);
+  const handleOpenModalAboutRequest = (id) => {
+    setRequestId(id);
+
+    setopenModalAboutRequest(true);
+  };
   const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
   // Function to close all modals at the same time after confirm the close
   const handleCloseModals = () => {
@@ -77,7 +83,7 @@ export default function RequestList() {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 500,
+    width: 400,
     height: 700,
     bgcolor: "#292929",
     borderRadius: "10px",
@@ -120,6 +126,7 @@ export default function RequestList() {
                 handleClose={handleCloseModals}
                 handleOpenConfirmationModal={handleOpenConfirmationModal}
                 refreshPr={() => getAllPr()}
+                requestId={requestId}
               />
               {openConfirmationModal && (
                 <ConfirmationModal
@@ -140,7 +147,11 @@ export default function RequestList() {
       </div>
       {requestList.length > 0 ? (
         requestList.map((request) => (
-          <RequestCard key={request.id} request={request} />
+          <RequestCard
+            key={request.id}
+            request={request}
+            handleOpenModalAboutRequest={handleOpenModalAboutRequest}
+          />
         ))
       ) : (
         <p className={styles.no_content_text}>
