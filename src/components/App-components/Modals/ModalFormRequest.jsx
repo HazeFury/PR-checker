@@ -33,10 +33,7 @@ export default function ModalFormRequest({
 
         setRequestData(data[0]);
       } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des données de la PR",
-          error
-        );
+        console.error("Erreur lors de la récupération des données de la PR");
       }
     };
 
@@ -74,15 +71,24 @@ export default function ModalFormRequest({
           project_uuid: projectId,
           user_uuid: userId,
         };
+        if (requestData) {
+          // update data to pr_request table with supabase
+          await supabase
+            .from("pr_request")
+            .update([formData])
+            .eq("id", requestId);
 
-        // Add data to pr_request table with Supabase
-        await supabase.from("pr_request").insert([formData]);
-        toast.success("Votre PR a bien été créée");
-        handleClose();
-        refreshPr();
+          toast.success("Votre PR a bien été mise à jour");
+        } else {
+          // Add data to pr_request table with Supabase
+          await supabase.from("pr_request").insert([formData]);
+          toast.success("Votre PR a bien été créée");
+        }
       } catch (error) {
         toast.error("L'enregistrement de la PR n'a pas fonctionné");
       }
+      handleClose();
+      refreshPr();
     },
   });
 

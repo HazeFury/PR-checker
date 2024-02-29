@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-// import { useState } from "react";
 
 import styles from "./RequestCard.module.css";
 // Icons
@@ -47,6 +46,8 @@ function statusName(status) {
   }
 }
 export default function RequestCard({ request, handleOpenModalAboutRequest }) {
+  const formattedDate = new Date(request.created_at).toLocaleString();
+
   return (
     <div className={styles.card}>
       <ul className={styles.ul_box}>
@@ -59,10 +60,13 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
         <div className={styles.informations}>
           <div className={styles.infos}>
             <li className={styles.li_style}>
-              Ouvert par : <b>Marco</b>
+              Ouvert par : <b> Marco</b>
             </li>
             <li className={styles.li_style}>
               Nom de la PR :<b> {request.title}</b>
+            </li>
+            <li className={styles.li_style}>
+              Le : <b> {formattedDate}</b>
             </li>
           </div>
           <div className={styles.logos}>
@@ -102,6 +106,7 @@ RequestCard.propTypes = {
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
 };
