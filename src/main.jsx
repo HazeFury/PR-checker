@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+// eslint-disable-next-line import/no-unresolved
+import { Toaster } from "sonner";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -41,5 +43,6 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+    <Toaster richColors />
+  </React.StrictMode>
 );

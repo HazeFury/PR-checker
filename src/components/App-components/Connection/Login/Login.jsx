@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Login.module.css";
 import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
@@ -18,11 +20,23 @@ export default function Login() {
         .required("Veuillez entrer votre adresse mail"),
       passwordLog: Yup.string().required("Veuillez entrer votre mot de passe"),
     }),
-    onSubmit: (values) => {
-      supabase.auth.signInWithPassword({
-        email: values.mailLog,
-        password: values.passwordLog,
-      });
+    onSubmit: async (values) => {
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: values.mailLog,
+          password: values.passwordLog,
+        });
+        if (error) throw error;
+        else toast.success(`Bonjour ${data.user.user_metadata.first_name} !`);
+      } catch (error) {
+        if (error.status === 400)
+          toast.error("L'adresse mail et le mot de passe ne correspondent pas");
+        else
+          toast.error(
+            "Une erreur s'est produite, veuillez réessayer plus tard"
+          );
+        console.error(error);
+      }
     },
   });
 

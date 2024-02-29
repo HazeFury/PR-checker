@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Register.module.css";
 import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
@@ -44,8 +46,9 @@ export default function Register() {
           },
         });
         if (error) throw error;
+        else toast.info("Un mail de validation vous a été envoyé");
       } catch (error) {
-        // Ajouter un toast d'erreur ICI
+        toast.error("Une erreur s'est produite, veuillez réessayer plus tard");
         console.error(error);
       }
     },
