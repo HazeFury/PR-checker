@@ -1,11 +1,10 @@
 .container {
   min-height: 70vh;
   height: fit-content;
-  display: flex;
+  padding-left: 16rem;
 }
 
 .title {
-  padding-left: 16rem;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 2.5rem;
@@ -14,9 +13,9 @@
 
 .project_container {
   display: flex;
-  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-left: -5.3rem;
 }
 
 .loading_container {
