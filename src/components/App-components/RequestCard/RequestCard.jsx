@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 
 import { useState } from "react";
-import Button from "@mui/material/Button";
 
 import styles from "./RequestCard.module.css";
 // Icons
@@ -11,7 +10,6 @@ import github from "../../../assets/github.svg";
 
 import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
-
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -53,7 +51,6 @@ function statusName(status) {
 }
 
 export default function RequestCard({ request, handleOpenModalAboutRequest }) {
-  
   // Function to open modal with infos on PR
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -64,9 +61,8 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
   const handleCloseDescriptionPRModal = () => {
     setModalOpen(false);
   };
-  
-  const formattedDate = new Date(request.created_at).toLocaleString();
 
+  const formattedDate = new Date(request.created_at).toLocaleString();
 
   return (
     <div className={styles.card}>

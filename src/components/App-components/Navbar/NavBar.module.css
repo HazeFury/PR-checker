@@ -10,3 +10,18 @@
   height: 60px;
   margin-left: 40px;
 }
+
+@media screen and (max-width: 450px) {
+  /* .nav_container {
+    height: 100px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border-bottom: solid white 1px;
+  } */
+
+  .logo {
+    height: 40px;
+    margin-left: 10px;
+  }
+}

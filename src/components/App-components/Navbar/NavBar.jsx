@@ -5,7 +5,6 @@ import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -19,6 +18,7 @@ import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
+// import ProjectButtonNav from "./ProjectButtonNav";
 
 export default function NavBar() {
   const location = useLocation();
@@ -118,8 +118,7 @@ export default function NavBar() {
   return (
     <nav className={styles.nav_container}>
       <img className={styles.logo} src={Logo} alt="PR-checker logo" />
-
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+      <div>
         {renderExtraButton()}
 
         <Tooltip title="Account settings">
@@ -134,7 +133,8 @@ export default function NavBar() {
             <PersonOutlineIcon sx={{ color: "white", scale: "1.8" }} />
           </IconButton>
         </Tooltip>
-      </Box>
+      </div>
+
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
