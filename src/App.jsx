@@ -1,11 +1,7 @@
-// eslint-disable-next-line import/no-unresolved
-import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import "./App.css";
-// eslint-disable-next-line import/no-unresolved
-import { Toaster } from "sonner";
 import Connection from "./pages/Connection/Connection";
 import NavBar from "./components/App-components/Navbar/NavBar";
 import supabase from "./services/client";
@@ -34,7 +30,6 @@ export default function App() {
     <div>
       <NavBar />
       <Outlet />
-      <Toaster richColors />
     </div>
   );
 }
