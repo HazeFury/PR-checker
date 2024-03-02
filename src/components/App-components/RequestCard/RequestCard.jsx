@@ -1,12 +1,11 @@
 import PropTypes from "prop-types";
-// import { useState } from "react";
-import Button from "@mui/material/Button";
 
 import styles from "./RequestCard.module.css";
 // Icons
 import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
+import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -46,14 +45,9 @@ function statusName(status) {
       return styles.defaultColor;
   }
 }
-export default function RequestCard({ request }) {
-  // Function to open modal with infos on PR
-  /*
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleButtonClick = () => {
-    setModalOpen(true);
-  };
-  */
+export default function RequestCard({ request, handleOpenModalAboutRequest }) {
+  const formattedDate = new Date(request.created_at).toLocaleString();
+
   return (
     <div className={styles.card}>
       <ul className={styles.ul_box}>
@@ -66,18 +60,17 @@ export default function RequestCard({ request }) {
         <div className={styles.informations}>
           <div className={styles.infos}>
             <li className={styles.li_style}>
-              Ouvert par : <b>Marco</b>
+              Ouvert par : <b> Marco</b>
             </li>
             <li className={styles.li_style}>
               Nom de la PR :<b> {request.title}</b>
             </li>
+            <li className={styles.li_style}>
+              Le : <b> {formattedDate}</b>
+            </li>
           </div>
           <div className={styles.logos}>
-            <button
-              type="button" /* 
-                onClick={handleButtonClick}
-            */
-            >
+            <button type="button">
               <img src={info} alt="pr-description" />
             </button>
 
@@ -93,9 +86,14 @@ export default function RequestCard({ request }) {
             </button>
           </div>
         </div>
-        <Button variant="contained" size="small">
-          Administrer
-        </Button>
+        <ManageRequestButton
+          buttonText="Administrer"
+          textItem1="Modifier"
+          textItem2="Supprimer"
+          handleOpenModalAboutRequest={() => {
+            handleOpenModalAboutRequest(request.id);
+          }}
+        />
       </ul>
     </div>
   );
@@ -108,5 +106,7 @@ RequestCard.propTypes = {
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired,
   }).isRequired,
+  handleOpenModalAboutRequest: PropTypes.func.isRequired,
 };
