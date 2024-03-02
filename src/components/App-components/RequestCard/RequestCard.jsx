@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+
 import { useState } from "react";
 import Button from "@mui/material/Button";
 
@@ -7,7 +8,10 @@ import styles from "./RequestCard.module.css";
 import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
+
 import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
+import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
+
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -47,7 +51,9 @@ function statusName(status) {
       return styles.defaultColor;
   }
 }
-export default function RequestCard({ request }) {
+
+export default function RequestCard({ request, handleOpenModalAboutRequest }) {
+  
   // Function to open modal with infos on PR
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,6 +64,9 @@ export default function RequestCard({ request }) {
   const handleCloseDescriptionPRModal = () => {
     setModalOpen(false);
   };
+  
+  const formattedDate = new Date(request.created_at).toLocaleString();
+
 
   return (
     <div className={styles.card}>
@@ -71,17 +80,19 @@ export default function RequestCard({ request }) {
         <div className={styles.informations}>
           <div className={styles.infos}>
             <li className={styles.li_style}>
-              Ouvert par : <b>Marco</b>
+              Ouvert par : <b> Marco</b>
             </li>
             <li className={styles.li_style}>
               Nom de la PR :<b> {request.title}</b>
+            </li>
+            <li className={styles.li_style}>
+              Le : <b> {formattedDate}</b>
             </li>
           </div>
           <div className={styles.logos}>
             <button type="button" onClick={handleButtonClick}>
               <img src={info} alt="pr-description" />
             </button>
-
             <button type="button">
               <a href={request.github} target="_blank" rel="noreferrer">
                 <img src={github} alt="githublink" />
@@ -94,9 +105,14 @@ export default function RequestCard({ request }) {
             </button>
           </div>
         </div>
-        <Button variant="contained" size="small">
-          Administrer
-        </Button>
+        <ManageRequestButton
+          buttonText="Administrer"
+          textItem1="Modifier"
+          textItem2="Supprimer"
+          handleOpenModalAboutRequest={() => {
+            handleOpenModalAboutRequest(request.id);
+          }}
+        />
       </ul>
       <ModalDescriptionPR
         open={modalOpen}
@@ -115,5 +131,7 @@ RequestCard.propTypes = {
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired,
   }).isRequired,
+  handleOpenModalAboutRequest: PropTypes.func.isRequired,
 };

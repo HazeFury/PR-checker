@@ -1,5 +1,9 @@
 import { useState } from "react";
+
 import { useLocation } from "react-router-dom";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
+
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -15,10 +19,6 @@ import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
-
-async function signOut() {
-  await supabase.auth.signOut();
-}
 
 export default function NavBar() {
   const location = useLocation();
@@ -50,9 +50,20 @@ export default function NavBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleLogout = () => {
-    signOut();
-    setAnchorEl(null);
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      else {
+        setAnchorEl(null);
+        toast.info("À bientôt !", {
+          icon: "👋",
+        });
+      }
+    } catch (error) {
+      toast.error("Une erreur s'est produite");
+      console.error(error);
+    }
   };
 
   const isProjectPage = location.pathname === "/";
