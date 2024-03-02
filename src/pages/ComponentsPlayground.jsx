@@ -5,6 +5,7 @@ import ProjectCard from "../components/App-components/ProjectCard/ProjectCard";
 import RequestCard from "../components/App-components/RequestCard/RequestCard";
 import Login from "../components/App-components/Connection/Login/Login";
 import Register from "../components/App-components/Connection/Register/Register";
+import ProjectButtonNav from "../components/App-components/Navbar/ProjectButtonNav";
 
 export default function ComponentsPlayground() {
   const projects = [
@@ -104,6 +105,10 @@ export default function ComponentsPlayground() {
       <div className="component-section">
         <p className="component-title">Register</p>
         <Register />
+      </div>
+      <div className="component-section">
+        <p className="component-title">useScreenSize</p>
+        <ProjectButtonNav />
       </div>
     </div>
   );
