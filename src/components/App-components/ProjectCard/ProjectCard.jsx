@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import styles from "./ProjectCard.module.css";
 

@@ -1,11 +1,17 @@
 import PropTypes from "prop-types";
 
+import { useState } from "react";
+import Button from "@mui/material/Button";
+
 import styles from "./RequestCard.module.css";
 // Icons
 import info from "../../../assets/info.svg";
 import trello from "../../../assets/trello.svg";
 import github from "../../../assets/github.svg";
+
+import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
+
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -45,8 +51,22 @@ function statusName(status) {
       return styles.defaultColor;
   }
 }
+
 export default function RequestCard({ request, handleOpenModalAboutRequest }) {
+  
+  // Function to open modal with infos on PR
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleButtonClick = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseDescriptionPRModal = () => {
+    setModalOpen(false);
+  };
+  
   const formattedDate = new Date(request.created_at).toLocaleString();
+
 
   return (
     <div className={styles.card}>
@@ -70,10 +90,9 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
             </li>
           </div>
           <div className={styles.logos}>
-            <button type="button">
+            <button type="button" onClick={handleButtonClick}>
               <img src={info} alt="pr-description" />
             </button>
-
             <button type="button">
               <a href={request.github} target="_blank" rel="noreferrer">
                 <img src={github} alt="githublink" />
@@ -95,6 +114,11 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
           }}
         />
       </ul>
+      <ModalDescriptionPR
+        open={modalOpen}
+        onClose={handleCloseDescriptionPRModal}
+        request={request}
+      />
     </div>
   );
 }
@@ -106,6 +130,7 @@ RequestCard.propTypes = {
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,
     trello: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
