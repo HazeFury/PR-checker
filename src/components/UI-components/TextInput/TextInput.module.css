@@ -31,9 +31,9 @@
   box-shadow: 0 0 0 2px var(--action);
 }
 
-
 .password {
   padding-right: 40px;
+}
 
 .inputArea {
   font: var(--input-text);
