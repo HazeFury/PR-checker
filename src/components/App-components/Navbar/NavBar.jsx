@@ -1,11 +1,8 @@
 import { useState } from "react";
-
-import { useLocation } from "react-router-dom";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
 
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -14,17 +11,16 @@ import Tooltip from "@mui/material/Tooltip";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import styles from "./NavBar.module.css";
+import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
-import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
-// import ProjectButtonNav from "./ProjectButtonNav";
+import ProjectButtonNav from "./ProjectButtonNav";
 
 export default function NavBar() {
-  const location = useLocation();
-
-  const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
+  const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
 
   const handleOpenJoinProjectModal = () => {
     setOpenJoinProjectModal(true);
@@ -42,20 +38,21 @@ export default function NavBar() {
     setOpenCreateProjectModal(false);
   };
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+
+  const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      else {
-        setAnchorEl(null);
+      if (error) {
+        throw error;
+      } else {
+        handleMenuClose();
         toast.info("À bientôt !", {
           icon: "👋",
         });
@@ -66,69 +63,24 @@ export default function NavBar() {
     }
   };
 
-  const isProjectPage = location.pathname === "/";
-
-  const renderExtraButton = () => {
-    if (isProjectPage) {
-      return (
-        <>
-          <Button
-            onClick={handleOpenJoinProjectModal}
-            variant="contained"
-            style={{
-              backgroundColor: "#3883BA",
-              color: "white",
-              marginRight: "1rem",
-              minWidth: "17rem",
-              borderRadius: "0.5rem",
-              fontSize: "1rem",
-              fontFamily: "Montserrat",
-            }}
-          >
-            REJOINDRE UN PROJET
-          </Button>
-          <Button
-            onClick={handleOpenCreateProjectModal}
-            variant="contained"
-            style={{
-              backgroundColor: "#3883BA",
-              color: "white",
-              minWidth: "17rem",
-              borderRadius: "0.5rem",
-              fontSize: "1rem",
-              fontFamily: "Montserrat",
-            }}
-          >
-            Créer un projet
-          </Button>
-          <JoinProject
-            open={openJoinProjectModal}
-            onClose={handleCloseJoinProjectModal}
-          />
-          <CreateProject
-            open={openCreateProjectModal}
-            onClose={handleCloseCreateProjectModal}
-          />
-        </>
-      );
-    }
-    return null;
-  };
-
   return (
     <nav className={styles.nav_container}>
       <img className={styles.logo} src={Logo} alt="PR-checker logo" />
-      <div>
-        {renderExtraButton()}
-
+      <div className={styles.Tooltip}>
+        <ProjectButtonNav
+          openJoinProjectModal={openJoinProjectModal}
+          onOpenJoinProjectModal={handleOpenJoinProjectModal}
+          openCreateProjectModal={openCreateProjectModal}
+          onOpenCreateProjectModal={handleOpenCreateProjectModal}
+        />
         <Tooltip title="Account settings">
           <IconButton
-            onClick={handleClick}
+            onClick={handleMenuClick}
             size="large"
             sx={{ ml: 2, mx: 5 }}
-            aria-controls={open ? "account-menu" : undefined}
+            aria-controls={anchorEl ? "account-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={anchorEl ? "true" : undefined}
           >
             <PersonOutlineIcon sx={{ color: "white", scale: "1.8" }} />
           </IconButton>
@@ -136,11 +88,10 @@ export default function NavBar() {
       </div>
 
       <Menu
-        anchorEl={anchorEl}
         id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -170,7 +121,7 @@ export default function NavBar() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
@@ -183,6 +134,14 @@ export default function NavBar() {
           Logout
         </MenuItem>
       </Menu>
+      <JoinProject
+        open={openJoinProjectModal}
+        onClose={handleCloseJoinProjectModal}
+      />
+      <CreateProject
+        open={openCreateProjectModal}
+        onClose={handleCloseCreateProjectModal}
+      />
     </nav>
   );
 }
