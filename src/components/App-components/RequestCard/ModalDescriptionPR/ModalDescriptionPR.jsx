@@ -3,9 +3,13 @@ import { Box, Modal, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./ModalDescriptionPR.module.css";
 
-export default function ModalDescriptionPR({ open, onClose, request }) {
+export default function ModalDescriptionPR({
+  openModalDescription,
+  onCloseModalDescription,
+  request,
+}) {
   const handleModalCloseCreate = () => {
-    onClose();
+    onCloseModalDescription();
   };
 
   const style = {
@@ -25,7 +29,7 @@ export default function ModalDescriptionPR({ open, onClose, request }) {
   };
 
   return (
-    <Modal open={open} onClose={handleModalCloseCreate}>
+    <Modal open={openModalDescription} onClose={handleModalCloseCreate}>
       <Box sx={style}>
         <IconButton
           style={{
@@ -53,8 +57,8 @@ export default function ModalDescriptionPR({ open, onClose, request }) {
 }
 
 ModalDescriptionPR.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  openModalDescription: PropTypes.bool.isRequired,
+  onCloseModalDescription: PropTypes.func.isRequired,
   request: PropTypes.shape({
     description: PropTypes.string.isRequired,
   }).isRequired,

@@ -8,9 +8,9 @@ import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./JoinProject.module.css";
 
-export default function JoinProject({ open, onClose }) {
+export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
   const handleModalCloseJoin = () => {
-    onClose(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalJoin(); // Appel de la fonction onClose pour fermer la modal
   };
 
   const formik = useFormik({
@@ -73,7 +73,7 @@ export default function JoinProject({ open, onClose }) {
   };
 
   return (
-    <Modal open={open} onClose={handleModalCloseJoin}>
+    <Modal open={openModalJoin} onClose={handleModalCloseJoin}>
       <Box sx={style}>
         <IconButton
           style={{
@@ -128,6 +128,6 @@ export default function JoinProject({ open, onClose }) {
 }
 
 JoinProject.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  openModalJoin: PropTypes.bool.isRequired,
+  onCloseModalJoin: PropTypes.func.isRequired,
 };

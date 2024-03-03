@@ -135,12 +135,12 @@ export default function NavBar() {
         </MenuItem>
       </Menu>
       <JoinProject
-        open={openJoinProjectModal}
-        onClose={handleCloseJoinProjectModal}
+        openModalJoin={openJoinProjectModal}
+        onCloseModalJoin={handleCloseJoinProjectModal}
       />
       <CreateProject
-        open={openCreateProjectModal}
-        onClose={handleCloseCreateProjectModal}
+        openModalCreate={openCreateProjectModal}
+        onCloseModalCreate={handleCloseCreateProjectModal}
       />
     </nav>
   );
