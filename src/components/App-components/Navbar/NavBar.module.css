@@ -7,21 +7,21 @@
 }
 
 .logo {
-  height: 60px;
-  margin-left: 40px;
+  height: 40px;
+  margin-left: 10px;
 }
 
-@media screen and (max-width: 450px) {
-  /* .nav_container {
-    height: 100px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    border-bottom: solid white 1px;
-  } */
+.Tooltip {
+  display: flex;
+}
 
+@media screen and (min-width: 600px) {
   .logo {
-    height: 40px;
-    margin-left: 10px;
+    height: 60px;
+    margin-left: 40px;
+  }
+  .Tooltip {
+    align-items: center;
+    text-align: center;
   }
 }
