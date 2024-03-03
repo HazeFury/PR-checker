@@ -7,6 +7,30 @@ import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
 import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
+import DropDownMenu from "../../components/UI-components/MUIRemix/DropDownMenu";
+
+const filters = [
+  {
+    Statut: [
+      ["Tous", "0"],
+      ["En attente de review", "1"],
+      ["En cours de review", "2"],
+      ["En attente de correctifs", "3"],
+      ["Correctifs faits", "4"],
+      ["Demande validée", "5"],
+      ["Demande rejetée", "6"],
+    ],
+  },
+  {
+    Demandes: [
+      ["Toutes", "0"],
+      ["Moi", "1"],
+      ["Mon groupe", "2"],
+    ],
+  },
+];
+
+const USER = "membre";
 
 export default function RequestList() {
   // state for loader
@@ -96,53 +120,62 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <h3>{projectName}</h3>
         <div>
-          <Button
-            variant="contained"
-            sx={{
-              width: ["100%", "100%", "100%"],
-              background: "#3883ba",
-              fontFamily: "Montserrat, sans serif",
-            }}
-            onClick={handleOpenModalAboutRequest}
-          >
-            Nouvelle demande{" "}
-          </Button>
-          <Modal
-            open={openModalAboutRequest}
-            onClose={() => {
-              handleOpenConfirmationModal();
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              {" "}
-              <ModalFormRequest
-                title="Enregistrer"
-                text="Enregistrer"
-                projectId={projectId}
-                handleClose={handleCloseModals}
-                handleOpenConfirmationModal={handleOpenConfirmationModal}
-                refreshPr={() => getAllPr()}
-                requestId={requestId}
-              />
-              {openConfirmationModal && (
-                <ConfirmationModal
-                  title="Voulez-vous vraiment quitter votre enregistrement ?"
-                  textButtonLeft="Revenir à mon enregistrement"
-                  textButtonRight="Quitter"
-                  handleCloseModals={() => {
-                    handleCloseModals();
-                  }}
-                  handleOpenRequestModal={() => {
-                    handleReOpenRequestModal();
-                  }}
+          <h3>{projectName}</h3>
+          <div>
+            <Button
+              variant="contained"
+              sx={{
+                width: ["100%", "100%", "100%"],
+                background: "#3883ba",
+                fontFamily: "Montserrat, sans serif",
+              }}
+              onClick={handleOpenModalAboutRequest}
+            >
+              Nouvelle demande{" "}
+            </Button>
+            <Modal
+              open={openModalAboutRequest}
+              onClose={() => {
+                handleOpenConfirmationModal();
+              }}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                {" "}
+                <ModalFormRequest
+                  title="Enregistrer"
+                  text="Enregistrer"
+                  projectId={projectId}
+                  handleClose={handleCloseModals}
+                  handleOpenConfirmationModal={handleOpenConfirmationModal}
+                  refreshPr={() => getAllPr()}
+                  requestId={requestId}
                 />
-              )}
-            </Box>
-          </Modal>
+                {openConfirmationModal && (
+                  <ConfirmationModal
+                    title="Voulez-vous vraiment quitter votre enregistrement ?"
+                    textButtonLeft="Revenir à mon enregistrement"
+                    textButtonRight="Quitter"
+                    handleCloseModals={() => {
+                      handleCloseModals();
+                    }}
+                    handleOpenRequestModal={() => {
+                      handleReOpenRequestModal();
+                    }}
+                  />
+                )}
+              </Box>
+            </Modal>
+          </div>
+        </div>
+        <div>
+          <DropDownMenu
+            buttonText="Filtres"
+            menuItems={USER === "membre" ? filters : [filters[0]]}
+            user={USER}
+          />
         </div>
       </div>
       {requestList.length > 0 ? (
