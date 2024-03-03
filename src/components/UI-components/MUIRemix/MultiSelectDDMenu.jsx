@@ -12,7 +12,6 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import { useState } from "react";
 import PropTypes from "prop-types";
 
 export default function MultiSelectDDMenu({
@@ -20,12 +19,12 @@ export default function MultiSelectDDMenu({
   menuTitle,
   selectItem,
   selectedItems,
+  showMenu,
+  setShowMenu,
 }) {
-  // State and func used for displaying the list of selection
-  const [showMenu, setShowMenu] = useState(true);
-
+  // Function used for displaying the list of selection
   const handleClickMenu = () => {
-    setShowMenu(!showMenu);
+    setShowMenu({ ...showMenu, [menuTitle]: !showMenu[menuTitle] });
   };
 
   return (
@@ -50,7 +49,7 @@ export default function MultiSelectDDMenu({
         >
           {menuTitle}
         </Button>
-        <Box hidden={!showMenu}>
+        <Box hidden={!showMenu[menuTitle]}>
           <FormGroup id={menuTitle}>
             {Object.values(menuItems)[0].map((item) => {
               return (
@@ -86,4 +85,6 @@ MultiSelectDDMenu.propTypes = {
   menuTitle: PropTypes.string.isRequired,
   selectItem: PropTypes.func.isRequired,
   selectedItems: PropTypes.arrayOf(PropTypes.string).isRequired,
+  showMenu: PropTypes.objectOf(PropTypes.bool).isRequired,
+  setShowMenu: PropTypes.func.isRequired,
 };

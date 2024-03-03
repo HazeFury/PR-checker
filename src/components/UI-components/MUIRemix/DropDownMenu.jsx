@@ -17,6 +17,7 @@ export default function DropDownMenu({ buttonText, menuItems, user }) {
 
   /* --- State and func used for storing filters --- */
   const [selectedFilters, setSelectedFilters] = useState(null);
+  const [showMenu, setShowMenu] = useState(null);
 
   // Updates filter state when mounting with provided data structure
   useEffect(() => {
@@ -27,6 +28,11 @@ export default function DropDownMenu({ buttonText, menuItems, user }) {
           item === menuItems[0] && user === "admin"
             ? ["1", "2", "3", "4"]
             : [item === menuItems[0] ? "0" : "1"],
+      }));
+
+      setShowMenu((prev) => ({
+        ...prev,
+        [Object.keys(item).join("")]: true,
       }));
     });
   }, [menuItems, user]);
@@ -134,6 +140,8 @@ export default function DropDownMenu({ buttonText, menuItems, user }) {
                 menuTitle={sectionName}
                 selectItem={selectFilter}
                 selectedItems={selectedFilters[sectionName]}
+                showMenu={showMenu}
+                setShowMenu={setShowMenu}
               />
             );
           })}
