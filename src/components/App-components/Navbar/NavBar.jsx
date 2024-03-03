@@ -18,7 +18,6 @@ import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import Logo from "../../../assets/logo.svg";
 import supabase from "../../../services/client";
-// import ProjectButtonNav from "./ProjectButtonNav";
 
 export default function NavBar() {
   const location = useLocation();
@@ -117,7 +116,9 @@ export default function NavBar() {
 
   return (
     <nav className={styles.nav_container}>
-      <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+      <a href="/">
+        <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+      </a>
       <div>
         {renderExtraButton()}
 

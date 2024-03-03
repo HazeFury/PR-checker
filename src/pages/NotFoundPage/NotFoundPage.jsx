@@ -6,6 +6,9 @@ export default function NotFoundPage() {
       <h1 className={styles.test}>NotFoundPage</h1>
       <h1>404 Not Found !</h1>
       <p>la super page de 404 de PR checker</p>
+      <button type="button">
+        <a href="/">revenir a l'accueil</a>
+      </button>
     </div>
   );
 }

@@ -100,7 +100,7 @@ export default function JoinProject({ open, onClose }) {
               placeholder="ID du projet"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.id}
+              value={formik.values.project_id}
               labelStyle={{ fontSize: "4rem", fontWeight: "bold" }}
             />
           </div>
