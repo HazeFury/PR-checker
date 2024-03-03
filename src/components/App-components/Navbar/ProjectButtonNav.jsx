@@ -10,7 +10,6 @@ import styles from "./ProjectButtonNav.module.css";
 
 export default function ProjectButtonNav({
   onOpenJoinProjectModal,
-
   onOpenCreateProjectModal,
 }) {
   const width = useScreeSize();
