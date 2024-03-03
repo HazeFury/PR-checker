@@ -12,7 +12,8 @@ import supabase from "../../../../services/client";
 import styles from "./CreateProject.module.css";
 import refreshContext from "../../../../contexts/RefreshContext";
 
-export default function CreateProject({ open, onClose }) {
+
+export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
   const { refreshData, setRefreshData } = useContext(refreshContext);
 
   const handleRefresh = () => {
@@ -20,7 +21,7 @@ export default function CreateProject({ open, onClose }) {
   };
 
   const handleModalCloseCreate = () => {
-    onClose(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalCreate(); // Appel de la fonction onClose pour fermer la modal
   };
 
   const formik = useFormik({
@@ -98,7 +99,7 @@ export default function CreateProject({ open, onClose }) {
   };
 
   return (
-    <Modal open={open} onClose={handleModalCloseCreate}>
+    <Modal open={openModalCreate} onClose={handleModalCloseCreate}>
       <Box sx={style}>
         <IconButton
           style={{
@@ -153,6 +154,6 @@ export default function CreateProject({ open, onClose }) {
 }
 
 CreateProject.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  openModalCreate: PropTypes.bool.isRequired,
+  onCloseModalCreate: PropTypes.func.isRequired,
 };

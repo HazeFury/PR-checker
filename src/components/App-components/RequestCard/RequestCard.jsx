@@ -111,8 +111,8 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
         />
       </ul>
       <ModalDescriptionPR
-        open={modalOpen}
-        onClose={handleCloseDescriptionPRModal}
+        openModalDescription={modalOpen}
+        onCloseModalDescription={handleCloseDescriptionPRModal}
         request={request}
       />
     </div>
