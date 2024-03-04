@@ -5,6 +5,7 @@ import * as Yup from "yup";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { useTheme } from "@emotion/react";
 
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
@@ -19,6 +20,8 @@ export default function ModalFormRequest({
   refreshPr,
   requestId,
 }) {
+  const theme = useTheme();
+
   // state to manage the data of request
   const [requestData, setRequestData] = useState(null);
 
@@ -111,7 +114,6 @@ export default function ModalFormRequest({
       });
     }
   }, [requestData]);
-
   return (
     <div className={styles.formStyle}>
       <button
@@ -206,8 +208,8 @@ export default function ModalFormRequest({
             onClick={handleSaveClick}
             sx={{
               width: ["100%", "100%", "40%"],
-              background: "#3883ba",
-              fontFamily: "Montserrat, sans serif",
+              background: theme.palette.button.main,
+              fontFamily: theme.typography.fontFamily,
             }}
           >
             {modalTitle}

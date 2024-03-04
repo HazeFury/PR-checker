@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
+import { useTheme } from "@emotion/react";
 import PropTypes from "prop-types";
-
 import styles from "./ConfirmationModal.module.css";
 
 export default function ConfirmationModal({
@@ -15,7 +15,6 @@ export default function ConfirmationModal({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
     height: 265,
     bgcolor: "#292929",
     borderRadius: "10px",
@@ -26,19 +25,15 @@ export default function ConfirmationModal({
     justifyContent: "space-around",
     fontSize: "20px",
     textAlign: "center",
-  };
-
-  const buttonLeftStyle = {
-    bgcolor: "#A82B2B",
-    width: "350px",
-
-    "&:hover": {
-      bgcolor: "#8c2222",
+    width: {
+      sm: "380px",
+      md: "430px",
+      lg: "480px",
+      xl: "530px",
     },
   };
-  const buttonRigthStyle = {
-    width: "350px",
-  };
+  const theme = useTheme();
+
   return (
     <div className={styles.backdrop}>
       <Box sx={style}>
@@ -46,14 +41,23 @@ export default function ConfirmationModal({
         <div className={styles.buttonContainer}>
           <Button
             variant="contained"
-            sx={buttonRigthStyle}
+            sx={{
+              backgroundColor: theme.palette.button.main,
+              width: "350px",
+            }}
             onClick={handleOpenRequestModal}
           >
             {textButtonLeft}
           </Button>
           <Button
             variant="contained"
-            sx={buttonLeftStyle}
+            sx={{
+              width: "350px",
+              backgroundColor: theme.palette.button.secondary,
+              "&:hover": {
+                backgroundColor: theme.palette.button.hover,
+              },
+            }}
             onClick={handleCloseModals}
           >
             {textButtonRight}

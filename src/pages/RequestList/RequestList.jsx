@@ -144,7 +144,6 @@ export default function RequestList() {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
     height: 700,
     bgcolor: "#292929",
     borderRadius: "10px",
@@ -152,6 +151,12 @@ export default function RequestList() {
     p: 4,
     display: "flex",
     justifyContent: "center",
+    width: {
+      sm: "400px",
+      md: "450px",
+      lg: "500px",
+      xl: "550px",
+    },
   };
 
   return (

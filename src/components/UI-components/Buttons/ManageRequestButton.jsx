@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { Button, Menu, MenuItem } from "@mui/material";
 import PropTypes from "prop-types";
@@ -17,7 +18,7 @@ export default function ManageRequestButton({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const theme = useTheme();
   return (
     <div>
       <Button
@@ -27,7 +28,7 @@ export default function ManageRequestButton({
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         variant="contained"
-        sx={{ backgroundColor: "#3883BA" }}
+        sx={{ backgroundColor: theme.palette.primary.main }}
         endIcon={open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       >
         {buttonText}
@@ -42,22 +43,22 @@ export default function ManageRequestButton({
         }}
         PaperProps={{
           sx: {
-            backgroundColor: "#3E3E3E",
-            color: "#FFFFFF",
+            backgroundColor: theme.palette.modal.background,
+            color: theme.palette.text.secondary,
             minWidth: "9.8rem",
           },
         }}
       >
         <MenuItem
           sx={{
-            fontFamily: "Montserrat, sans-serif",
+            fontFamily: theme.typography.fontFamily,
             fontSize: "12px",
             display: "flex",
             justifyContent: "center",
             marginBottom: "10px",
 
             "&:hover": {
-              backgroundColor: "#3883BA",
+              backgroundColor: theme.palette.button.main,
               marginRight: "0px",
               marginLeft: "0px",
             },
@@ -82,15 +83,15 @@ export default function ManageRequestButton({
         >
           <Button
             sx={{
-              fontFamily: "Montserrat, sans-serif",
-              backgroundColor: "#BA3838",
-              color: "#FFFFFF",
+              fontFamily: theme.typography.fontFamily,
+              backgroundColor: theme.palette.button.secondary,
+              color: theme.palette.text.secondary,
               fontSize: "12px",
               paddingLeft: "30px",
               paddingRight: "30px",
 
               "&:hover": {
-                backgroundColor: "#8c2222",
+                backgroundColor: theme.palette.button.hover,
               },
             }}
           >
