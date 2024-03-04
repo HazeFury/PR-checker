@@ -43,10 +43,6 @@ const theme = createTheme({
   },
 });
 const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <Connection />,
-  // },
   {
     path: "/components", // To remove before prod
     element: <ComponentsPlayground />, // Use to dev the main components of the app
