@@ -15,7 +15,6 @@ export default function ConfirmationModal({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
     height: 265,
     bgcolor: "#292929",
     borderRadius: "10px",
@@ -26,6 +25,12 @@ export default function ConfirmationModal({
     justifyContent: "space-around",
     fontSize: "20px",
     textAlign: "center",
+    width: {
+      sm: "400px",
+      md: "450px",
+      lg: "500px",
+      xl: "550px",
+    },
   };
   const theme = useTheme();
 
