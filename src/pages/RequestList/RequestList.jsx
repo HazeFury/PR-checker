@@ -1,17 +1,31 @@
 import { Box, Button, Modal } from "@mui/material";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
 import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
+import refreshContext from "../../contexts/RefreshContext";
 
 export default function RequestList() {
+  // ------------------------ (1) Initial values -------------------------------------
+
   // state for loader
   const [loading, setLoading] = useState(true);
-  // states for requestList
+  // state for the role of the user
+  const [userRole, setUserRole] = useState(null);
+  // get the userId from the context of the Outlet
+  const [userId] = useOutletContext();
+  // import the refresh state to actualize the list
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+  // useNavigate to navigate to different page
+  const navigate = useNavigate();
+  // To keep the id of the project using params
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
+  // states for requestList and projectName
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
   // state to save the Id of the PR that will be used
@@ -19,6 +33,14 @@ export default function RequestList() {
   // state for open request and confirmation modals
   const [openModalAboutRequest, setopenModalAboutRequest] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  // -------------------------------------------------------------------------------
+
+  // ---------------------------- (2) handle function ------------------------------
+
+  // Function to refresh
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
   // function to manage the state to open the modal about Request and modal for confirmation
   const handleOpenModalAboutRequest = (id) => {
     setRequestId(id);
@@ -36,10 +58,20 @@ export default function RequestList() {
     setOpenConfirmationModal(false);
     setopenModalAboutRequest(true);
   };
+  // --------------------------------------------------------------------------------
 
-  // To keep the id of the project
-  const getProjectId = useParams();
-  const projectId = getProjectId.uuid;
+  // --------------------------- (3) Async function ---------------------------------
+
+  // Function to verify if the user can view the request of this project
+  async function verifyUser() {
+    const { data: userAccess } = await supabase
+      .from("project_users")
+      .select("*")
+      .match({ user_uuid: userId, project_uuid: projectId })
+      .single();
+
+    return userAccess; // the response will be either "null" or an object containing user information
+  }
 
   // Function to get all own pull request
   async function getAllPr() {
@@ -62,17 +94,46 @@ export default function RequestList() {
 
     setProjectName(data.name);
   }
+  // ----------------------------------------------------------------------------------
 
-  // To show all pr and project name at the beggining
+  // ---------------------- (4) Mounting the component (useEffect) --------------------
+
+  // When mounting the component, we check if the connected user has the right to see the requests
   useEffect(() => {
-    getAllPr();
-    getProjectName();
+    const fetchVerifiedUser = async () => {
+      const verifiedUser = await verifyUser();
+      if (verifiedUser !== null && verifiedUser.pending === false) {
+        // if the user exist and the pending === false, we can fetch all the request and we set the role
+        setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
+        getProjectName();
+        getAllPr();
+      }
+      if (verifiedUser === null) {
+        // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
+        navigate("/error");
+      }
+    };
+    fetchVerifiedUser();
+    return () => {
+      setUserRole(null); // set null to userRole on component unmounting
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // ----------------------------
+  // this useEffect is just used to refetch data when you press the "actualiser" button
+  useEffect(() => {
+    if (userRole !== null) {
+      getAllPr();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshData]); // the dependancy needed to refetch data
+
+  // ----------------------------------------------------------------------------------
 
   // Loader
   if (loading)
     return (
-      <div className={styles.request_list_container}>
+      <div className={styles.requests_container}>
         <CircularProgress />
       </div>
     );
@@ -97,67 +158,82 @@ export default function RequestList() {
     <div className={styles.request_list_container}>
       <div className={styles.head}>
         <h3>{projectName}</h3>
-        <div>
+        <div className={styles.head_btn_box}>
           <Button
             variant="contained"
             sx={{
-              width: ["100%", "100%", "100%"],
               background: "#3883ba",
               fontFamily: "Montserrat, sans serif",
+              mx: 2,
+              my: 2,
+            }}
+            onClick={handleRefresh}
+          >
+            Actualiser{" "}
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              background: "#3883ba",
+              fontFamily: "Montserrat, sans serif",
+              mx: 2,
+              my: 2,
             }}
             onClick={handleOpenModalAboutRequest}
           >
             Nouvelle demande{" "}
           </Button>
-          <Modal
-            open={openModalAboutRequest}
-            onClose={() => {
-              handleOpenConfirmationModal();
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              {" "}
-              <ModalFormRequest
-                title="Enregistrer"
-                text="Enregistrer"
-                projectId={projectId}
-                handleClose={handleCloseModals}
-                handleOpenConfirmationModal={handleOpenConfirmationModal}
-                refreshPr={() => getAllPr()}
-                requestId={requestId}
-              />
-              {openConfirmationModal && (
-                <ConfirmationModal
-                  title="Voulez-vous vraiment quitter votre enregistrement ?"
-                  textButtonLeft="Revenir à mon enregistrement"
-                  textButtonRight="Quitter"
-                  handleCloseModals={() => {
-                    handleCloseModals();
-                  }}
-                  handleOpenRequestModal={() => {
-                    handleReOpenRequestModal();
-                  }}
-                />
-              )}
-            </Box>
-          </Modal>
         </div>
+        <Modal
+          open={openModalAboutRequest}
+          onClose={() => {
+            handleOpenConfirmationModal();
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            {" "}
+            <ModalFormRequest
+              title="Enregistrer"
+              text="Enregistrer"
+              projectId={projectId}
+              handleClose={handleCloseModals}
+              handleOpenConfirmationModal={handleOpenConfirmationModal}
+              refreshPr={handleRefresh}
+              requestId={requestId}
+            />
+            {openConfirmationModal && (
+              <ConfirmationModal
+                title="Voulez-vous vraiment quitter votre enregistrement ?"
+                textButtonLeft="Revenir à mon enregistrement"
+                textButtonRight="Quitter"
+                handleCloseModals={() => {
+                  handleCloseModals();
+                }}
+                handleOpenRequestModal={() => {
+                  handleReOpenRequestModal();
+                }}
+              />
+            )}
+          </Box>
+        </Modal>
       </div>
-      {requestList.length > 0 ? (
-        requestList.map((request) => (
-          <RequestCard
-            key={request.id}
-            request={request}
-            handleOpenModalAboutRequest={handleOpenModalAboutRequest}
-          />
-        ))
-      ) : (
-        <p className={styles.no_content_text}>
-          Ce projet ne contient pas de demande de PR !
-        </p>
-      )}
+      <div className={styles.requests_container}>
+        {requestList.length > 0 ? (
+          requestList.map((request) => (
+            <RequestCard
+              key={request.id}
+              request={request}
+              handleOpenModalAboutRequest={handleOpenModalAboutRequest}
+            />
+          ))
+        ) : (
+          <p className={styles.no_content_text}>
+            Ce projet ne contient pas de demande de PR !
+          </p>
+        )}
+      </div>
     </div>
   );
 }
