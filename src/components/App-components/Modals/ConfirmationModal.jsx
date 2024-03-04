@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
+import { useTheme } from "@emotion/react";
 import PropTypes from "prop-types";
-
 import styles from "./ConfirmationModal.module.css";
 
 export default function ConfirmationModal({
@@ -27,18 +27,8 @@ export default function ConfirmationModal({
     fontSize: "20px",
     textAlign: "center",
   };
+  const theme = useTheme();
 
-  const buttonLeftStyle = {
-    bgcolor: "#A82B2B",
-    width: "350px",
-
-    "&:hover": {
-      bgcolor: "#8c2222",
-    },
-  };
-  const buttonRigthStyle = {
-    width: "350px",
-  };
   return (
     <div className={styles.backdrop}>
       <Box sx={style}>
@@ -46,14 +36,23 @@ export default function ConfirmationModal({
         <div className={styles.buttonContainer}>
           <Button
             variant="contained"
-            sx={buttonRigthStyle}
+            sx={{
+              backgroundColor: theme.palette.button.main,
+              width: "350px",
+            }}
             onClick={handleOpenRequestModal}
           >
             {textButtonLeft}
           </Button>
           <Button
             variant="contained"
-            sx={buttonLeftStyle}
+            sx={{
+              width: "350px",
+              backgroundColor: theme.palette.button.secondary,
+              "&:hover": {
+                backgroundColor: theme.palette.button.hover,
+              },
+            }}
             onClick={handleCloseModals}
           >
             {textButtonRight}
