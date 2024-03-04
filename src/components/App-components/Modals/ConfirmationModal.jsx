@@ -26,10 +26,10 @@ export default function ConfirmationModal({
     fontSize: "20px",
     textAlign: "center",
     width: {
-      sm: "400px",
-      md: "450px",
-      lg: "500px",
-      xl: "550px",
+      sm: "380px",
+      md: "430px",
+      lg: "480px",
+      xl: "530px",
     },
   };
   const theme = useTheme();
