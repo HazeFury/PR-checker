@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
@@ -9,8 +10,15 @@ import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./CreateProject.module.css";
+import refreshContext from "../../../../contexts/RefreshContext";
 
 export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+
   const handleModalCloseCreate = () => {
     onCloseModalCreate(); // Appel de la fonction onClose pour fermer la modal
   };
@@ -62,6 +70,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .select();
 
         handleModalCloseCreate(); // close the modal
+        handleRefresh(); // refetch the project list after the creation
       } catch (error) {
         console.error("La création du projet n'a pas fonctionné");
         toast.error("La création du projet a échoué");

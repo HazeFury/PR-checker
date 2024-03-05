@@ -65,7 +65,9 @@ export default function NavBar() {
 
   return (
     <nav className={styles.nav_container}>
-      <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+      <a href="/">
+        <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+      </a>
       <div className={styles.Tooltip}>
         <ProjectButtonNav
           openJoinProjectModal={openJoinProjectModal}
@@ -73,6 +75,7 @@ export default function NavBar() {
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
         />
+
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleMenuClick}
