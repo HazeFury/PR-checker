@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -28,53 +27,50 @@ export default function MultiSelectDDMenu({
   };
 
   return (
-    <>
-      <FormControl
-        component="fieldset"
-        variant="standard"
-        sx={{ display: "flex", flexDirection: "column", alignItems: "end" }}
+    <FormControl
+      component="fieldset"
+      variant="standard"
+      sx={{ display: "flex", flexDirection: "column", alignItems: "end" }}
+    >
+      <Button
+        id="section-button"
+        aria-haspopup="true"
+        aria-expanded={showMenu ? "true" : undefined}
+        aria-label="section-button"
+        onClick={handleClickMenu}
+        sx={{
+          color: "#ffffff",
+          textTransform: "none",
+          font: "600 1em Montserrat, sans serif",
+        }}
+        endIcon={
+          !showMenu[menuTitle] ? <KeyboardArrowUp /> : <KeyboardArrowDown />
+        }
       >
-        <Button
-          id="section-button"
-          aria-haspopup="true"
-          aria-expanded={showMenu ? "true" : undefined}
-          aria-label="section-button"
-          onClick={handleClickMenu}
-          sx={{
-            color: "#ffffff",
-            textTransform: "none",
-            font: "600 1em Montserrat, sans serif",
-          }}
-          endIcon={!showMenu ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-        >
-          {menuTitle}
-        </Button>
-        <Box hidden={!showMenu[menuTitle]}>
-          <FormGroup id={menuTitle}>
-            {Object.values(menuItems)[0].map((item) => {
-              return (
-                <FormControlLabel
-                  key={item[1]}
-                  control={
-                    <Checkbox
-                      checked={selectedItems.indexOf(`${item[1]}`) !== -1}
-                      onClick={selectItem}
-                      name={item[1]}
-                      icon={<CheckBoxOutlineBlank sx={{ color: "#3883BA" }} />}
-                    />
-                  }
-                  label={item[0]}
-                  labelPlacement="start"
-                />
-              );
-            })}
-          </FormGroup>
-        </Box>
-      </FormControl>
-      {menuTitle !== "Demandes" ? (
-        <Divider sx={{ background: "white", marginBlock: "1rem" }} />
-      ) : null}
-    </>
+        {menuTitle}
+      </Button>
+      <Box hidden={!showMenu[menuTitle]}>
+        <FormGroup id={menuTitle}>
+          {Object.values(menuItems)[0].map((item) => {
+            return (
+              <FormControlLabel
+                key={item[1]}
+                control={
+                  <Checkbox
+                    checked={selectedItems.indexOf(`${item[1]}`) !== -1}
+                    onClick={selectItem}
+                    name={item[1]}
+                    icon={<CheckBoxOutlineBlank sx={{ color: "#3883BA" }} />}
+                  />
+                }
+                label={item[0]}
+                labelPlacement="start"
+              />
+            );
+          })}
+        </FormGroup>
+      </Box>
+    </FormControl>
   );
 }
 
