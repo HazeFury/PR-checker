@@ -12,12 +12,23 @@
 }
 
 .head {
+  width: 80vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  width: 90vw;
+  margin-block: 2rem 1rem;
+}
+
+.head div:first-of-type {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.head div:first-of-type h1 {
+  font: 300 1.2em var(--global-font);
 }
 
 .requests_container {
