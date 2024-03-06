@@ -155,12 +155,22 @@ export default function RequestList() {
   }, [refreshData]); // the dependancy needed to refetch data
 
   useEffect(() => {
-    const requestsToDisplay =
-      selectedFilters?.Statut?.join("") !== "0"
-        ? requestList.filter(
-            (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
-          )
-        : requestList;
+    // used for filtering everytime a new filter is selected
+    let requestsToDisplay = requestList;
+    if (selectedFilters?.Statut?.join("") !== "0") {
+      requestsToDisplay = requestsToDisplay.filter(
+        (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
+      );
+    }
+    if (
+      userRole === "contributor" &&
+      selectedFilters?.Demandes?.join("") === "1"
+    ) {
+      requestsToDisplay = requestsToDisplay.filter(
+        (el) => el.user_uuid === userId
+      );
+    }
+
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
