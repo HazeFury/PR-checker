@@ -12,7 +12,6 @@ import supabase from "../../../../services/client";
 import styles from "./CreateProject.module.css";
 import refreshContext from "../../../../contexts/RefreshContext";
 
-
 export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
   const { refreshData, setRefreshData } = useContext(refreshContext);
 

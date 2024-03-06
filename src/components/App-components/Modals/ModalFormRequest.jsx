@@ -43,6 +43,7 @@ export default function ModalFormRequest({
 
       fetchPRData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // to manage the title of the modal and of the button if it's edit or create form
@@ -115,6 +116,7 @@ export default function ModalFormRequest({
         github: requestData.github,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestData]);
   return (
     <div className={styles.formStyle}>

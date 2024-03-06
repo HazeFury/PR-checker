@@ -8,6 +8,28 @@ import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
 import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
 import refreshContext from "../../contexts/RefreshContext";
+import DropDownMenu from "../../components/UI-components/MUIRemix/DropDownMenu";
+
+const filters = [
+  {
+    Statut: [
+      ["Tous", "0"],
+      ["En attente de review", "1"],
+      ["En cours de review", "2"],
+      ["En attente de correctifs", "3"],
+      ["Correctifs faits", "4"],
+      ["Demande rejetée", "5"],
+      ["Demande validée", "6"],
+    ],
+  },
+  {
+    Demandes: [
+      ["Toutes", "0"],
+      ["Moi", "1"],
+      ["Mon groupe", "2"],
+    ],
+  },
+];
 
 export default function RequestList() {
   // ------------------------ (1) Initial values -------------------------------------
@@ -33,6 +55,10 @@ export default function RequestList() {
   // state for open request and confirmation modals
   const [openModalAboutRequest, setopenModalAboutRequest] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  // states for filters
+  const [selectedFilters, setSelectedFilters] = useState(null);
+  const [filteredRequestList, setFilteredRequestList] = useState([]);
+  const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
   // -------------------------------------------------------------------------------
 
   // ---------------------------- (2) handle function ------------------------------
@@ -132,6 +158,26 @@ export default function RequestList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshData]); // the dependancy needed to refetch data
 
+  useEffect(() => {
+    // used for filtering everytime a new filter is selected
+    let requestsToDisplay = requestList;
+    if (selectedFilters?.Statut?.join("") !== "0") {
+      requestsToDisplay = requestsToDisplay.filter(
+        (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
+      );
+    }
+    if (
+      userRole === "contributor" &&
+      selectedFilters?.Demandes?.join("") === "1"
+    ) {
+      requestsToDisplay = requestsToDisplay.filter(
+        (el) => el.user_uuid === userId
+      );
+    }
+
+    setFilteredRequestList(requestsToDisplay);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFilters]);
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -166,82 +212,102 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <h3>{projectName}</h3>
-        <div className={styles.head_btn_box}>
-          <Button
-            variant="contained"
-            sx={{
-              background: "#3883ba",
-              fontFamily: "Montserrat, sans serif",
-              mx: 2,
-              my: 2,
+        <div>
+          <h3>{projectName}</h3>
+          <div className={styles.head_btn_box}>
+            <Button
+              variant="contained"
+              sx={{
+                background: "#3883ba",
+                fontFamily: "Montserrat, sans serif",
+                mx: 2,
+                my: 2,
+              }}
+              onClick={handleRefresh}
+            >
+              Actualiser{" "}
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                background: "#3883ba",
+                fontFamily: "Montserrat, sans serif",
+                mx: 2,
+                my: 2,
+              }}
+              onClick={handleOpenModalForNewRequest}
+            >
+              Nouvelle demande{" "}
+            </Button>
+          </div>
+          <Modal
+            open={openModalAboutRequest}
+            onClose={() => {
+              handleOpenConfirmationModal();
             }}
-            onClick={handleRefresh}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
           >
-            Actualiser{" "}
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              background: "#3883ba",
-              fontFamily: "Montserrat, sans serif",
-              mx: 2,
-              my: 2,
-            }}
-            onClick={handleOpenModalForNewRequest}
-          >
-            Nouvelle demande{" "}
-          </Button>
-        </div>
-        <Modal
-          open={openModalAboutRequest}
-          onClose={() => {
-            handleOpenConfirmationModal();
-          }}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            {" "}
-            <ModalFormRequest
-              title="Enregistrer"
-              text="Enregistrer"
-              projectId={projectId}
-              handleClose={handleCloseModals}
-              handleOpenConfirmationModal={handleOpenConfirmationModal}
-              refreshPr={handleRefresh}
-              requestId={requestId}
-            />
-            {openConfirmationModal && (
-              <ConfirmationModal
-                title="Voulez-vous vraiment quitter votre enregistrement ?"
-                textButtonLeft="Revenir à mon enregistrement"
-                textButtonRight="Quitter"
-                handleCloseModals={() => {
-                  handleCloseModals();
-                }}
-                handleOpenRequestModal={() => {
-                  handleReOpenRequestModal();
-                }}
+            <Box sx={style}>
+              {" "}
+              <ModalFormRequest
+                title="Enregistrer"
+                text="Enregistrer"
+                projectId={projectId}
+                handleClose={handleCloseModals}
+                handleOpenConfirmationModal={handleOpenConfirmationModal}
+                refreshPr={handleRefresh}
+                requestId={requestId}
               />
-            )}
-          </Box>
-        </Modal>
+              {openConfirmationModal && (
+                <ConfirmationModal
+                  title="Voulez-vous vraiment quitter votre enregistrement ?"
+                  textButtonLeft="Revenir à mon enregistrement"
+                  textButtonRight="Quitter"
+                  handleCloseModals={() => {
+                    handleCloseModals();
+                  }}
+                  handleOpenRequestModal={() => {
+                    handleReOpenRequestModal();
+                  }}
+                />
+              )}
+            </Box>
+          </Modal>
+        </div>
+        <div>
+          <DropDownMenu
+            buttonText="Filtres"
+            menuItems={userRole === "contributor" ? filters : [filters[0]]}
+            user={userRole}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            disabled={!requestList.length}
+            haveFiltersBeenUsed={haveFiltersBeenUsed}
+            setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+          />
+        </div>
       </div>
       <div className={styles.requests_container}>
-        {requestList.length > 0 ? (
-          requestList.map((request) => (
-            <RequestCard
-              key={request.id}
-              request={request}
-              handleOpenModalAboutRequest={handleOpenModalToEditRequest}
-            />
-          ))
-        ) : (
+        {filteredRequestList.length > 0
+          ? filteredRequestList.map((request) => (
+              <RequestCard
+                key={request.id}
+                request={request}
+                handleOpenModalAboutRequest={handleOpenModalToEditRequest}
+              />
+            ))
+          : null}
+        {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
+          <p className={styles.no_content_text}>
+            Aucune demande de PR ne correspond à votre recherche
+          </p>
+        ) : null}
+        {requestList.length === 0 && !haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
             Ce projet ne contient pas de demande de PR !
           </p>
-        )}
+        ) : null}
       </div>
     </div>
   );
