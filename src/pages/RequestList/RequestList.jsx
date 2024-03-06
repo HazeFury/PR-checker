@@ -41,12 +41,16 @@ export default function RequestList() {
   const handleRefresh = () => {
     setRefreshData(!refreshData);
   };
-  // function to manage the state to open the modal about Request and modal for confirmation
-  const handleOpenModalAboutRequest = (id) => {
+  // function to manage the state to open the modal to edit a PR
+  const handleOpenModalToEditRequest = (id) => {
     setRequestId(id);
-
     setopenModalAboutRequest(true);
   };
+  // function to manage the state to open the modal to create a new PR
+  const handleOpenModalForNewRequest = () => {
+    setopenModalAboutRequest(true);
+  };
+  //  function to manage the state to open the confirmation modal
   const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
   // Function to close all modals at the same time after confirm the close
   const handleCloseModals = () => {
@@ -184,7 +188,7 @@ export default function RequestList() {
               mx: 2,
               my: 2,
             }}
-            onClick={handleOpenModalAboutRequest}
+            onClick={handleOpenModalForNewRequest}
           >
             Nouvelle demande{" "}
           </Button>
@@ -230,7 +234,7 @@ export default function RequestList() {
             <RequestCard
               key={request.id}
               request={request}
-              handleOpenModalAboutRequest={handleOpenModalAboutRequest}
+              handleOpenModalAboutRequest={handleOpenModalToEditRequest}
             />
           ))
         ) : (
