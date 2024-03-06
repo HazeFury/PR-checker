@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import { useTheme } from "@emotion/react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -21,6 +22,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const theme = useTheme();
 
   const handleOpenJoinProjectModal = () => {
     setOpenJoinProjectModal(true);
@@ -124,7 +126,12 @@ export default function NavBar() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            color: theme.palette.text.primary,
+          }}
+        >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
