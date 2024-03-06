@@ -27,20 +27,22 @@ export default function ModalFormRequest({
 
   // function to fetch data of the PR which is used
   useEffect(() => {
-    const fetchPRData = async () => {
-      try {
-        const { data } = await supabase
-          .from("pr_request")
-          .select("*")
-          .eq("id", requestId);
+    if (requestId !== null) {
+      const fetchPRData = async () => {
+        try {
+          const { data } = await supabase
+            .from("pr_request")
+            .select("*")
+            .eq("id", requestId);
 
-        setRequestData(data[0]);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données de la PR");
-      }
-    };
+          setRequestData(data[0]);
+        } catch (error) {
+          console.error("Erreur lors de la récupération des données de la PR");
+        }
+      };
 
-    fetchPRData();
+      fetchPRData();
+    }
   }, []);
 
   // to manage the title of the modal and of the button if it's edit or create form
@@ -224,5 +226,8 @@ ModalFormRequest.propTypes = {
   handleClose: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
   refreshPr: PropTypes.func.isRequired,
-  requestId: PropTypes.number.isRequired,
+  requestId: PropTypes.number,
+};
+ModalFormRequest.defaultProps = {
+  requestId: null,
 };
