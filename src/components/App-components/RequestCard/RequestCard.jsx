@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 
 import { useState } from "react";
 
+import { Divider, IconButton, Stack } from "@mui/material";
 import styles from "./RequestCard.module.css";
 // Icons
 import info from "../../../assets/info.svg";
@@ -10,6 +11,7 @@ import github from "../../../assets/github.svg";
 
 import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 // Function to assign a color based on status
 function statusColor(status) {
@@ -52,7 +54,6 @@ function statusName(status) {
 
 export default function RequestCard({ request, handleOpenModalAboutRequest }) {
   // Function to open modal with infos on PR
-
   const [modalOpen, setModalOpen] = useState(false);
   const handleButtonClick = () => {
     setModalOpen(true);
@@ -62,45 +63,71 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
     setModalOpen(false);
   };
 
+  const screenSize = useScreenSize();
+
   const formattedDate = new Date(request.created_at).toLocaleString();
 
   return (
-    <div className={styles.card}>
-      <ul className={styles.ul_box}>
-        <div className={statusColor(request.status)}>
-          <div className={styles.statusBlock}>
-            <li className={styles.pr_id}>#{request.id}</li>
-            <li className={styles.status}>{statusName(request.status)}</li>
-          </div>
-        </div>
-        <div className={styles.informations}>
-          <div className={styles.infos}>
-            <li className={styles.li_style}>
-              Ouvert par : <b> Marco</b>
-            </li>
-            <li className={styles.li_style}>
-              Nom de la PR :<b> {request.title}</b>
-            </li>
-            <li className={styles.li_style}>
-              Le : <b> {formattedDate}</b>
-            </li>
-          </div>
-          <div className={styles.logos}>
-            <button type="button" onClick={handleButtonClick}>
-              <img src={info} alt="pr-description" />
-            </button>
-            <button type="button">
-              <a href={request.github} target="_blank" rel="noreferrer">
-                <img src={github} alt="githublink" />
-              </a>
-            </button>
-            <button type="button">
-              <a href={request.trello} target="_blank" rel="noreferrer">
-                <img src={trello} alt="trellolink" />
-              </a>
-            </button>
-          </div>
-        </div>
+    <Stack
+      direction="row"
+      className={styles.card}
+      justifyContent="space-between"
+    >
+      <Stack
+        className={[styles.status, statusColor(request.status)].join(" ")}
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        divider={
+          <Divider
+            orientation="vertical"
+            flexItem
+            variant="middle"
+            sx={{ bgcolor: "#e8e8e8", width: "2px" }}
+          />
+        }
+      >
+        <p className={styles.status_pr_id}>#{request.id}</p>
+        <p className={styles.status_name}>{statusName(request.status)}</p>
+      </Stack>
+      <Stack
+        className={styles.infos}
+        direction="row"
+        justifyContent="start"
+        alignItems="center"
+        gap="1rem"
+      >
+        <p>
+          PR :{screenSize < 1200 && <br />}
+          <b> {request.title}</b>
+        </p>
+        <p>
+          Par :{screenSize < 1200 && <br />} <b> Marco</b>
+        </p>
+        <p>
+          Le :{screenSize < 1200 && <br />} <b> {formattedDate}</b>
+        </p>
+      </Stack>
+      <Stack
+        className={styles.buttons}
+        direction="row"
+        justifyContent="end"
+        alignItems="center"
+        gap="5%"
+      >
+        <IconButton onClick={handleButtonClick}>
+          <img src={info} alt="info-button" />
+        </IconButton>
+        <IconButton className={styles.buttons_link}>
+          <a href={request.github} target="_blank" rel="noreferrer">
+            <img src={github} alt="github-link" />
+          </a>
+        </IconButton>
+        <IconButton className={styles.buttons_link}>
+          <a href={request.trello} target="_blank" rel="noreferrer">
+            <img src={trello} alt="trello-link" />
+          </a>
+        </IconButton>
         <ManageRequestButton
           buttonText="Administrer"
           textItem1="Modifier"
@@ -109,13 +136,13 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
             handleOpenModalAboutRequest(request.id);
           }}
         />
-      </ul>
+      </Stack>
       <ModalDescriptionPR
         openModalDescription={modalOpen}
         onCloseModalDescription={handleCloseDescriptionPRModal}
         request={request}
       />
-    </div>
+    </Stack>
   );
 }
 

@@ -1,65 +1,65 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 .card {
-  width: 80vw;
-  height: 59px;
-  background-color: #e8e8e8;
-  color: black;
+  width: 80svw;
+  height: 60px;
+  background-color: var(--light);
   border-radius: 10px;
-  font-family: "Montserrat", sans-serif;
-  margin: 20px auto;
-}
-
-.ul_box {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 59px;
-  justify-content: space-between;
-  margin-right: 10px;
-  list-style-type: none;
-}
-
-.li_style {
-  font-size: 12px;
-}
-
-.pr_id {
-  font-size: 20px;
-  font-weight: bold;
-  width: 4rem;
-  height: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  border-right: 1px solid;
-  border-color: #e8e8e8;
+  font-family: var(--global-font);
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.303);
 }
 
 .status {
-  width: 9rem;
+  width: 200px;
+  box-shadow: 10px 0 20px rgba(0, 0, 0, 0.151);
+}
+
+.status_pr_id {
+  width: 40%;
+  font-size: 1.2em;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
+
+.status_name {
+  font-size: 1em;
   text-align: center;
-  font-size: 1rem;
-  height: 59px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  align-items: center;
+  color: black;
 }
 
-.logos button {
-  background-color: transparent;
+.infos {
+  width: 40%;
+  margin-left: 1rem;
 }
 
-.statusBlock {
+.infos p {
+  width: 33%;
+  color: black;
+  font-size: 0.8em;
+  overflow: hidden;
+}
+
+.buttons {
+  width: 40%;
+  margin-right: 15px;
+}
+
+.buttons_link a {
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 
+/* --- Status colors --- */
 .waitingReview {
-  background-color: #3883ba;
+  background-color: #6ca8e0;
   border-radius: 10px;
 }
 
@@ -91,109 +91,4 @@
 .defaultColor {
   background-color: #e8e8e8;
   border-radius: 10px;
-}
-
-.infos {
-  display: flex;
-  flex-direction: row;
-  width: 42rem;
-  justify-content: space-around;
-  margin-left: 0.5rem;
-}
-
-.li_style {
-  margin-right: 0.5rem;
-  align-items: center;
-}
-
-.logos {
-  display: flex;
-  flex-direction: row;
-  width: 15rem;
-  justify-content: space-around;
-}
-
-.logos > button {
-  cursor: pointer;
-}
-
-.logos img {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 5px;
-}
-
-.informations {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 70%;
-}
-
-@media screen and (min-width: 1290px) and (max-width: 1460px) {
-  .infos {
-    width: 25rem;
-  }
-
-  .li_style {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-  }
-}
-
-@media screen and (max-width: 1290px) {
-  .card {
-    width: 40vw;
-    height: 30vh;
-  }
-
-  .ul_box {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 100%;
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .informations {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .informations {
-    flex-direction: colum;
-    justify-content: space-around;
-    width: auto;
-    height: 50%;
-  }
-
-  .infos {
-    flex-direction: row;
-    justify-content: space-aroud;
-    width: 90%;
-  }
-}
-
-@media screen and (max-width: 790px) {
-  .card {
-    width: 70vw;
-  }
-
-  .infos {
-    display: flex;
-    flex-direction: column;
-    margin-left: 0px;
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .li_style {
-    display: flex;
-    flex: row;
-    margin-bottom: 0.7rem;
-  }
 }
