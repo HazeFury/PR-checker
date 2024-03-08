@@ -50,7 +50,11 @@ function statusName(status) {
   }
 }
 
-export default function RequestCard({ request, handleOpenModalAboutRequest }) {
+export default function RequestCard({
+  request,
+  handleOpenModalAboutRequest,
+  handleOpenConfirmationModal,
+}) {
   // Function to open modal with infos on PR
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -108,6 +112,9 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
           handleOpenModalAboutRequest={() => {
             handleOpenModalAboutRequest(request.id);
           }}
+          handleOpenConfirmationModal={() => {
+            handleOpenConfirmationModal();
+          }}
         />
       </ul>
       <ModalDescriptionPR
@@ -130,4 +137,5 @@ RequestCard.propTypes = {
     created_at: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
+  handleOpenConfirmationModal: PropTypes.func.isRequired,
 };

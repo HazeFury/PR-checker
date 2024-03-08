@@ -77,7 +77,10 @@ export default function RequestList() {
     setopenModalAboutRequest(true);
   };
   //  function to manage the state to open the confirmation modal
-  const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
+  const handleOpenConfirmationModal = (id) => {
+    setRequestId(id);
+    setOpenConfirmationModal(true);
+  };
   // Function to close all modals at the same time after confirm the close
   const handleCloseModals = () => {
     setopenModalAboutRequest(false);
@@ -124,6 +127,16 @@ export default function RequestList() {
 
     setProjectName(data.name);
   }
+
+  // function to delete a PR
+  const deleteRequest = async (id) => {
+    try {
+      await supabase.from("pr_request").delete().eq("id", id);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la PR");
+    }
+  };
+
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------
@@ -177,7 +190,7 @@ export default function RequestList() {
 
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters]);
+  }, [selectedFilters, refreshData]);
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -264,10 +277,10 @@ export default function RequestList() {
                   title="Voulez-vous vraiment quitter votre enregistrement ?"
                   textButtonLeft="Revenir à mon enregistrement"
                   textButtonRight="Quitter"
-                  handleCloseModals={() => {
+                  handleRightButtonClick={() => {
                     handleCloseModals();
                   }}
-                  handleOpenRequestModal={() => {
+                  handleLeftButtonClick={() => {
                     handleReOpenRequestModal();
                   }}
                 />
@@ -295,9 +308,26 @@ export default function RequestList() {
                 key={request.id}
                 request={request}
                 handleOpenModalAboutRequest={handleOpenModalToEditRequest}
+                handleOpenConfirmationModal={() =>
+                  handleOpenConfirmationModal(request.id)
+                }
               />
             ))
           : null}
+        {openConfirmationModal && (
+          <ConfirmationModal
+            title="Voulez-vous vraiment supprimer votre PR ?"
+            textButtonLeft="Annuler"
+            textButtonRight="Supprimer"
+            handleRightButtonClick={() => {
+              deleteRequest(requestId);
+              handleCloseModals();
+            }}
+            handleLeftButtonClick={() => {
+              handleCloseModals();
+            }}
+          />
+        )}
         {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
             Aucune demande de PR ne correspond à votre recherche
