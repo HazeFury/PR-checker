@@ -91,57 +91,54 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
         <p className={styles.status_name}>{statusName(request.status)}</p>
       </Stack>
       <Stack
-        className={styles.infos}
-        direction="row"
-        justifyContent="start"
-        alignItems="center"
-        gap="1rem"
+        className={styles.pr}
+        direction={screenSize <= 1024 ? "column" : "row"}
       >
-        <p>
-          PR :{screenSize < 1200 && <br />}
-          <b> {request.title}</b>
-        </p>
-        <p>
-          Par :{screenSize < 1200 && <br />} <b> Marco</b>
-        </p>
-        <p>
-          Le :{screenSize < 1200 && <br />} <b> {formattedDate}</b>
-        </p>
-      </Stack>
-      <Stack
-        className={styles.buttons}
-        direction="row"
-        justifyContent="end"
-        alignItems="center"
-        gap="5%"
-      >
-        <IconButton onClick={handleButtonClick}>
-          <img src={info} alt="info-button" />
-        </IconButton>
-        <IconButton className={styles.buttons_link}>
-          <a href={request.github} target="_blank" rel="noreferrer">
-            <img src={github} alt="github-link" />
-          </a>
-        </IconButton>
-        <IconButton className={styles.buttons_link}>
-          <a href={request.trello} target="_blank" rel="noreferrer">
-            <img src={trello} alt="trello-link" />
-          </a>
-        </IconButton>
-        <ManageRequestButton
-          buttonText="Administrer"
-          textItem1="Modifier"
-          textItem2="Supprimer"
-          handleOpenModalAboutRequest={() => {
-            handleOpenModalAboutRequest(request.id);
-          }}
+        <Stack className={styles.infos} direction="row">
+          <p>
+            PR :{screenSize < 1200 && screenSize > 1024 && <br />}
+            <b> {request.title}</b>
+          </p>
+          <p>
+            Par :{screenSize < 1200 && screenSize > 1024 && <br />}{" "}
+            <b> Marco</b>
+          </p>
+          {screenSize > 1024 ? (
+            <p>
+              Le :{screenSize < 1200 && screenSize > 1024 && <br />}{" "}
+              <b> {formattedDate}</b>
+            </p>
+          ) : null}
+        </Stack>
+        <Stack className={styles.buttons} direction="row">
+          <IconButton onClick={handleButtonClick}>
+            <img src={info} alt="info-button" />
+          </IconButton>
+          <IconButton className={styles.buttons_link}>
+            <a href={request.github} target="_blank" rel="noreferrer">
+              <img src={github} alt="github-link" />
+            </a>
+          </IconButton>
+          <IconButton className={styles.buttons_link}>
+            <a href={request.trello} target="_blank" rel="noreferrer">
+              <img src={trello} alt="trello-link" />
+            </a>
+          </IconButton>
+          <ManageRequestButton
+            buttonText="Administrer"
+            textItem1="Modifier"
+            textItem2="Supprimer"
+            handleOpenModalAboutRequest={() => {
+              handleOpenModalAboutRequest(request.id);
+            }}
+          />
+        </Stack>
+        <ModalDescriptionPR
+          openModalDescription={modalOpen}
+          onCloseModalDescription={handleCloseDescriptionPRModal}
+          request={request}
         />
       </Stack>
-      <ModalDescriptionPR
-        openModalDescription={modalOpen}
-        onCloseModalDescription={handleCloseDescriptionPRModal}
-        request={request}
-      />
     </Stack>
   );
 }
