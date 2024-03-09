@@ -45,9 +45,6 @@ export default function ModalFormRequest({
       };
 
       fetchPRData();
-    } else {
-      // Réinitialiser les données de la PR lorsque la modale est ouverte pour créer une nouvelle PR
-      setRequestData(null);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
