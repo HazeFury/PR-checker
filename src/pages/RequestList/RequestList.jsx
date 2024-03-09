@@ -1,4 +1,5 @@
 import { Box, Button, Modal } from "@mui/material";
+import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,7 +9,8 @@ import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
 import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
 import refreshContext from "../../contexts/RefreshContext";
-import DropDownMenu from "../../components/UI-components/MUIRemix/DropDownMenu";
+import DropDownMenu from "../../components/App-components/Filters/DropDownMenu";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const filters = [
   {
@@ -59,6 +61,8 @@ export default function RequestList() {
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [filteredRequestList, setFilteredRequestList] = useState([]);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
+  // for styling
+  const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
 
   // --------------------------- (2) Async function ---------------------------------
@@ -234,32 +238,26 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <div>
-          <h3>{projectName}</h3>
-          <div className={styles.head_btn_box}>
+        <h3>{projectName}</h3>
+        <div className={styles.head_btn}>
+          <div className={styles.head_btn_new}>
             <Button
               variant="contained"
               sx={{
-                background: "#3883ba",
-                fontFamily: "Montserrat, sans serif",
-                mx: 2,
-                my: 2,
+                bgcolor: "button.main",
               }}
               onClick={handleRefresh}
             >
-              Actualiser{" "}
+              {screenSize < 767 ? <Refresh /> : "Actualiser"}
             </Button>
             <Button
               variant="contained"
               sx={{
-                background: "#3883ba",
-                fontFamily: "Montserrat, sans serif",
-                mx: 2,
-                my: 2,
+                bgcolor: "button.main",
               }}
               onClick={handleOpenModalForNewRequest}
             >
-              Nouvelle demande{" "}
+              {screenSize < 767 ? <Add /> : "Nouvelle demande"}
             </Button>
           </div>
           <Modal
@@ -296,18 +294,19 @@ export default function RequestList() {
               )}
             </Box>
           </Modal>
-        </div>
-        <div>
-          <DropDownMenu
-            buttonText="Filtres"
-            menuItems={userRole === "contributor" ? filters : [filters[0]]}
-            user={userRole}
-            selectedFilters={selectedFilters}
-            setSelectedFilters={setSelectedFilters}
-            disabled={!requestList.length}
-            haveFiltersBeenUsed={haveFiltersBeenUsed}
-            setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
-          />
+
+          <div className={styles.head_btn_filters}>
+            <DropDownMenu
+              buttonText="Filtres"
+              menuItems={userRole === "contributor" ? filters : [filters[0]]}
+              user={userRole}
+              selectedFilters={selectedFilters}
+              setSelectedFilters={setSelectedFilters}
+              disabled={!requestList.length}
+              haveFiltersBeenUsed={haveFiltersBeenUsed}
+              setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+            />
+          </div>
         </div>
       </div>
       <div className={styles.requests_container}>

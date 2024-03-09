@@ -1,8 +1,13 @@
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import {
+  FilterAlt,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from "@mui/icons-material";
 import { Button, Divider, Menu } from "@mui/material";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import MultiSelectDDMenu from "./MultiSelectDDMenu";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 export default function DropDownMenu({
   buttonText,
@@ -24,7 +29,9 @@ export default function DropDownMenu({
     setAnchorEl(null);
   };
 
-  /* --- State and func used for storing filters --- */
+  const screenSize = useScreenSize();
+
+  /* --- functions used for storing filters --- */
   const [showMenu, setShowMenu] = useState(null);
 
   // Updates filter state when mounting with provided data structure
@@ -139,7 +146,7 @@ export default function DropDownMenu({
           }
           endIcon={open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         >
-          {buttonText}
+          {screenSize < 440 ? <FilterAlt /> : buttonText}
         </Button>
         <Menu
           id="filters-menu"
@@ -194,7 +201,7 @@ DropDownMenu.propTypes = {
   menuItems: PropTypes.arrayOf(
     PropTypes.objectOf(PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)))
   ).isRequired,
-  user: PropTypes.string.isRequired,
+  user: PropTypes.string,
   selectedFilters: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
   setSelectedFilters: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
@@ -203,5 +210,6 @@ DropDownMenu.propTypes = {
 };
 
 DropDownMenu.defaultProps = {
+  user: "owner",
   selectedFilters: null,
 };
