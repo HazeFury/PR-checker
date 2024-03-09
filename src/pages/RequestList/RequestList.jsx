@@ -61,39 +61,7 @@ export default function RequestList() {
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
   // -------------------------------------------------------------------------------
 
-  // ---------------------------- (2) handle function ------------------------------
-
-  // Function to refresh
-  const handleRefresh = () => {
-    setRefreshData(!refreshData);
-  };
-  // function to manage the state to open the modal to edit a PR
-  const handleOpenModalToEditRequest = (id) => {
-    setRequestId(id);
-    setopenModalAboutRequest(true);
-  };
-  // function to manage the state to open the modal to create a new PR
-  const handleOpenModalForNewRequest = () => {
-    setopenModalAboutRequest(true);
-  };
-  //  function to manage the state to open the confirmation modal
-  const handleOpenConfirmationModal = (id) => {
-    setRequestId(id);
-    setOpenConfirmationModal(true);
-  };
-  // Function to close all modals at the same time after confirm the close
-  const handleCloseModals = () => {
-    setopenModalAboutRequest(false);
-    setOpenConfirmationModal(false);
-  };
-  // Function to re-open request modal after don't confirm the exit of the modal
-  const handleReOpenRequestModal = () => {
-    setOpenConfirmationModal(false);
-    setopenModalAboutRequest(true);
-  };
-  // --------------------------------------------------------------------------------
-
-  // --------------------------- (3) Async function ---------------------------------
+  // --------------------------- (2) Async function ---------------------------------
 
   // Function to verify if the user can view the request of this project
   async function verifyUser() {
@@ -127,7 +95,6 @@ export default function RequestList() {
 
     setProjectName(data.name);
   }
-
   // function to delete a PR
   const deleteRequest = async (id) => {
     try {
@@ -136,7 +103,49 @@ export default function RequestList() {
       console.error("Erreur lors de la suppression de la PR");
     }
   };
+  // --------------------------------------------------------------------------------
 
+  // ---------------------------- (3) handle function ------------------------------
+
+  // Function to refresh
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+  // function to manage the state to open the modal to edit a PR
+  const handleOpenModalToEditRequest = (id) => {
+    setRequestId(id);
+    setopenModalAboutRequest(true);
+  };
+  // function to manage the state to open the modal to create a new PR
+  const handleOpenModalForNewRequest = () => {
+    setopenModalAboutRequest(true);
+  };
+  //  function to manage the state to open the confirmation modal
+  const handleOpenConfirmationModal = (id) => {
+    setRequestId(id);
+    setOpenConfirmationModal(true);
+  };
+  // Function to close all modals at the same time after confirm the close
+  const handleCloseModals = () => {
+    setopenModalAboutRequest(false);
+    setOpenConfirmationModal(false);
+  };
+  // Function to re-open request modal after don't confirm the exit of the modal
+  const handleReOpenRequestModal = () => {
+    setOpenConfirmationModal(false);
+    setopenModalAboutRequest(true);
+  };
+  // Function to delete a request then refresh PRlist
+  const handleDeleteRequest = async (id) => {
+    await deleteRequest(id);
+    await getAllPr();
+    setRefreshData(!refreshData);
+  };
+  // Function to refresh PRlist and PRcards after create or edit a PR
+  const handleCreateOrUpdateRequest = async () => {
+    await getAllPr();
+    setRefreshData(!refreshData);
+  };
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------
@@ -269,7 +278,7 @@ export default function RequestList() {
                 projectId={projectId}
                 handleClose={handleCloseModals}
                 handleOpenConfirmationModal={handleOpenConfirmationModal}
-                refreshPr={handleRefresh}
+                handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
                 requestId={requestId}
               />
               {openConfirmationModal && (
@@ -320,7 +329,7 @@ export default function RequestList() {
             textButtonLeft="Annuler"
             textButtonRight="Supprimer"
             handleRightButtonClick={() => {
-              deleteRequest(requestId);
+              handleDeleteRequest(requestId);
               handleCloseModals();
             }}
             handleLeftButtonClick={() => {
