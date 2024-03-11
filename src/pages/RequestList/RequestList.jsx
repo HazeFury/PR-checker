@@ -142,12 +142,10 @@ export default function RequestList() {
   // Function to delete a request then refresh PRlist
   const handleDeleteRequest = async (id) => {
     await deleteRequest(id);
-    await getAllPr();
     setRefreshData(!refreshData);
   };
   // Function to refresh PRlist and PRcards after create or edit a PR
   const handleCreateOrUpdateRequest = async () => {
-    await getAllPr();
     setRefreshData(!refreshData);
   };
   // ----------------------------------------------------------------------------------
@@ -189,7 +187,7 @@ export default function RequestList() {
     let requestsToDisplay = requestList;
     if (selectedFilters?.Statut?.join("") !== "0") {
       requestsToDisplay = requestsToDisplay.filter(
-        (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
+        (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
       );
     }
     if (
@@ -203,7 +201,7 @@ export default function RequestList() {
 
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, refreshData]);
+  }, [selectedFilters, requestList]);
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -338,7 +336,7 @@ export default function RequestList() {
         )}
         {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
-            Aucune demande de PR ne correspond à votre recherche
+            refreshData Aucune demande de PR ne correspond à votre recherche
           </p>
         ) : null}
         {requestList.length === 0 && !haveFiltersBeenUsed ? (
