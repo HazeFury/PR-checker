@@ -3,6 +3,8 @@ import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
@@ -103,8 +105,9 @@ export default function RequestList() {
   const deleteRequest = async (id) => {
     try {
       await supabase.from("pr_request").delete().eq("id", id);
+      toast.success("La PR a bien été supprimée");
     } catch (error) {
-      console.error("Erreur lors de la suppression de la PR");
+      toast.error("Erreur lors de la suppression de la PR");
     }
   };
   // --------------------------------------------------------------------------------
