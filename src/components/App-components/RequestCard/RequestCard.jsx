@@ -69,7 +69,7 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
 
   return (
     <Stack
-      direction="row"
+      direction={screenSize < 767 ? "column" : "row"}
       className={styles.card}
       justifyContent="space-between"
     >
