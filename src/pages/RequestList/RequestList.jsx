@@ -339,7 +339,7 @@ export default function RequestList() {
         )}
         {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
-            refreshData Aucune demande de PR ne correspond à votre recherche
+            Aucune demande de PR ne correspond à votre recherche
           </p>
         ) : null}
         {requestList.length === 0 && !haveFiltersBeenUsed ? (
