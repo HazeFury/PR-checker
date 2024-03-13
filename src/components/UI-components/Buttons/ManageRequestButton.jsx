@@ -29,7 +29,11 @@ export default function ManageRequestButton({
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         variant="contained"
-        sx={{ backgroundColor: theme.palette.primary.main }}
+        sx={{
+          backgroundColor: theme.palette.button.main,
+          textTransform: "none",
+        }}
+        size="small"
         endIcon={open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       >
         {buttonText}
