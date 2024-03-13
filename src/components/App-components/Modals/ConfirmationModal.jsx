@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import styles from "./ConfirmationModal.module.css";
 
 export default function ConfirmationModal({
-  handleCloseModals,
-  handleOpenRequestModal,
+  handleLeftButtonClick,
+  handleRightButtonClick,
   title,
   textButtonLeft,
   textButtonRight,
@@ -45,7 +45,7 @@ export default function ConfirmationModal({
               backgroundColor: theme.palette.button.main,
               width: "350px",
             }}
-            onClick={handleOpenRequestModal}
+            onClick={handleLeftButtonClick}
           >
             {textButtonLeft}
           </Button>
@@ -58,7 +58,7 @@ export default function ConfirmationModal({
                 backgroundColor: theme.palette.button.hover,
               },
             }}
-            onClick={handleCloseModals}
+            onClick={handleRightButtonClick}
           >
             {textButtonRight}
           </Button>
@@ -71,6 +71,6 @@ ConfirmationModal.propTypes = {
   title: PropTypes.string.isRequired,
   textButtonLeft: PropTypes.string.isRequired,
   textButtonRight: PropTypes.string.isRequired,
-  handleCloseModals: PropTypes.func.isRequired,
-  handleOpenRequestModal: PropTypes.func.isRequired,
+  handleLeftButtonClick: PropTypes.func.isRequired,
+  handleRightButtonClick: PropTypes.func.isRequired,
 };

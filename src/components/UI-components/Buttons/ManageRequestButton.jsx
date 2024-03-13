@@ -9,6 +9,7 @@ export default function ManageRequestButton({
   textItem2,
   buttonText,
   handleOpenModalAboutRequest,
+  handleOpenConfirmationModal,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -98,6 +99,10 @@ export default function ManageRequestButton({
                 backgroundColor: theme.palette.button.hover,
               },
             }}
+            onClick={() => {
+              handleClose();
+              handleOpenConfirmationModal();
+            }}
           >
             {textItem2}
           </Button>
@@ -111,4 +116,5 @@ ManageRequestButton.propTypes = {
   textItem2: PropTypes.string.isRequired,
   buttonText: PropTypes.string.isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
+  handleOpenConfirmationModal: PropTypes.func.isRequired,
 };

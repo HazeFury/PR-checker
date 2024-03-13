@@ -3,6 +3,8 @@ import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
@@ -66,36 +68,7 @@ export default function RequestList() {
   const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
 
-  // ---------------------------- (2) handle function ------------------------------
-
-  // Function to refresh
-  const handleRefresh = () => {
-    setRefreshData(!refreshData);
-  };
-  // function to manage the state to open the modal to edit a PR
-  const handleOpenModalToEditRequest = (id) => {
-    setRequestId(id);
-    setopenModalAboutRequest(true);
-  };
-  // function to manage the state to open the modal to create a new PR
-  const handleOpenModalForNewRequest = () => {
-    setopenModalAboutRequest(true);
-  };
-  //  function to manage the state to open the confirmation modal
-  const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
-  // Function to close all modals at the same time after confirm the close
-  const handleCloseModals = () => {
-    setopenModalAboutRequest(false);
-    setOpenConfirmationModal(false);
-  };
-  // Function to re-open request modal after don't confirm the exit of the modal
-  const handleReOpenRequestModal = () => {
-    setOpenConfirmationModal(false);
-    setopenModalAboutRequest(true);
-  };
-  // --------------------------------------------------------------------------------
-
-  // --------------------------- (3) Async function ---------------------------------
+  // --------------------------- (2) Async function ---------------------------------
 
   // Function to verify if the user can view the request of this project
   async function verifyUser() {
@@ -129,6 +102,56 @@ export default function RequestList() {
 
     setProjectName(data.name);
   }
+  // function to delete a PR
+  const deleteRequest = async (id) => {
+    try {
+      await supabase.from("pr_request").delete().eq("id", id);
+      toast.success("La PR a bien été supprimée");
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de la PR");
+    }
+  };
+  // --------------------------------------------------------------------------------
+
+  // ---------------------------- (3) handle function ------------------------------
+
+  // Function to refresh
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+  // function to manage the state to open the modal to edit a PR
+  const handleOpenModalToEditRequest = (id) => {
+    setRequestId(id);
+    setopenModalAboutRequest(true);
+  };
+  // function to manage the state to open the modal to create a new PR
+  const handleOpenModalForNewRequest = () => {
+    setopenModalAboutRequest(true);
+  };
+  //  function to manage the state to open the confirmation modal
+  const handleOpenConfirmationModal = (id) => {
+    setRequestId(id);
+    setOpenConfirmationModal(true);
+  };
+  // Function to close all modals at the same time after confirm the close
+  const handleCloseModals = () => {
+    setopenModalAboutRequest(false);
+    setOpenConfirmationModal(false);
+  };
+  // Function to re-open request modal after don't confirm the exit of the modal
+  const handleReOpenRequestModal = () => {
+    setOpenConfirmationModal(false);
+    setopenModalAboutRequest(true);
+  };
+  // Function to delete a request then refresh PRlist
+  const handleDeleteRequest = async (id) => {
+    await deleteRequest(id);
+    setRefreshData(!refreshData);
+  };
+  // Function to refresh PRlist and PRcards after create or edit a PR
+  const handleCreateOrUpdateRequest = async () => {
+    setRefreshData(!refreshData);
+  };
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------
@@ -168,7 +191,7 @@ export default function RequestList() {
     let requestsToDisplay = requestList;
     if (selectedFilters?.Statut?.join("") !== "0") {
       requestsToDisplay = requestsToDisplay.filter(
-        (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
+        (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
       );
     }
     if (
@@ -188,7 +211,8 @@ export default function RequestList() {
 
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, refreshData, sortBy]);
+  }, [selectedFilters, requestList, sortBy]);
+
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -261,7 +285,7 @@ export default function RequestList() {
                 projectId={projectId}
                 handleClose={handleCloseModals}
                 handleOpenConfirmationModal={handleOpenConfirmationModal}
-                refreshPr={handleRefresh}
+                handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
                 requestId={requestId}
               />
               {openConfirmationModal && (
@@ -269,10 +293,10 @@ export default function RequestList() {
                   title="Voulez-vous vraiment quitter votre enregistrement ?"
                   textButtonLeft="Revenir à mon enregistrement"
                   textButtonRight="Quitter"
-                  handleCloseModals={() => {
+                  handleRightButtonClick={() => {
                     handleCloseModals();
                   }}
-                  handleOpenRequestModal={() => {
+                  handleLeftButtonClick={() => {
                     handleReOpenRequestModal();
                   }}
                 />
@@ -303,9 +327,26 @@ export default function RequestList() {
                 key={request.id}
                 request={request}
                 handleOpenModalAboutRequest={handleOpenModalToEditRequest}
+                handleOpenConfirmationModal={() =>
+                  handleOpenConfirmationModal(request.id)
+                }
               />
             ))
           : null}
+        {openConfirmationModal && (
+          <ConfirmationModal
+            title="Voulez-vous vraiment supprimer votre PR ?"
+            textButtonLeft="Annuler"
+            textButtonRight="Supprimer"
+            handleRightButtonClick={() => {
+              handleDeleteRequest(requestId);
+              handleCloseModals();
+            }}
+            handleLeftButtonClick={() => {
+              handleCloseModals();
+            }}
+          />
+        )}
         {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
             Aucune demande de PR ne correspond à votre recherche
