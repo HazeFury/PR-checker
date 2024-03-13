@@ -76,7 +76,7 @@ export default function RequestCard({ request, handleOpenModalAboutRequest }) {
       <Stack
         className={[styles.status, statusColor(request.status)].join(" ")}
         direction="row"
-        justifyContent="center"
+        justifyContent="space-evenly"
         alignItems="center"
         divider={
           <Divider
