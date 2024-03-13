@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import MultiSelectDDMenu from "./MultiSelectDDMenu";
 import useScreenSize from "../../../hooks/useScreenSize";
+import Sort from "./Sort";
 
 export default function DropDownMenu({
   buttonText,
@@ -18,6 +19,8 @@ export default function DropDownMenu({
   disabled,
   haveFiltersBeenUsed,
   setHaveFiltersBeenUsed,
+  sortBy,
+  setSortBy,
 }) {
   /* --- State and functions used for MUI Menu component --- */
   const [anchorEl, setAnchorEl] = useState(null);
@@ -155,6 +158,11 @@ export default function DropDownMenu({
           onClose={handleClose}
           MenuListProps={{
             "aria-labelledby": "filters-button",
+            sx: {
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "end",
+            },
           }}
           slotProps={{
             paper: {
@@ -163,16 +171,20 @@ export default function DropDownMenu({
                 color: "#FFFFFF",
                 paddingInline: "1rem",
                 borderTopRightRadius: "0",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "end",
-                justifyContent: "space-between",
               },
             },
           }}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
+          <Sort sortBy={sortBy} setSortBy={setSortBy} />
+          <Divider
+            sx={{
+              background: "white",
+              marginBlock: "1rem",
+              width: "100%",
+            }}
+          />
           {menuItems.map((section) => {
             const sectionName = Object.keys(section).join("");
             return (
@@ -207,6 +219,8 @@ DropDownMenu.propTypes = {
   disabled: PropTypes.bool.isRequired,
   haveFiltersBeenUsed: PropTypes.bool.isRequired,
   setHaveFiltersBeenUsed: PropTypes.func.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  setSortBy: PropTypes.func.isRequired,
 };
 
 DropDownMenu.defaultProps = {
