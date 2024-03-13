@@ -63,6 +63,7 @@ export default function RequestList() {
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [filteredRequestList, setFilteredRequestList] = useState([]);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
+  const [sortBy, setSortBy] = useState("old");
   // for styling
   const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
@@ -202,9 +203,16 @@ export default function RequestList() {
       );
     }
 
+    requestsToDisplay.sort((a, b) =>
+      sortBy === "old"
+        ? new Date(a.created_at) - new Date(b.created_at)
+        : new Date(b.created_at) - new Date(a.created_at)
+    );
+
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, requestList]);
+  }, [selectedFilters, requestList, sortBy]);
+
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -306,6 +314,8 @@ export default function RequestList() {
               disabled={!requestList.length}
               haveFiltersBeenUsed={haveFiltersBeenUsed}
               setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
             />
           </div>
         </div>
