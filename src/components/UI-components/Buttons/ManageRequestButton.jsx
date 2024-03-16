@@ -1,16 +1,17 @@
-import { useTheme } from "@emotion/react";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Button, Divider, Menu, MenuItem } from "@mui/material";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
 export default function ManageRequestButton({
-  textItem1,
-  textItem2,
+  PRStatus,
+  statusNames,
+  userRole,
   buttonText,
   handleOpenModalAboutRequest,
   handleOpenConfirmationModal,
 }) {
+  /* --- State and functions used for MUI Menu component --- */
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -19,18 +20,43 @@ export default function ManageRequestButton({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const theme = useTheme();
+
+  /* --- Function to modify the list of items to render --- */
+  const itemsToRender = () => {
+    if (userRole === "owner") {
+      if (PRStatus === 5 || PRStatus === 6) return []; // When status is validated or rejected, no options should be available
+      return statusNames.filter(
+        (el) => el !== statusNames[PRStatus - 1] && el !== "Correctifs faits"
+      ); // the same status and "Correctifs faits" should never be available options for owners
+    }
+
+    const contributorOptions = ["Modifier"];
+    if (PRStatus === 3) contributorOptions.push(statusNames[3]);
+    return contributorOptions;
+  };
+
+  /* --- Function to update the status in the database --- */
+  const handleStatusUpdate = (e) => {
+    console.info(
+      `Je dois changer le statut '${statusNames.filter((el) => el === statusNames[PRStatus - 1])}' en '${e.target.innerText}'`
+    );
+  };
+
   return (
     <div>
       <Button
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
+        id="admin-button"
+        disabled={
+          userRole === "contributor" &&
+          (PRStatus === 2 || PRStatus === 5 || PRStatus === 6)
+        }
+        aria-controls={open ? "admin-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         variant="contained"
         sx={{
-          backgroundColor: theme.palette.button.main,
+          bgcolor: "button.main",
           textTransform: "none",
         }}
         size="small"
@@ -39,81 +65,92 @@ export default function ManageRequestButton({
         {buttonText}
       </Button>
       <Menu
-        id="basic-menu"
+        id="admin-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          "aria-labelledby": "basic-button",
+          "aria-labelledby": "admin-buttons",
         }}
-        PaperProps={{
-          sx: {
-            backgroundColor: theme.palette.modal.background,
-            color: theme.palette.text.secondary,
-            minWidth: "9.8rem",
+        slotProps={{
+          paper: {
+            sx: {
+              minWidth: "7.7rem",
+              bgcolor: "modal.background",
+              color: "text.secondary",
+            },
           },
         }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem
-          sx={{
-            fontFamily: theme.typography.fontFamily,
-            fontSize: "12px",
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "10px",
+        {itemsToRender().map((item) => {
+          return (
+            <MenuItem
+              key={item}
+              sx={{
+                fontSize: "0.9em",
+                display: "flex",
+                flexDirection: "row-reverse",
+                paddingBlock: "0.8rem",
 
-            "&:hover": {
-              backgroundColor: theme.palette.button.main,
-              marginRight: "0px",
-              marginLeft: "0px",
-            },
-          }}
-          onClick={() => {
-            handleClose();
-            handleOpenModalAboutRequest();
-          }}
-        >
-          {textItem1}
-        </MenuItem>
-        <MenuItem
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: "15px",
-            margin: "0 5%",
-            borderTop: "2px solid #ABABAB",
-            boxSizing: "border-box",
-          }}
-          onClick={handleClose}
-        >
-          <Button
+                "&:hover": {
+                  bgcolor: "button.main",
+                },
+              }}
+              onClick={(e) => {
+                handleClose();
+                if (item === "Modifier") handleOpenModalAboutRequest();
+                else handleStatusUpdate(e);
+              }}
+            >
+              {item}
+            </MenuItem>
+          );
+        })}
+        {itemsToRender().length > 0 &&
+        (userRole === "owner" ||
+          (userRole === "contributor" && PRStatus === 1)) ? (
+          <Divider
             sx={{
-              fontFamily: theme.typography.fontFamily,
-              backgroundColor: theme.palette.button.secondary,
-              color: theme.palette.text.secondary,
-              fontSize: "12px",
-              paddingLeft: "30px",
-              paddingRight: "30px",
-
-              "&:hover": {
-                backgroundColor: theme.palette.button.hover,
-              },
+              bgcolor: "text.secondary",
+              width: "80%",
+              marginInline: "auto",
             }}
-            onClick={() => {
-              handleClose();
-              handleOpenConfirmationModal();
-            }}
-          >
-            {textItem2}
-          </Button>
-        </MenuItem>
+          />
+        ) : null}
+        {userRole === "owner" || // User can delete only when he's owner, or contributor on a newly created PR
+        (userRole === "contributor" && PRStatus === 1) ? (
+          <MenuItem>
+            <Button
+              variant="contained"
+              sx={{
+                width: "100%",
+                bgcolor: "button.secondary",
+                color: "text.secondary",
+                paddingInline: "1.5rem",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "button.hover",
+                },
+              }}
+              onClick={() => {
+                handleClose();
+                handleOpenConfirmationModal();
+              }}
+            >
+              Supprimer
+            </Button>
+          </MenuItem>
+        ) : null}
       </Menu>
     </div>
   );
 }
 ManageRequestButton.propTypes = {
-  textItem1: PropTypes.string.isRequired,
-  textItem2: PropTypes.string.isRequired,
+  PRStatus: PropTypes.number.isRequired,
+  statusNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  userRole: PropTypes.string.isRequired,
   buttonText: PropTypes.string.isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,

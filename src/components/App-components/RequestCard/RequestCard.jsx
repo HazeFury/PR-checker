@@ -13,6 +13,15 @@ import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
 import useScreenSize from "../../../hooks/useScreenSize";
 
+const statusNames = [
+  "En attente de review",
+  "En cours de review",
+  "En attente de correctifs",
+  "Correctifs faits",
+  "Demande rejetée",
+  "Demande validée",
+];
+
 // Function to assign a color based on status
 function statusColor(status) {
   switch (status) {
@@ -33,26 +42,26 @@ function statusColor(status) {
   }
 }
 
-function statusName(status) {
+function nameStatus(status) {
   switch (status) {
     case 1:
-      return "En attente de review";
+      return statusNames[0];
     case 2:
-      return "En cours de review";
+      return statusNames[1];
     case 3:
-      return "En attente de correctifs";
+      return statusNames[2];
     case 4:
-      return "Correctifs faits";
+      return statusNames[3];
     case 5:
-      return "Demande rejetée";
+      return statusNames[4];
     case 6:
-      return "Demande validée";
+      return statusNames[5];
     default:
-      return styles.defaultColor;
+      return "Statut inderterminé";
   }
 }
-
 export default function RequestCard({
+  userRole,
   request,
   handleOpenModalAboutRequest,
   handleOpenConfirmationModal,
@@ -92,7 +101,7 @@ export default function RequestCard({
         }
       >
         <p className={styles.status_pr_id}>#{request.id}</p>
-        <p className={styles.status_name}>{statusName(request.status)}</p>
+        <p className={styles.status_name}>{nameStatus(request.status)}</p>
       </Stack>
       <Stack
         className={styles.pr}
@@ -129,9 +138,10 @@ export default function RequestCard({
             </a>
           </IconButton>
           <ManageRequestButton
+            PRStatus={request.status}
+            statusNames={statusNames}
+            userRole={userRole}
             buttonText="Administrer"
-            textItem1="Modifier"
-            textItem2="Supprimer"
             handleOpenModalAboutRequest={() => {
               handleOpenModalAboutRequest(request.id);
             }}
@@ -151,6 +161,7 @@ export default function RequestCard({
 }
 
 RequestCard.propTypes = {
+  userRole: PropTypes.string.isRequired,
   request: PropTypes.shape({
     id: PropTypes.number.isRequired,
     status: PropTypes.number.isRequired,
