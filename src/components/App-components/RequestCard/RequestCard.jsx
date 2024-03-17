@@ -13,6 +13,15 @@ import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
 import useScreenSize from "../../../hooks/useScreenSize";
 
+const statusNames = [
+  { name: "En attente de review", value: 1 },
+  { name: "En cours de review", value: 2 },
+  { name: "En attente de correctifs", value: 3 },
+  { name: "Correctifs faits", value: 4 },
+  { name: "Demande rejetée", value: 5 },
+  { name: "Demande validée", value: 6 },
+];
+
 // Function to assign a color based on status
 function statusColor(status) {
   switch (status) {
@@ -25,7 +34,7 @@ function statusColor(status) {
     case 4:
       return styles.correctionDone;
     case 5:
-      return styles.resquestRejected;
+      return styles.requestRejected;
     case 6:
       return styles.requestValidated;
     default:
@@ -33,26 +42,26 @@ function statusColor(status) {
   }
 }
 
-function statusName(status) {
+function nameStatus(status) {
   switch (status) {
     case 1:
-      return "En attente de review";
+      return statusNames[0].name;
     case 2:
-      return "En cours de review";
+      return statusNames[1].name;
     case 3:
-      return "En attente de correctifs";
+      return statusNames[2].name;
     case 4:
-      return "Correctifs faits";
+      return statusNames[3].name;
     case 5:
-      return "Demande rejetée";
+      return statusNames[4].name;
     case 6:
-      return "Demande validée";
+      return statusNames[5].name;
     default:
-      return styles.defaultColor;
+      return "Statut inderterminé";
   }
 }
-
 export default function RequestCard({
+  userRole,
   request,
   handleOpenModalAboutRequest,
   handleOpenConfirmationModal,
@@ -92,7 +101,7 @@ export default function RequestCard({
         }
       >
         <p className={styles.status_pr_id}>#{request.id}</p>
-        <p className={styles.status_name}>{statusName(request.status)}</p>
+        <p className={styles.status_name}>{nameStatus(request.status)}</p>
       </Stack>
       <Stack
         className={styles.pr}
@@ -129,15 +138,17 @@ export default function RequestCard({
             </a>
           </IconButton>
           <ManageRequestButton
+            request={request}
+            statusNames={statusNames}
+            userRole={userRole}
             buttonText="Administrer"
-            textItem1="Modifier"
-            textItem2="Supprimer"
             handleOpenModalAboutRequest={() => {
               handleOpenModalAboutRequest(request.id);
             }}
             handleOpenConfirmationModal={() => {
               handleOpenConfirmationModal();
             }}
+            statusColor={statusColor}
           />
         </Stack>
         <ModalDescriptionPR
@@ -151,6 +162,7 @@ export default function RequestCard({
 }
 
 RequestCard.propTypes = {
+  userRole: PropTypes.string.isRequired,
   request: PropTypes.shape({
     id: PropTypes.number.isRequired,
     status: PropTypes.number.isRequired,
@@ -159,6 +171,7 @@ RequestCard.propTypes = {
     trello: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
+    user_uuid: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,

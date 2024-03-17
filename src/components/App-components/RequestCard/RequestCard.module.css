@@ -10,6 +10,7 @@
 .status {
   width: 25%;
   box-shadow: 10px 0 20px rgba(0, 0, 0, 0.151);
+  border-radius: 10px;
 }
 
 .status_pr_id {
@@ -78,38 +79,31 @@
 
 /* --- Status colors --- */
 .waitingReview {
-  background-color: #6ca8e0;
-  border-radius: 10px;
+  background-color: var(--waitingReview);
 }
 
 .inProgress {
-  background-color: #e0db6c;
-  border-radius: 10px;
+  background-color: var(--inProgress);
 }
 
 .waitingCorrection {
-  background-color: #e0ab6c;
-  border-radius: 10px;
+  background-color: var(--waitingCorrection);
 }
 
 .correctionDone {
-  background-color: #ad6ce0;
-  border-radius: 10px;
+  background-color: var(--correctionDone);
 }
 
-.resquestRejected {
-  background-color: #e07a6c;
-  border-radius: 10px;
+.requestRejected {
+  background-color: var(--requestRejected);
 }
 
 .requestValidated {
-  background-color: #7add84;
-  border-radius: 10px;
+  background-color: var(--requestValidated);
 }
 
 .defaultColor {
-  background-color: #e8e8e8;
-  border-radius: 10px;
+  background-color: var(--defaultColor);
 }
 
 @media screen and (max-width: 1024px) {

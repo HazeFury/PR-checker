@@ -325,6 +325,7 @@ export default function RequestList() {
           ? filteredRequestList.map((request) => (
               <RequestCard
                 key={request.id}
+                userRole={userRole}
                 request={request}
                 handleOpenModalAboutRequest={handleOpenModalToEditRequest}
                 handleOpenConfirmationModal={() =>
@@ -335,7 +336,7 @@ export default function RequestList() {
           : null}
         {openConfirmationModal && (
           <ConfirmationModal
-            title="Voulez-vous vraiment supprimer votre PR ?"
+            title="Voulez-vous vraiment supprimer cette demande de PR ?"
             textButtonLeft="Annuler"
             textButtonRight="Supprimer"
             handleRightButtonClick={() => {
