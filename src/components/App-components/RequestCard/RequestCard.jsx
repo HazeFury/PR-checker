@@ -14,12 +14,12 @@ import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton
 import useScreenSize from "../../../hooks/useScreenSize";
 
 const statusNames = [
-  "En attente de review",
-  "En cours de review",
-  "En attente de correctifs",
-  "Correctifs faits",
-  "Demande rejetée",
-  "Demande validée",
+  { name: "En attente de review", value: 1 },
+  { name: "En cours de review", value: 2 },
+  { name: "En attente de correctifs", value: 3 },
+  { name: "Correctifs faits", value: 4 },
+  { name: "Demande rejetée", value: 5 },
+  { name: "Demande validée", value: 6 },
 ];
 
 // Function to assign a color based on status
@@ -34,7 +34,7 @@ function statusColor(status) {
     case 4:
       return styles.correctionDone;
     case 5:
-      return styles.resquestRejected;
+      return styles.requestRejected;
     case 6:
       return styles.requestValidated;
     default:
@@ -45,17 +45,17 @@ function statusColor(status) {
 function nameStatus(status) {
   switch (status) {
     case 1:
-      return statusNames[0];
+      return statusNames[0].name;
     case 2:
-      return statusNames[1];
+      return statusNames[1].name;
     case 3:
-      return statusNames[2];
+      return statusNames[2].name;
     case 4:
-      return statusNames[3];
+      return statusNames[3].name;
     case 5:
-      return statusNames[4];
+      return statusNames[4].name;
     case 6:
-      return statusNames[5];
+      return statusNames[5].name;
     default:
       return "Statut inderterminé";
   }
@@ -138,7 +138,7 @@ export default function RequestCard({
             </a>
           </IconButton>
           <ManageRequestButton
-            PRStatus={request.status}
+            request={request}
             statusNames={statusNames}
             userRole={userRole}
             buttonText="Administrer"
@@ -148,6 +148,7 @@ export default function RequestCard({
             handleOpenConfirmationModal={() => {
               handleOpenConfirmationModal();
             }}
+            statusColor={statusColor}
           />
         </Stack>
         <ModalDescriptionPR
@@ -170,6 +171,7 @@ RequestCard.propTypes = {
     trello: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
+    user_uuid: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
