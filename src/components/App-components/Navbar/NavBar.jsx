@@ -1,22 +1,23 @@
 import { useState } from "react";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
-
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useTheme } from "@emotion/react";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
+import {
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Settings, Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
+import NotificationButtonNav from "./NotificationButtonNav";
 
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -77,7 +78,7 @@ export default function NavBar() {
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
         />
-
+        <NotificationButtonNav />
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleMenuClick}

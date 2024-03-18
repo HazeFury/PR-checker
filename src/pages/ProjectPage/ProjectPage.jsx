@@ -1,7 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
 import supabase from "../../services/client";
 import styles from "./ProjectPage.module.css";
