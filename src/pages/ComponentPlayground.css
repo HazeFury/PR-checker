@@ -25,3 +25,13 @@
 .component-title {
   margin: 20px;
 }
+
+.big_container {
+  min-height: 500px;
+  min-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid red;
+}
