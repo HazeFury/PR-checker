@@ -9,6 +9,7 @@
 
 .status {
   width: 25%;
+  min-width: 180px;
   box-shadow: 10px 0 20px rgba(0, 0, 0, 0.151);
   border-radius: 10px;
 }
@@ -17,21 +18,17 @@
   padding-inline: 0.8rem;
   font-size: 1.2em;
   font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   color: black;
+  text-align: center;
+  flex: 1;
 }
 
 .status_name {
   padding-inline: 0.8rem;
   font-size: 1em;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   color: black;
+  flex: 3;
 }
 
 .pr {

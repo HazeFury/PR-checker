@@ -1,24 +1,26 @@
 .request_list_container {
-  height: fit-content;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  width: 80svw;
+  height: calc(100svh - 100px);
+  padding-block: 1rem 2rem;
+  margin-inline: auto;
 }
 
 .no_content_text {
-  font-family: var(--global-font);
+  height: 100%;
   font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .head {
-  width: 80vw;
+  min-height: 100px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin-block: 2rem 1rem;
 }
 
 .head > h3 {
@@ -52,10 +54,13 @@
 }
 
 .requests_container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  width: calc(100% + 1rem);
+  height: calc(100% - 100px);
+  overflow-x: hidden;
+}
+
+.requests_container > div {
+  margin-bottom: 1.5rem;
 }
 
 .modal {
@@ -63,16 +68,40 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .request_list_container {
+    padding-block: 1.5rem 2rem;
+  }
+
   .head {
     flex-direction: column;
     justify-content: center;
     align-items: start;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
   }
 
   .head_btn {
     width: 100%;
     justify-content: center;
-    align-items: start;
+    align-items: center;
     align-content: space-between;
+  }
+}
+
+/* For browsers that support `scrollbar-*` properties */
+@supports (scrollbar-color: auto) {
+  .requests_container {
+    scrollbar-color: var(--action) transparent;
+  }
+}
+
+/* Otherwise, use `::-webkit-scrollbar-*` pseudo-elements */
+@supports selector(::-webkit-scrollbar) {
+  .requests_container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .requests_container::-webkit-scrollbar-thumb,
+  .requests_container::-webkit-scrollbar-button {
+    background: var(--action);
   }
 }

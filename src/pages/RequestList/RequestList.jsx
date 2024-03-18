@@ -184,16 +184,24 @@ export default function RequestList() {
       getAllPr();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshData]); // the dependancy needed to refetch data
-
+  }, [refreshData]);
+  // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
   useEffect(() => {
-    // used for filtering everytime a new filter is selected
+    if (userRole !== null) {
+      setSortBy(userRole === "owner" ? "old" : "new");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userRole]);
+  // ----- Used for filtering PR requests everytime a new filter is selected -----
+  useEffect(() => {
     let requestsToDisplay = requestList;
+    // Creates a copy of requestLis, then tries to filters on PR status first
     if (selectedFilters?.Statut?.join("") !== "0") {
       requestsToDisplay = requestsToDisplay.filter(
         (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
       );
     }
+    // If user is contributor, tries to filter on PR creator id
     if (
       userRole === "contributor" &&
       selectedFilters?.Demandes?.join("") === "1"
@@ -202,13 +210,13 @@ export default function RequestList() {
         (el) => el.user_uuid === userId
       );
     }
-
+    // Sort is happening after content has been filtered
     requestsToDisplay.sort((a, b) =>
       sortBy === "old"
         ? new Date(a.created_at) - new Date(b.created_at)
         : new Date(b.created_at) - new Date(a.created_at)
     );
-
+    // Once it's all filtered and sorted, we can pass it to our state in order to display the results
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters, requestList, sortBy]);
