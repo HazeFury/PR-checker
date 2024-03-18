@@ -30,6 +30,7 @@
 }
 
 body {
+  font-family: var(--global-font);
   background: radial-gradient(circle, rgb(40, 40, 40) 0%, rgb(29, 29, 29) 100%);
   min-height: 100vh;
   overflow-x: hidden;

@@ -1,4 +1,4 @@
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { KeyboardArrowDown, KeyboardArrowUp, Loop } from "@mui/icons-material";
 import { Button, Divider, Menu, MenuItem } from "@mui/material";
 import PropTypes from "prop-types";
 import { useContext, useState } from "react";
@@ -7,16 +7,17 @@ import { useOutletContext } from "react-router-dom";
 import { toast } from "sonner";
 import supabase from "../../../services/client";
 import refreshContext from "../../../contexts/RefreshContext";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 export default function ManageRequestButton({
   request,
   statusNames,
   userRole,
-  buttonText,
   handleOpenModalAboutRequest,
   handleOpenConfirmationModal,
   statusColor,
 }) {
+  const screenSize = useScreenSize();
   const userId = useOutletContext();
   const { refreshData, setRefreshData } = useContext(refreshContext);
 
@@ -88,7 +89,7 @@ export default function ManageRequestButton({
         size="small"
         endIcon={open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       >
-        {buttonText}
+        {screenSize > 400 ? "Administrer" : <Loop />}
       </Button>
       <Menu
         id="admin-menu"
@@ -195,7 +196,6 @@ ManageRequestButton.propTypes = {
     }).isRequired
   ).isRequired,
   userRole: PropTypes.string.isRequired,
-  buttonText: PropTypes.string.isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
   statusColor: PropTypes.func.isRequired,

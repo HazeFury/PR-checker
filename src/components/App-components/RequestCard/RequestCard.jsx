@@ -141,7 +141,6 @@ export default function RequestCard({
             request={request}
             statusNames={statusNames}
             userRole={userRole}
-            buttonText="Administrer"
             handleOpenModalAboutRequest={() => {
               handleOpenModalAboutRequest(request.id);
             }}
