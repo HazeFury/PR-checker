@@ -151,6 +151,7 @@ export default function RequestList() {
   // Function to refresh PRlist and PRcards after create or edit a PR
   const handleCreateOrUpdateRequest = async () => {
     setRefreshData(!refreshData);
+    setRequestId(null);
   };
   // ----------------------------------------------------------------------------------
 
