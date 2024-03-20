@@ -4,8 +4,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useTheme } from "@emotion/react";
+import refreshContext from "../../../contexts/RefreshContext";
 
 import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
@@ -17,13 +18,15 @@ export default function ModalFormRequest({
   projectId,
   handleClose,
   handleOpenConfirmationModal,
-  refreshPr,
   requestId,
+  handleCreateOrUpdateRequest,
 }) {
   const theme = useTheme();
 
   // state to manage the data of request
   const [requestData, setRequestData] = useState(null);
+
+  const { refreshData, setRefreshData } = useContext(refreshContext);
 
   // function to fetch data of the PR which is used
   useEffect(() => {
@@ -43,6 +46,7 @@ export default function ModalFormRequest({
 
       fetchPRData();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,11 +94,12 @@ export default function ModalFormRequest({
           await supabase.from("pr_request").insert([formData]);
           toast.success("Votre PR a bien été créée");
         }
+        await handleCreateOrUpdateRequest();
       } catch (error) {
         toast.error("L'enregistrement de la PR n'a pas fonctionné");
       }
       handleClose();
-      refreshPr();
+      setRefreshData(!refreshData);
     },
   });
 
@@ -118,6 +123,7 @@ export default function ModalFormRequest({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestData]);
+
   return (
     <div className={styles.formStyle}>
       <button
@@ -227,8 +233,8 @@ ModalFormRequest.propTypes = {
   projectId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,
-  refreshPr: PropTypes.func.isRequired,
   requestId: PropTypes.number,
+  handleCreateOrUpdateRequest: PropTypes.func.isRequired,
 };
 ModalFormRequest.defaultProps = {
   requestId: null,

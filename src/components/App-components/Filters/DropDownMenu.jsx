@@ -1,8 +1,14 @@
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import {
+  FilterAlt,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from "@mui/icons-material";
 import { Button, Divider, Menu } from "@mui/material";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import MultiSelectDDMenu from "./MultiSelectDDMenu";
+import useScreenSize from "../../../hooks/useScreenSize";
+import Sort from "./Sort";
 
 export default function DropDownMenu({
   buttonText,
@@ -13,6 +19,8 @@ export default function DropDownMenu({
   disabled,
   haveFiltersBeenUsed,
   setHaveFiltersBeenUsed,
+  sortBy,
+  setSortBy,
 }) {
   /* --- State and functions used for MUI Menu component --- */
   const [anchorEl, setAnchorEl] = useState(null);
@@ -24,7 +32,9 @@ export default function DropDownMenu({
     setAnchorEl(null);
   };
 
-  /* --- State and func used for storing filters --- */
+  const screenSize = useScreenSize();
+
+  /* --- functions used for storing filters --- */
   const [showMenu, setShowMenu] = useState(null);
 
   // Updates filter state when mounting with provided data structure
@@ -139,7 +149,7 @@ export default function DropDownMenu({
           }
           endIcon={open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         >
-          {buttonText}
+          {screenSize < 440 ? <FilterAlt /> : buttonText}
         </Button>
         <Menu
           id="filters-menu"
@@ -148,6 +158,11 @@ export default function DropDownMenu({
           onClose={handleClose}
           MenuListProps={{
             "aria-labelledby": "filters-button",
+            sx: {
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "end",
+            },
           }}
           slotProps={{
             paper: {
@@ -156,16 +171,20 @@ export default function DropDownMenu({
                 color: "#FFFFFF",
                 paddingInline: "1rem",
                 borderTopRightRadius: "0",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "end",
-                justifyContent: "space-between",
               },
             },
           }}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
+          <Sort sortBy={sortBy} setSortBy={setSortBy} />
+          <Divider
+            sx={{
+              background: "white",
+              marginBlock: "1rem",
+              width: "100%",
+            }}
+          />
           {menuItems.map((section) => {
             const sectionName = Object.keys(section).join("");
             return (
@@ -194,14 +213,17 @@ DropDownMenu.propTypes = {
   menuItems: PropTypes.arrayOf(
     PropTypes.objectOf(PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)))
   ).isRequired,
-  user: PropTypes.string.isRequired,
+  user: PropTypes.string,
   selectedFilters: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
   setSelectedFilters: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   haveFiltersBeenUsed: PropTypes.bool.isRequired,
   setHaveFiltersBeenUsed: PropTypes.func.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  setSortBy: PropTypes.func.isRequired,
 };
 
 DropDownMenu.defaultProps = {
+  user: "owner",
   selectedFilters: null,
 };

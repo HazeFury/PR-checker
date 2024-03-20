@@ -44,7 +44,7 @@ export default function MultiSelectDDMenu({
           font: "600 1em Montserrat, sans serif",
         }}
         endIcon={
-          !showMenu[menuTitle] ? <KeyboardArrowUp /> : <KeyboardArrowDown />
+          showMenu[menuTitle] ? <KeyboardArrowUp /> : <KeyboardArrowDown />
         }
       >
         {menuTitle}

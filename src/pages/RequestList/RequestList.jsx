@@ -1,14 +1,18 @@
 import { Box, Button, Modal } from "@mui/material";
+import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
 import supabase from "../../services/client";
 import styles from "./RequestList.module.css";
 import ModalFormRequest from "../../components/App-components/Modals/ModalFormRequest";
 import ConfirmationModal from "../../components/App-components/Modals/ConfirmationModal";
 import refreshContext from "../../contexts/RefreshContext";
-import DropDownMenu from "../../components/UI-components/MUIRemix/DropDownMenu";
+import DropDownMenu from "../../components/App-components/Filters/DropDownMenu";
+import useScreenSize from "../../hooks/useScreenSize";
 
 const filters = [
   {
@@ -59,38 +63,12 @@ export default function RequestList() {
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [filteredRequestList, setFilteredRequestList] = useState([]);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
+  const [sortBy, setSortBy] = useState("old");
+  // for styling
+  const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
 
-  // ---------------------------- (2) handle function ------------------------------
-
-  // Function to refresh
-  const handleRefresh = () => {
-    setRefreshData(!refreshData);
-  };
-  // function to manage the state to open the modal to edit a PR
-  const handleOpenModalToEditRequest = (id) => {
-    setRequestId(id);
-    setopenModalAboutRequest(true);
-  };
-  // function to manage the state to open the modal to create a new PR
-  const handleOpenModalForNewRequest = () => {
-    setopenModalAboutRequest(true);
-  };
-  //  function to manage the state to open the confirmation modal
-  const handleOpenConfirmationModal = () => setOpenConfirmationModal(true);
-  // Function to close all modals at the same time after confirm the close
-  const handleCloseModals = () => {
-    setopenModalAboutRequest(false);
-    setOpenConfirmationModal(false);
-  };
-  // Function to re-open request modal after don't confirm the exit of the modal
-  const handleReOpenRequestModal = () => {
-    setOpenConfirmationModal(false);
-    setopenModalAboutRequest(true);
-  };
-  // --------------------------------------------------------------------------------
-
-  // --------------------------- (3) Async function ---------------------------------
+  // --------------------------- (2) Async function ---------------------------------
 
   // Function to verify if the user can view the request of this project
   async function verifyUser() {
@@ -124,6 +102,57 @@ export default function RequestList() {
 
     setProjectName(data.name);
   }
+  // function to delete a PR
+  const deleteRequest = async (id) => {
+    try {
+      await supabase.from("pr_request").delete().eq("id", id);
+      toast.success("La PR a bien été supprimée");
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de la PR");
+    }
+  };
+  // --------------------------------------------------------------------------------
+
+  // ---------------------------- (3) handle function ------------------------------
+
+  // Function to refresh
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+  // function to manage the state to open the modal to edit a PR
+  const handleOpenModalToEditRequest = (id) => {
+    setRequestId(id);
+    setopenModalAboutRequest(true);
+  };
+  // function to manage the state to open the modal to create a new PR
+  const handleOpenModalForNewRequest = () => {
+    setopenModalAboutRequest(true);
+  };
+  //  function to manage the state to open the confirmation modal
+  const handleOpenConfirmationModal = (id) => {
+    setRequestId(id);
+    setOpenConfirmationModal(true);
+  };
+  // Function to close all modals at the same time after confirm the close
+  const handleCloseModals = () => {
+    setopenModalAboutRequest(false);
+    setOpenConfirmationModal(false);
+  };
+  // Function to re-open request modal after don't confirm the exit of the modal
+  const handleReOpenRequestModal = () => {
+    setOpenConfirmationModal(false);
+    setopenModalAboutRequest(true);
+  };
+  // Function to delete a request then refresh PRlist
+  const handleDeleteRequest = async (id) => {
+    await deleteRequest(id);
+    setRefreshData(!refreshData);
+  };
+  // Function to refresh PRlist and PRcards after create or edit a PR
+  const handleCreateOrUpdateRequest = async () => {
+    setRefreshData(!refreshData);
+    setRequestId(null);
+  };
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------
@@ -156,16 +185,24 @@ export default function RequestList() {
       getAllPr();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshData]); // the dependancy needed to refetch data
-
+  }, [refreshData]);
+  // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
   useEffect(() => {
-    // used for filtering everytime a new filter is selected
+    if (userRole !== null) {
+      setSortBy(userRole === "owner" ? "old" : "new");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userRole]);
+  // ----- Used for filtering PR requests everytime a new filter is selected -----
+  useEffect(() => {
     let requestsToDisplay = requestList;
+    // Creates a copy of requestLis, then tries to filters on PR status first
     if (selectedFilters?.Statut?.join("") !== "0") {
       requestsToDisplay = requestsToDisplay.filter(
-        (el) => selectedFilters.Statut.indexOf(`${el.status}`) !== -1
+        (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
       );
     }
+    // If user is contributor, tries to filter on PR creator id
     if (
       userRole === "contributor" &&
       selectedFilters?.Demandes?.join("") === "1"
@@ -174,10 +211,17 @@ export default function RequestList() {
         (el) => el.user_uuid === userId
       );
     }
-
+    // Sort is happening after content has been filtered
+    requestsToDisplay.sort((a, b) =>
+      sortBy === "old"
+        ? new Date(a.created_at) - new Date(b.created_at)
+        : new Date(b.created_at) - new Date(a.created_at)
+    );
+    // Once it's all filtered and sorted, we can pass it to our state in order to display the results
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters]);
+  }, [selectedFilters, requestList, sortBy]);
+
   // ----------------------------------------------------------------------------------
 
   // Loader
@@ -212,32 +256,26 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <div>
-          <h3>{projectName}</h3>
-          <div className={styles.head_btn_box}>
+        <h3>{projectName}</h3>
+        <div className={styles.head_btn}>
+          <div className={styles.head_btn_new}>
             <Button
               variant="contained"
               sx={{
-                background: "#3883ba",
-                fontFamily: "Montserrat, sans serif",
-                mx: 2,
-                my: 2,
+                bgcolor: "button.main",
               }}
               onClick={handleRefresh}
             >
-              Actualiser{" "}
+              {screenSize < 767 ? <Refresh /> : "Actualiser"}
             </Button>
             <Button
               variant="contained"
               sx={{
-                background: "#3883ba",
-                fontFamily: "Montserrat, sans serif",
-                mx: 2,
-                my: 2,
+                bgcolor: "button.main",
               }}
               onClick={handleOpenModalForNewRequest}
             >
-              Nouvelle demande{" "}
+              {screenSize < 767 ? <Add /> : "Nouvelle demande"}
             </Button>
           </div>
           <Modal
@@ -256,7 +294,7 @@ export default function RequestList() {
                 projectId={projectId}
                 handleClose={handleCloseModals}
                 handleOpenConfirmationModal={handleOpenConfirmationModal}
-                refreshPr={handleRefresh}
+                handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
                 requestId={requestId}
               />
               {openConfirmationModal && (
@@ -264,28 +302,31 @@ export default function RequestList() {
                   title="Voulez-vous vraiment quitter votre enregistrement ?"
                   textButtonLeft="Revenir à mon enregistrement"
                   textButtonRight="Quitter"
-                  handleCloseModals={() => {
+                  handleRightButtonClick={() => {
                     handleCloseModals();
                   }}
-                  handleOpenRequestModal={() => {
+                  handleLeftButtonClick={() => {
                     handleReOpenRequestModal();
                   }}
                 />
               )}
             </Box>
           </Modal>
-        </div>
-        <div>
-          <DropDownMenu
-            buttonText="Filtres"
-            menuItems={userRole === "contributor" ? filters : [filters[0]]}
-            user={userRole}
-            selectedFilters={selectedFilters}
-            setSelectedFilters={setSelectedFilters}
-            disabled={!requestList.length}
-            haveFiltersBeenUsed={haveFiltersBeenUsed}
-            setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
-          />
+
+          <div className={styles.head_btn_filters}>
+            <DropDownMenu
+              buttonText="Filtres"
+              menuItems={userRole === "contributor" ? filters : [filters[0]]}
+              user={userRole}
+              selectedFilters={selectedFilters}
+              setSelectedFilters={setSelectedFilters}
+              disabled={!requestList.length}
+              haveFiltersBeenUsed={haveFiltersBeenUsed}
+              setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+            />
+          </div>
         </div>
       </div>
       <div className={styles.requests_container}>
@@ -293,11 +334,29 @@ export default function RequestList() {
           ? filteredRequestList.map((request) => (
               <RequestCard
                 key={request.id}
+                userRole={userRole}
                 request={request}
                 handleOpenModalAboutRequest={handleOpenModalToEditRequest}
+                handleOpenConfirmationModal={() =>
+                  handleOpenConfirmationModal(request.id)
+                }
               />
             ))
           : null}
+        {openConfirmationModal && (
+          <ConfirmationModal
+            title="Voulez-vous vraiment supprimer cette demande de PR ?"
+            textButtonLeft="Annuler"
+            textButtonRight="Supprimer"
+            handleRightButtonClick={() => {
+              handleDeleteRequest(requestId);
+              handleCloseModals();
+            }}
+            handleLeftButtonClick={() => {
+              handleCloseModals();
+            }}
+          />
+        )}
         {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
           <p className={styles.no_content_text}>
             Aucune demande de PR ne correspond à votre recherche
