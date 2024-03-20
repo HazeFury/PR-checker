@@ -16,36 +16,18 @@ export default function NotificationCard({ notification }) {
     return null;
   };
 
-  // on applique une bulle de notification s'il y a une nouvelle notification
-  const getNewBadge = () => {
-    if (notification.unread === 0) {
-      return styles.new_badge;
-    }
-    if (notification.unread === 1) {
-      return styles.display_none_class;
-    }
-    return null;
-  };
-
-  const getTextClass = () => {
-    if (notification.unread === 0) {
-      return styles.boldIfUnread;
-    }
-    return "";
-  };
+  const formattedDate = new Date(notification.created_at).toLocaleString();
 
   return (
     <div className={styles.notificationcard_container}>
       <div className={`${styles.status_color} ${getStatusColor() || ""}`} />
-      <div className={styles.is_new_badge}>
-        <div className={`${getNewBadge()}`} />
-      </div>
+
       <div className={styles.contentNotif}>
-        <div className={`${getTextClass()} ${styles.text_section}`}>
-          <p>{notification.text}</p>
+        <div className={styles.text_section}>
+          <p>{notification.message}</p>
         </div>
-        <div className={`${getTextClass()} ${styles.date_section}`}>
-          <p>Il y a {notification.created_at}</p>
+        <div className={styles.date_section}>
+          <p>Il y a {formattedDate}</p>
         </div>
       </div>
     </div>
@@ -54,9 +36,8 @@ export default function NotificationCard({ notification }) {
 
 NotificationCard.propTypes = {
   notification: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    unread: PropTypes.bool.isRequired,
+    type: PropTypes.number.isRequired,
+    message: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
   }).isRequired,
 };

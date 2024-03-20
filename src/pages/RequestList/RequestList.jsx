@@ -100,7 +100,7 @@ export default function RequestList() {
       .match({ user_uuid: userId, project_uuid: projectId })
       .single();
 
-    return userAccess; // the response will be either "null" or an object containing user information
+    return userAccess;
   }
 
   // Function to get all own pull request

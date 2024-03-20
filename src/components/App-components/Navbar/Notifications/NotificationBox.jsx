@@ -1,38 +1,39 @@
+import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
 import NotificationCard from "./NotificationCard";
+import supabase from "../../../../services/client";
 import styles from "./NotificationBox.module.css";
 
 export default function NotificationBox() {
-  const notifications = [
-    {
-      id: 1,
-      text: "La PR US22_Register a été validée",
-      type: "validation",
-      created_at: "1H",
-      unread: 0,
-    },
-    {
-      id: 2,
-      text: "La PR US32_Authentification est en attente de correction",
-      type: "correction",
-      created_at: "10H",
-      unread: 0,
-    },
-    {
-      id: 3,
-      text: "La PR US12_ProjectCard a été rejetée",
-      type: "annulation",
-      created_at: "1j",
-      unread: 1,
-    },
-    {
-      id: 4,
-      text: "La PR US12_ProjectCard a été rejetée",
-      type: "annulation",
-      created_at: "1j",
-      unread: 1,
-    },
-  ];
+  const [notifications, setNotifications] = useState([]);
 
+  const { userId } = useOutletContext();
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        // Récupérer les notifications de l'utilisateur actuel depuis le backend
+        const { data: notificationsData, error } = await supabase
+          .from("notification")
+          .select("*")
+          .eq("user_uuid", userId)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          throw new Error(
+            "Erreur lors de la récupération des notifications : "
+          );
+        }
+
+        // Mettre à jour l'état avec les nouvelles notifications récupérées
+        setNotifications(notificationsData);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    fetchNotifications();
+  });
   return (
     <div className={styles.notifications_container}>
       <div>
@@ -40,14 +41,10 @@ export default function NotificationBox() {
           <div className={styles.nodata}>
             <p>Vous n'avez actuellement aucune notification.</p>
           </div>
-        ) : (
-          notifications.map((notification) => (
-            <NotificationCard
-              key={notification.id}
-              notification={notification}
-            />
-          ))
-        )}
+        ) : null}
+        {notifications.map((notification) => (
+          <NotificationCard key={notification.id} notification={notification} />
+        ))}
       </div>
     </div>
   );
