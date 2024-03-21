@@ -7,33 +7,35 @@ import styles from "./NotificationBox.module.css";
 export default function NotificationBox() {
   const [notifications, setNotifications] = useState([]);
 
-  const { userId } = useOutletContext();
+  const [userId] = useOutletContext();
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        // Récupérer les notifications de l'utilisateur actuel depuis le backend
+    async function getNotifications() {
+      if (userId !== null) {
         const { data: notificationsData, error } = await supabase
           .from("notification")
-          .select("*")
-          .eq("user_uuid", userId)
-          .order("created_at", { ascending: false });
+          .select("*, notification_user!inner(*)")
+          .match({
+            "notification_user.user_uuid": userId,
+          });
 
         if (error) {
-          throw new Error(
-            "Erreur lors de la récupération des notifications : "
+          console.error(
+            "Erreur lors de la récupération des notifications :",
+            error.message
           );
+        } else {
+          console.info(
+            "Notifications récupérées avec succès :",
+            notificationsData
+          );
+          setNotifications(notificationsData);
         }
-
-        // Mettre à jour l'état avec les nouvelles notifications récupérées
-        setNotifications(notificationsData);
-      } catch (error) {
-        console.error(error.message);
       }
-    };
+    }
+    getNotifications();
+  }, [userId]);
 
-    fetchNotifications();
-  });
   return (
     <div className={styles.notifications_container}>
       <div>

@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import { Button, CircularProgress } from "@mui/material";
 import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
 import supabase from "../../services/client";
+import NotificationBox from "../../components/App-components/Navbar/Notifications/NotificationBox";
 import styles from "./ProjectPage.module.css";
 import refreshContext from "../../contexts/RefreshContext";
 
@@ -69,6 +70,7 @@ export default function ProjectPage() {
           </p>
         )}
       </div>
+      <NotificationBox />
     </div>
   );
 }

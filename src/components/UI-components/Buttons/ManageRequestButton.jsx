@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import supabase from "../../../services/client";
 import refreshContext from "../../../contexts/RefreshContext";
 import useScreenSize from "../../../hooks/useScreenSize";
+import createAndSendNotification from "../../../services/utilities/createAndSendNotification";
 
 export default function ManageRequestButton({
   request,
@@ -51,13 +52,22 @@ export default function ManageRequestButton({
   /* --- Function to update the status in the database --- */
   const handleStatusUpdate = async (e) => {
     try {
+      const newStatus = e.target.value;
       const { error } = await supabase
         .from("pr_request")
-        .update({ status: e.target.value })
+        .update({ status: newStatus })
         .eq("id", request.id);
 
+      const requestId = request.id;
+
       if (error) throw error;
-      else toast.success("Le statut a bien été mis à jour");
+      else {
+        if (newStatus === 5 || newStatus === 6) {
+          // Si le statut précédent n'était pas 5 ou 6 et le nouveau statut est 5 ou 6, cela créer la notification
+          await createAndSendNotification(newStatus, requestId);
+        }
+        toast.success("Le statut a bien été mis à jour");
+      }
     } catch (error) {
       toast.error("Une erreur s'est produite, veuillez réessayer plus tard");
       console.error(error);
