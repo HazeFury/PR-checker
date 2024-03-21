@@ -1,3 +1,44 @@
-.test {
-  color: white;
+.notFoundPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 90vh;
+}
+
+.notFoundPage a {
+  text-decoration: none;
+}
+.notFoundPage img {
+  width: 35vw;
+  min-width: 200px;
+}
+
+.notFoundBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 60vh;
+  width: 60vw;
+}
+
+.notFoundBlock h1 {
+  font-size: 9vw;
+}
+
+.notFoundBlock p {
+  font-size: 3vw;
+  text-align: center;
+  width: 70%;
+}
+
+@media screen and (max-width: 767px) {
+  .notFoundBlock h1 {
+    font-size: 12vw;
+  }
+
+  .notFoundBlock p {
+    font-size: 6vw;
+  }
 }
