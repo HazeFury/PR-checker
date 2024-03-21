@@ -30,7 +30,7 @@ function formatRelativeTime(dateString) {
   }
 }
 
-export default function NotificationCard({ notification }) {
+export default function NotificationCard({ notification, notificationUser }) {
   const getStatusColor = () => {
     if (notification.type === 1) {
       return styles.validation_color;
@@ -41,18 +41,38 @@ export default function NotificationCard({ notification }) {
     return null;
   };
 
+  // on applique une bulle de notification s'il y a une nouvelle notification
+  const getNewBadge = () => {
+    if (notificationUser.unread === 0) {
+      return styles.new_badge;
+    }
+    if (notificationUser.unread === 1) {
+      return styles.display_none_class;
+    }
+    return null;
+  };
+
+  const getTextClass = () => {
+    if (notificationUser.unread === 0) {
+      return styles.boldIfUnread;
+    }
+    return "";
+  };
+
   const formattedDate = formatRelativeTime(notification.created_at);
 
   return (
-    <div key={notification.id} className={styles.notificationcard_container}>
+    <div className={styles.notificationcard_container}>
       <div className={`${styles.status_color} ${getStatusColor() || ""}`} />
-
+      <div className={styles.is_new_badge}>
+        <div className={`${getNewBadge()}`} />
+      </div>
       <div className={styles.contentNotif}>
-        <div className={styles.text_section}>
+        <div className={`${getTextClass()} ${styles.text_section}`}>
           <p>{notification.message}</p>
         </div>
-        <div className={styles.date_section}>
-          <p>{formattedDate}</p>
+        <div className={`${getTextClass()} ${styles.date_section}`}>
+          <p>Il y a {formattedDate}</p>
         </div>
       </div>
     </div>
@@ -65,5 +85,9 @@ NotificationCard.propTypes = {
     type: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
+  }).isRequired,
+  notificationUser: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    unread: PropTypes.bool.isRequired,
   }).isRequired,
 };
