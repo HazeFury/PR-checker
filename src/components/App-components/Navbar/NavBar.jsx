@@ -16,6 +16,7 @@ import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
+import SettingsButton from "../Settings/SettingsButton";
 
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -75,6 +76,8 @@ export default function NavBar() {
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
         />
+
+        <SettingsButton />
 
         <Tooltip title="Account settings">
           <IconButton

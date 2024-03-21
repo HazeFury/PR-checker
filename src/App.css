@@ -56,3 +56,21 @@ button {
 button {
   cursor: pointer;
 }
+
+/* For browsers that support `scrollbar-*` properties */
+@supports (scrollbar-color: auto) {
+  body {
+    scrollbar-color: var(--action) transparent;
+  }
+}
+
+/* Otherwise, use `::-webkit-scrollbar-*` pseudo-elements */
+@supports selector(::-webkit-scrollbar) {
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  body::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-button {
+    background: var(--action);
+  }
+}
