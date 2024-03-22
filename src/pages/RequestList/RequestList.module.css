@@ -87,21 +87,3 @@
     align-content: space-between;
   }
 }
-
-/* For browsers that support `scrollbar-*` properties */
-@supports (scrollbar-color: auto) {
-  .requests_container {
-    scrollbar-color: var(--action) transparent;
-  }
-}
-
-/* Otherwise, use `::-webkit-scrollbar-*` pseudo-elements */
-@supports selector(::-webkit-scrollbar) {
-  .requests_container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .requests_container::-webkit-scrollbar-thumb,
-  .requests_container::-webkit-scrollbar-button {
-    background: var(--action);
-  }
-}
