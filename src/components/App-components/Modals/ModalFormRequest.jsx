@@ -66,8 +66,12 @@ export default function ModalFormRequest({
     validationSchema: Yup.object({
       title: Yup.string().required("Le titre est requis"),
       description: Yup.string().required("La description est requise"),
-      trello: Yup.string().required("Le lien Trello est requis"),
-      github: Yup.string().required("Le lien Github est requis"),
+      trello: Yup.string()
+        .url("Le lien Trello doit être une URL valide")
+        .required("Le lien Trello est requis"),
+      github: Yup.string()
+        .url("Le lien Github doit être une URL valide")
+        .required("Le lien Github est requis"),
     }),
 
     onSubmit: async (values) => {
