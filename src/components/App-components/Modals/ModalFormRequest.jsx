@@ -12,7 +12,7 @@ import TextInput from "../../UI-components/TextInput/TextInput";
 import styles from "./ModalFormRequest.module.css";
 import TextArea from "../../UI-components/TextArea/TextArea";
 import supabase from "../../../services/client";
-import TooltipIconError from "../../UI-components/MUIRemix/TooltipIconError";
+import TooltipIcon from "../../UI-components/MUIRemix/TooltipIcon";
 
 export default function ModalFormRequest({
   projectId,
@@ -150,10 +150,11 @@ export default function ModalFormRequest({
               readOnly={false}
             />
             {formik.touched.title && formik.errors.title ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.title}
                 top="0"
                 left="130px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -168,10 +169,11 @@ export default function ModalFormRequest({
               value={formik.values.description}
             />
             {formik.touched.description && formik.errors.description ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.description}
                 top="0"
                 left="110px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -186,10 +188,11 @@ export default function ModalFormRequest({
               value={formik.values.trello}
             />
             {formik.touched.trello && formik.errors.trello ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.trello}
                 top="0"
                 left="100px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -204,10 +207,11 @@ export default function ModalFormRequest({
               value={formik.values.github}
             />
             {formik.touched.github && formik.errors.github ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.github}
                 top="0"
                 left="110px"
+                color="var(--error)"
               />
             ) : null}
           </div>

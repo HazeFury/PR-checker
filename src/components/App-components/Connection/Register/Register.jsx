@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Register.module.css";
-import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
+import TooltipIcon from "../../../UI-components/MUIRemix/TooltipIcon";
 import supabase from "../../../../services/client";
 
 export default function Register() {
@@ -71,10 +71,11 @@ export default function Register() {
               value={formik.values.lastname}
             />
             {formik.touched.lastname && formik.errors.lastname ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.lastname}
                 top="0"
                 left="50px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -89,10 +90,11 @@ export default function Register() {
               value={formik.values.firstname}
             />
             {formik.touched.firstname && formik.errors.firstname ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.firstname}
                 top="0"
                 left="80px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -108,10 +110,11 @@ export default function Register() {
             value={formik.values.mail}
           />
           {formik.touched.mail && formik.errors.mail ? (
-            <TooltipIconError
+            <TooltipIcon
               tooltip={formik.errors.mail}
               top="0"
               left="120px"
+              color="var(--error)"
             />
           ) : null}
         </div>
@@ -127,10 +130,11 @@ export default function Register() {
               value={formik.values.password}
             />
             {formik.touched.password && formik.errors.password ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.password}
                 top="1px"
                 left="125px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -145,10 +149,11 @@ export default function Register() {
               value={formik.values.confirm}
             />
             {formik.touched.confirm && formik.errors.confirm ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.confirm}
                 top="1px"
                 left="125px"
+                color="var(--error)"
               />
             ) : null}
           </div>

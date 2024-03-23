@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Login.module.css";
-import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
+import TooltipIcon from "../../../UI-components/MUIRemix/TooltipIcon";
 import supabase from "../../../../services/client";
 
 export default function Login() {
@@ -56,10 +56,11 @@ export default function Login() {
             value={formik.values.mailLog}
           />
           {formik.touched.mailLog && formik.errors.mailLog ? (
-            <TooltipIconError
+            <TooltipIcon
               tooltip={formik.errors.mailLog}
               top="0"
               left="120px"
+              color="var(--error)"
             />
           ) : null}
         </div>
@@ -74,10 +75,11 @@ export default function Login() {
             value={formik.values.passwordLog}
           />
           {formik.touched.passwordLog && formik.errors.passwordLog ? (
-            <TooltipIconError
+            <TooltipIcon
               tooltip={formik.errors.passwordLog}
               top="0"
               left="125px"
+              color="var(--error)"
             />
           ) : null}
         </div>

@@ -16,6 +16,7 @@ import axios from "axios";
 import styles from "./GeneralSettings.module.css";
 import ConfirmationModal from "../Modals/ConfirmationModal";
 import supabase from "../../../services/client";
+import TooltipIcon from "../../UI-components/MUIRemix/TooltipIcon";
 
 export default function GeneralSettings({ projectData, getProjectData }) {
   const [newData, setNewData] = useState({
@@ -25,7 +26,7 @@ export default function GeneralSettings({ projectData, getProjectData }) {
     status: projectData.status,
   });
   const [modifyName, setModifyName] = useState(false); // for disabling/enabling project name input
-  const [showPic, setShowPic] = useState(false);
+  const [showPic, setShowPic] = useState(false); // for displaying project image
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false); // for confirmation modal on delete
   const navigate = useNavigate();
   const theme = useTheme();
@@ -167,8 +168,17 @@ export default function GeneralSettings({ projectData, getProjectData }) {
 
   return (
     <form onSubmit={handleUpdate} className={styles.form}>
+      {/* _____ Project ID _____ */}
       <div className={styles.item}>
-        <label htmlFor="project-id">ID du projet</label>
+        <div className={styles.label}>
+          <label htmlFor="project-id">ID du projet</label>
+          <TooltipIcon
+            tooltip="Partagez l'ID avec les gens souhaitant rejoindre le projet."
+            top="0"
+            left="100px"
+            color="var(--action)"
+          />
+        </div>
         <div style={{ display: "inline", position: "relative" }}>
           <input
             disabled
@@ -193,6 +203,7 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         </div>
       </div>
 
+      {/* _____ Project name _____ */}
       <div className={styles.item}>
         <label htmlFor="project-name">Nom du projet</label>
         <div style={{ display: "inline", position: "relative" }}>
@@ -220,8 +231,17 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         </div>
       </div>
 
+      {/* _____ Project status _____ */}
       <div className={styles.item}>
-        <p>Statut du projet</p>
+        <div className={styles.label}>
+          <p>Statut du projet</p>
+          <TooltipIcon
+            tooltip="Changez le statut de votre projet selon s'il est actif, en pause ou terminé."
+            top="0"
+            left="132px"
+            color="var(--action)"
+          />
+        </div>
         <FormControlLabel
           id="project-status"
           control={
@@ -236,8 +256,17 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         />
       </div>
 
+      {/* _____ Project invitations _____ */}
       <div className={styles.item}>
-        <p>Invitations ouvertes</p>
+        <div className={styles.label}>
+          <p>Invitations ouvertes</p>
+          <TooltipIcon
+            tooltip="Décidez si vous souhaitez recevoir des demandes pour rejoindre votre projet."
+            top="0"
+            left="162px"
+            color="var(--action)"
+          />
+        </div>
         <FormControlLabel
           id="project-invites"
           control={
@@ -252,6 +281,7 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         />
       </div>
 
+      {/* _____ Project picture _____ */}
       <div className={styles.item}>
         <div>
           <label htmlFor="project-pic">Image du projet</label>
@@ -292,8 +322,17 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         </div>
       </div>
 
+      {/* _____ Project delete _____ */}
       <div className={styles.item}>
-        <label htmlFor="delete-project">Supprimer le projet</label>
+        <div className={styles.label}>
+          <label htmlFor="delete-project">Supprimer le projet</label>
+          <TooltipIcon
+            tooltip="Supprimez le projet avec toutes les demandes de PR qu'il contient."
+            top="0"
+            left="160px"
+            color="var(--action)"
+          />
+        </div>
         <div>
           <Button
             id="delete-project"
@@ -315,6 +354,7 @@ export default function GeneralSettings({ projectData, getProjectData }) {
         </div>
       </div>
 
+      {/* _____ Save + Reset buttons _____ */}
       <div className={styles.buttons}>
         <Button
           type="submit"
