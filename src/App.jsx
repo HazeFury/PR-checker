@@ -47,7 +47,7 @@ export default function App() {
   return (
     <div>
       <refreshContext.Provider value={contextValue}>
-        <NavBar />
+        <NavBar userId={userId} refreshData={refreshData} />
         <Outlet context={[userId]} />
       </refreshContext.Provider>
     </div>

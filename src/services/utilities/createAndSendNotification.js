@@ -3,36 +3,20 @@ import supabase from "../client";
 const createAndSendNotification = async (newStatus, requestId) => {
   try {
     // Étape 1: Mettre à jour le statut de la PR Request dans la table
-    const { data, error: updateError } = await supabase
+    const { data: prUpdate, error: updateError } = await supabase
       .from("pr_request")
       .update({ status: newStatus })
       .eq("id", requestId)
       .select();
-    console.info("Statut de la PR Request mis à jour avec succès.", data);
+
     if (updateError) {
       console.error(
-        "Erreur lors de la mise à jour du statut de la PR Request :",
-        updateError.message
+        "Erreur lors de la mise à jour du statut de la PR Request :"
       );
       return;
     }
 
-    // Étape 3: Récupérer les informations de la PR Request
-    const { data: prRequests, error: prRequestError } = await supabase
-      .from("pr_request")
-      .select("*")
-      .eq("id", requestId);
-
-    console.info("Informations sur la PR Request :", prRequests);
-    if (prRequestError) {
-      console.error(
-        "Erreur lors de la récupération de la PR Request :",
-        prRequestError.message
-      );
-      return;
-    }
-
-    const prRequest = prRequests[0];
+    const prRequest = prUpdate[0];
 
     // Vérifier si la PR existe et si son statut est valide (5 ou 6)
     if (prRequest && (newStatus === 5 || newStatus === 6)) {
@@ -58,62 +42,57 @@ const createAndSendNotification = async (newStatus, requestId) => {
           .select("*");
 
       if (notificationError) {
-        console.error(
-          "Erreur lors de l'insertion de la notification :",
-          notificationError.message
-        );
+        console.error("Erreur lors de l'insertion de la notification :");
       } else {
         const notifId = notificationData[0].id;
-        console.info("Notification insérée avec succès.");
 
-        // Étape 4: Récupérer les utilisateurs du même projet que la PR
-        const { data: projectUsersData, error: projectUsersError } =
-          await supabase
-            .from("project_users")
-            .select("user_uuid")
-            .eq("project_uuid", prRequest.project_uuid);
-
-        console.info("Utilisateurs du projet récupérés :", projectUsersData);
-
-        if (projectUsersError) {
-          console.error(
-            "Erreur lors de la récupération des utilisateurs du projet :",
-            projectUsersError.message
-          );
-        } else {
-          const userList = projectUsersData.map((user) => user.user_uuid);
-          console.info(
-            "Liste des utilisateurs du projet récupérée :",
-            userList
-          );
-
-          // Étape 5: Insérer dans la table notification_user l'ID de la notification et l'ID de chaque utilisateur
-          const promises = userList.map((userId) =>
-            supabase
-              .from("notification_user")
-              .insert({ user_uuid: userId, notification_id: notifId })
-          );
-
-          const insertResults = await Promise.all(promises);
-          insertResults.forEach((result, index) => {
-            if (result.error) {
-              console.error(
-                "Erreur lors de l'insertion de la notification pour l'utilisateur",
-                userList[index],
-                ":",
-                result.error.message
-              );
-            } else {
-              console.info(
-                "Notification insérée avec succès pour l'utilisateur",
-                userList[index]
-              );
-            }
+        // Étape 4: Récupérer le groupe de l'utilisateur ayant soumis la PR Request
+        const { data: userGroupData, error: userGroupError } = await supabase
+          .from("project_users")
+          .select("group")
+          .match({
+            user_uuid: prRequest.user_uuid,
+            project_uuid: prRequest.project_uuid,
           });
+
+        if (userGroupError) {
+          console.error(
+            "Erreur lors de la récupération du groupe de l'utilisateur :"
+          );
+          return;
         }
+
+        const userGroup = userGroupData[0].group;
+
+        const { data: userListData, error: userListError } = await supabase
+          .from("project_users")
+          .select("user_uuid")
+          .match({
+            group: userGroup,
+            project_uuid: prRequest.project_uuid,
+          });
+
+        if (userListError) {
+          console.error(
+            "Erreur lors de la récupération de la liste des utilisateurs :"
+          );
+        }
+
+        const userList = userListData.map((user) => user.user_uuid);
+
+        // Étape 6: Insérer dans la table notification_user pour chaque utilisateur
+        userList.forEach(async (userId) => {
+          const { error: insertError } = await supabase
+            .from("notification_user")
+            .insert({ user_uuid: userId, notification_id: notifId });
+
+          if (insertError) {
+            console.error(
+              "Erreur lors de l'insertion de la notification pour l'utilisateur"
+            );
+          }
+        });
       }
-    } else {
-      console.warn("Aucune PR trouvée ou la PR n'est pas dans un état valide.");
     }
   } catch (error) {
     console.error("Une erreur s'est produite :", error);

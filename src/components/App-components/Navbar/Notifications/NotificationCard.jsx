@@ -30,7 +30,7 @@ function formatRelativeTime(dateString) {
   }
 }
 
-export default function NotificationCard({ notification, notificationUser }) {
+export default function NotificationCard({ notification }) {
   const getStatusColor = () => {
     if (notification.type === 1) {
       return styles.validation_color;
@@ -42,19 +42,20 @@ export default function NotificationCard({ notification, notificationUser }) {
   };
 
   // on applique une bulle de notification s'il y a une nouvelle notification
+
   const getNewBadge = () => {
-    if (notificationUser.unread === 0) {
-      return styles.new_badge;
+    if (notification.notification_user[0].unread === true) {
+      return `${styles.new_badge}`;
     }
-    if (notificationUser.unread === 1) {
-      return styles.display_none_class;
+    if (notification.notification_user[0].unread === false) {
+      return `${styles.display_none_class}`;
     }
-    return null;
+    return ""; // Retourne une chaîne vide si la condition n'est pas remplie
   };
 
   const getTextClass = () => {
-    if (notificationUser.unread === 0) {
-      return styles.boldIfUnread;
+    if (notification.notification_user[0].unread === true) {
+      return `${styles.boldIfUnread}`;
     }
     return "";
   };
@@ -72,7 +73,7 @@ export default function NotificationCard({ notification, notificationUser }) {
           <p>{notification.message}</p>
         </div>
         <div className={`${getTextClass()} ${styles.date_section}`}>
-          <p>Il y a {formattedDate}</p>
+          <p>{formattedDate}</p>
         </div>
       </div>
     </div>
@@ -85,9 +86,10 @@ NotificationCard.propTypes = {
     type: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
-  }).isRequired,
-  notificationUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    unread: PropTypes.bool.isRequired,
+    notification_user: PropTypes.arrayOf(
+      PropTypes.shape({
+        unread: PropTypes.bool.isRequired,
+      })
+    ).isRequired,
   }).isRequired,
 };

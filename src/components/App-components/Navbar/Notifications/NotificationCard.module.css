@@ -58,6 +58,11 @@
   background-color: rgb(241, 87, 87);
 }
 
+.correction_color {
+  background-color: rgb(255, 192, 75);
+}
+
 .boldIfUnread {
   font-weight: 700;
+  color: red;
 }

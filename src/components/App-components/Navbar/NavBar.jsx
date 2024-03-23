@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -19,11 +20,20 @@ import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
 
-export default function NavBar() {
+export default function NavBar({ userId, refreshData }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const theme = useTheme();
+
+  const handleOpenNotification = () => {
+    setOpenNotificationBox(true);
+  };
+
+  const handleCloseNotification = () => {
+    setOpenNotificationBox(false);
+  };
 
   const handleOpenJoinProjectModal = () => {
     setOpenJoinProjectModal(true);
@@ -78,7 +88,13 @@ export default function NavBar() {
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
         />
-        <NotificationButtonNav />
+        <NotificationButtonNav
+          handleOpenNotification={handleOpenNotification}
+          handleCloseNotification={handleCloseNotification}
+          openNotificationBox={openNotificationBox}
+          userId={userId}
+          refreshData={refreshData}
+        />
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleMenuClick}
@@ -156,3 +172,12 @@ export default function NavBar() {
     </nav>
   );
 }
+
+NavBar.propTypes = {
+  userId: PropTypes.string,
+  refreshData: PropTypes.func.isRequired,
+};
+
+NavBar.defaultProps = {
+  userId: "",
+};

@@ -1,36 +1,22 @@
-import { useOutletContext } from "react-router-dom";
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import NotificationCard from "./NotificationCard";
 import supabase from "../../../../services/client";
 import styles from "./NotificationBox.module.css";
 
-export default function NotificationBox() {
+export default function NotificationBox({ userId }) {
   const [notifications, setNotifications] = useState([]);
-
-  const [userId] = useOutletContext();
-
   useEffect(() => {
     async function getNotifications() {
       if (userId !== null) {
-        const { data: notificationsData, error } = await supabase
+        const { data: notificationsData } = await supabase
           .from("notification")
           .select("*, notification_user!inner(*)")
           .match({
             "notification_user.user_uuid": userId,
           });
 
-        if (error) {
-          console.error(
-            "Erreur lors de la récupération des notifications :",
-            error.message
-          );
-        } else {
-          console.info(
-            "Notifications récupérées avec succès :",
-            notificationsData
-          );
-          setNotifications(notificationsData);
-        }
+        setNotifications(notificationsData);
       }
     }
     getNotifications();
@@ -44,10 +30,24 @@ export default function NotificationBox() {
             <p>Vous n'avez actuellement aucune notification.</p>
           </div>
         ) : null}
-        {notifications.map((notification) => (
-          <NotificationCard key={notification.id} notification={notification} />
-        ))}
+        {notifications
+          .slice() // Create a copy of the array to avoid mutating the original array
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Sort the notifications by created_at in descending order
+          .map((notification) => (
+            <NotificationCard
+              key={notification.id}
+              notification={notification}
+            />
+          ))}
       </div>
     </div>
   );
 }
+
+NotificationBox.propTypes = {
+  userId: PropTypes.string,
+};
+
+NotificationBox.defaultProps = {
+  userId: "",
+};

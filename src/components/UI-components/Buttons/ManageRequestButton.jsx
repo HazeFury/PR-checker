@@ -19,6 +19,7 @@ export default function ManageRequestButton({
   statusColor,
 }) {
   const screenSize = useScreenSize();
+  const requestId = request.id;
   const userId = useOutletContext();
   const { refreshData, setRefreshData } = useContext(refreshContext);
 
@@ -58,12 +59,10 @@ export default function ManageRequestButton({
         .update({ status: newStatus })
         .eq("id", request.id);
 
-      const requestId = request.id;
-
       if (error) throw error;
       else {
         if (newStatus === 5 || newStatus === 6) {
-          // Si le statut précédent n'était pas 5 ou 6 et le nouveau statut est 5 ou 6, cela créer la notification
+          // Si le nouveau statut est 5 ou 6, cela créer la notification
           await createAndSendNotification(newStatus, requestId);
         }
         toast.success("Le statut a bien été mis à jour");

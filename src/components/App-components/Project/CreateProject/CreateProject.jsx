@@ -37,7 +37,6 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
-        console.info("le userId est : ", userId);
 
         // To get the picture
         const newPictureForProject = await axios
@@ -45,8 +44,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .then((res) => {
             return res.request.responseURL;
           })
-          .catch((err) => {
-            console.error(err);
+          .catch(() => {
+            console.error("impossible de récupérer une image");
           });
 
         // To create the project with name and picture

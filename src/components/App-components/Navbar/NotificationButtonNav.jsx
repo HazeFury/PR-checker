@@ -4,31 +4,61 @@ import PropTypes from "prop-types";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import NotificationBox from "./Notifications/NotificationBox";
+import supabase from "../../../services/client";
 import styles from "./NotificationButtonNav.module.css";
 
-export default function NotificationButtonNav({ notificationUser }) {
-  const [openNotificationBox, setOpenNotificationBox] = useState(false);
+export default function NotificationButtonNav({
+  openNotificationBox,
+  handleOpenNotification,
+  handleCloseNotification,
+  userId,
+}) {
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const location = useLocation();
   const { uuid } = useParams();
 
   useEffect(() => {
-    // Check if notificationUser est un tableau et à une methode filtre
-    if (
-      Array.isArray(notificationUser) &&
-      typeof notificationUser.filter === "function"
-    ) {
-      // Calcule le nombre de notifications non lues
-      const unreadCount = notificationUser.filter(
-        (notif) => notif.unread
-      ).length;
-      setUnreadNotificationsCount(unreadCount);
-    }
-  }, [notificationUser]);
+    async function fetchNotifications() {
+      if (userId !== null) {
+        try {
+          const { data, error } = await supabase
+            .from("notification_user")
+            .select("*")
+            .eq("user_uuid", userId); // Assurez-vous d'avoir userId défini
 
-  const handleNotification = () => {
-    setOpenNotificationBox(!openNotificationBox);
-    setUnreadNotificationsCount(0); // Marque toutes les notifications comme lues quand l'user clique
+          if (error) {
+            throw error;
+          }
+
+          if (Array.isArray(data)) {
+            const unreadCount = data.filter((notif) => notif.unread).length;
+            setUnreadNotificationsCount(unreadCount);
+          }
+        } catch (error) {
+          console.error("Error fetching notifications:");
+        }
+      }
+    }
+
+    fetchNotifications();
+  }, [userId]);
+
+  const handleNotificationClose = async () => {
+    try {
+      // Met à jour la base de données pour marquer toutes les notifications comme lues
+      await supabase
+        .from("notification_user")
+        .update({ unread: false })
+        .eq("user_uuid", userId);
+
+      // Met à jour l'état pour gérer les notifications
+      setUnreadNotificationsCount(0);
+
+      // Appelle la fonction passer en props de NavBar pour ouvrir
+      handleCloseNotification();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const isOnPRList = location.pathname.startsWith("/project/") && uuid;
@@ -43,12 +73,16 @@ export default function NotificationButtonNav({ notificationUser }) {
                 : `${styles.notification_box_position_goup}`
             }
           >
-            {openNotificationBox && <NotificationBox />}
+            {openNotificationBox && <NotificationBox userId={userId} />}
           </div>
           <div className={styles.header_box}>
             <div className={styles.header_notification}>
               <ListItemButton
-                onClick={handleNotification}
+                onClick={
+                  openNotificationBox
+                    ? handleNotificationClose
+                    : handleOpenNotification
+                }
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -78,10 +112,12 @@ export default function NotificationButtonNav({ notificationUser }) {
 }
 
 NotificationButtonNav.propTypes = {
-  notificationUser: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      unread: PropTypes.bool.isRequired,
-    })
-  ).isRequired,
+  openNotificationBox: PropTypes.bool.isRequired,
+  handleOpenNotification: PropTypes.func.isRequired,
+  handleCloseNotification: PropTypes.func.isRequired,
+  userId: PropTypes.string,
+};
+
+NotificationButtonNav.defaultProps = {
+  userId: "",
 };
