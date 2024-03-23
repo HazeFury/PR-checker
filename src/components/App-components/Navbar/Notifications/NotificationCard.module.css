@@ -26,19 +26,19 @@
   height: 15px;
   width: 15px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #3883ba;
 }
 
 .contentNotif {
   display: flex;
   flex-direction: column;
+  max-width: 85%;
   flex-grow: 1;
   padding: 0 10px;
 }
 
 .text_section p {
   display: flex;
-  justify-content: center;
   color: rgb(0, 0, 0);
   font-size: 0.75rem;
 }
@@ -64,5 +64,4 @@
 
 .boldIfUnread {
   font-weight: 700;
-  color: red;
 }

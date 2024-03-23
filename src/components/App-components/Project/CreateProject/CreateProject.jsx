@@ -20,7 +20,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
   };
 
   const handleModalCloseCreate = () => {
-    onCloseModalCreate(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalCreate(); // Call the function to close the modal
   };
 
   const formik = useFormik({
@@ -65,6 +65,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
             project_uuid: projectId,
             role: "owner",
             pending: false,
+            group: null,
           })
           .select();
 
@@ -80,6 +81,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     formik.handleSubmit();
   };
 
+  // CSS for the modal
   const style = {
     position: "absolute",
     display: "flex",

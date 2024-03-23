@@ -21,7 +21,10 @@ export default function ProjectButtonNav({
   };
   const location = useLocation();
 
+  // Button are visible on the first page only
   const isProjectPage = location.pathname === "/";
+
+  // Button to create and join a project
   const renderExtraButton = () => {
     if (isProjectPage) {
       if (width > 1064) {

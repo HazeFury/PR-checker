@@ -21,45 +21,49 @@ import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
 import SettingsButton from "../Settings/SettingsButton";
 
-export default function NavBar({ userId, refreshData }) {
+export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const theme = useTheme();
 
+  // to open the notification list
   const handleOpenNotification = () => {
     setOpenNotificationBox(true);
   };
 
+  // to close the notification list
   const handleCloseNotification = () => {
     setOpenNotificationBox(false);
   };
 
+  // to open the join project modal
   const handleOpenJoinProjectModal = () => {
     setOpenJoinProjectModal(true);
   };
-
+  // to close the join project modal
   const handleCloseJoinProjectModal = () => {
     setOpenJoinProjectModal(false);
   };
-
+  // to open the create project modal
   const handleOpenCreateProjectModal = () => {
     setOpenCreateProjectModal(true);
   };
-
+  // to open the create project modal
   const handleCloseCreateProjectModal = () => {
     setOpenCreateProjectModal(false);
   };
-
+  // to open the user menu
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  // to close the user menu
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  // Function to logout
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -94,8 +98,8 @@ export default function NavBar({ userId, refreshData }) {
           handleCloseNotification={handleCloseNotification}
           openNotificationBox={openNotificationBox}
           userId={userId}
-          refreshData={refreshData}
         />
+
         <SettingsButton />
 
         <Tooltip title="Account settings">
@@ -178,7 +182,6 @@ export default function NavBar({ userId, refreshData }) {
 
 NavBar.propTypes = {
   userId: PropTypes.string,
-  refreshData: PropTypes.func.isRequired,
 };
 
 NavBar.defaultProps = {

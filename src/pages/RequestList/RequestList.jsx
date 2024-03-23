@@ -269,15 +269,17 @@ export default function RequestList() {
             >
               {screenSize < 767 ? <Refresh /> : "Actualiser"}
             </Button>
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "button.main",
-              }}
-              onClick={handleOpenModalForNewRequest}
-            >
-              {screenSize < 767 ? <Add /> : "Nouvelle demande"}
-            </Button>
+            {userRole === "contributor" && (
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: "button.main",
+                }}
+                onClick={handleOpenModalForNewRequest}
+              >
+                {screenSize < 767 ? <Add /> : "Nouvelle demande"}
+              </Button>
+            )}
           </div>
           <Modal
             open={openModalAboutRequest}

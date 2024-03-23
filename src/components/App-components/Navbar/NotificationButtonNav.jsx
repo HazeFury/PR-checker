@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import ListItemButton from "@mui/material/ListItemButton";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import NotificationBox from "./Notifications/NotificationBox";
 import supabase from "../../../services/client";
+import UserContext from "../../../contexts/UserContext";
 import styles from "./NotificationButtonNav.module.css";
 
 export default function NotificationButtonNav({
@@ -15,8 +16,10 @@ export default function NotificationButtonNav({
 }) {
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const location = useLocation();
+  const { userRole } = useContext(UserContext);
   const { uuid } = useParams();
 
+  /* --- Function to update the notifications unread in the button --- */
   useEffect(() => {
     async function fetchNotifications() {
       if (userId !== null) {
@@ -24,12 +27,12 @@ export default function NotificationButtonNav({
           const { data, error } = await supabase
             .from("notification_user")
             .select("*")
-            .eq("user_uuid", userId); // Assurez-vous d'avoir userId défini
+            .eq("user_uuid", userId);
 
           if (error) {
             throw error;
           }
-
+          // To count the numbers of unread notification
           if (Array.isArray(data)) {
             const unreadCount = data.filter((notif) => notif.unread).length;
             setUnreadNotificationsCount(unreadCount);
@@ -45,23 +48,29 @@ export default function NotificationButtonNav({
 
   const handleNotificationClose = async () => {
     try {
-      // Met à jour la base de données pour marquer toutes les notifications comme lues
+      //  Update the database to put all notification as read
       await supabase
         .from("notification_user")
         .update({ unread: false })
         .eq("user_uuid", userId);
 
-      // Met à jour l'état pour gérer les notifications
+      // Update the state to handle notification_user.unread
       setUnreadNotificationsCount(0);
 
-      // Appelle la fonction passer en props de NavBar pour ouvrir
+      // Call the function to open the button from NavBar
       handleCloseNotification();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const isOnPRList = location.pathname.startsWith("/project/") && uuid;
+  // Button are visible only if you are contributor and on the project page
+  const isOnPRList =
+    location.pathname.startsWith("/project/") &&
+    uuid &&
+    userRole === "contributor";
+
+  // Button to open the notifications list
   const renderExtraButton = () => {
     if (isOnPRList) {
       return (

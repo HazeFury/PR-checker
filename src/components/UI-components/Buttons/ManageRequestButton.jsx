@@ -62,7 +62,7 @@ export default function ManageRequestButton({
       if (error) throw error;
       else {
         if (newStatus === 5 || newStatus === 6) {
-          // Si le nouveau statut est 5 ou 6, cela créer la notification
+          // If status is 5 or 6, create and send notification
           await createAndSendNotification(newStatus, requestId);
         }
         toast.success("Le statut a bien été mis à jour");

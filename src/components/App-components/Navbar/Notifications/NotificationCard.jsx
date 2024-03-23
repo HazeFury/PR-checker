@@ -10,6 +10,7 @@ function formatRelativeTime(dateString) {
   const diffHours = Math.round(diffMinutes / 60);
   const diffDays = Math.round(diffHours / 24);
 
+  /* --- To transform the data from created_at --- */
   switch (true) {
     case diffSeconds < 2:
       return `il y a ${diffSeconds} seconde`;
@@ -31,6 +32,7 @@ function formatRelativeTime(dateString) {
 }
 
 export default function NotificationCard({ notification }) {
+  // Function to choose the color depending on the type
   const getStatusColor = () => {
     if (notification.type === 1) {
       return styles.validation_color;
@@ -41,7 +43,7 @@ export default function NotificationCard({ notification }) {
     return null;
   };
 
-  // on applique une bulle de notification s'il y a une nouvelle notification
+  // Function to apply a bubble if the notification is unread
 
   const getNewBadge = () => {
     if (notification.notification_user[0].unread === true) {
@@ -50,9 +52,10 @@ export default function NotificationCard({ notification }) {
     if (notification.notification_user[0].unread === false) {
       return `${styles.display_none_class}`;
     }
-    return ""; // Retourne une chaîne vide si la condition n'est pas remplie
+    return "";
   };
 
+  // Function to apply bold on the text if unread
   const getTextClass = () => {
     if (notification.notification_user[0].unread === true) {
       return `${styles.boldIfUnread}`;

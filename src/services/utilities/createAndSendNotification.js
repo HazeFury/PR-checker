@@ -2,7 +2,7 @@ import supabase from "../client";
 
 const createAndSendNotification = async (newStatus, requestId) => {
   try {
-    // Étape 1: Mettre à jour le statut de la PR Request dans la table
+    /* --- Step 1: Update PR Request status in table via ManageRequestButton props --- */
     const { data: prUpdate, error: updateError } = await supabase
       .from("pr_request")
       .update({ status: newStatus })
@@ -16,13 +16,16 @@ const createAndSendNotification = async (newStatus, requestId) => {
       return;
     }
 
+    // Adding the updated PR (status) to a variable
     const prRequest = prUpdate[0];
 
-    // Vérifier si la PR existe et si son statut est valide (5 ou 6)
+    /* --- Step 2: Prepare information for notification addition --- */
+
+    // Verify if the PR exists and the status is valid(5 ou 6)
     if (prRequest && (newStatus === 5 || newStatus === 6)) {
-      // Associer le statut de la PR avec le type de notification
+      // Associate PR status with notification type
       const notificationType = newStatus === 5 ? 2 : 1;
-      // Créer un message de notification en fonction du statut
+      // Create a notification message according to the statut
       let notificationMessage = "";
       if (newStatus === 5) {
         notificationMessage = `Votre PR "${prRequest.title}" a été refusée.`;
@@ -30,7 +33,7 @@ const createAndSendNotification = async (newStatus, requestId) => {
         notificationMessage = `Votre PR "${prRequest.title}" a été acceptée.`;
       }
 
-      // Étape 3: Insérer la notification dans la table
+      /* --- Étape 3: Insert notification within table --- */
       const { data: notificationData, error: notificationError } =
         await supabase
           .from("notification")
@@ -44,9 +47,10 @@ const createAndSendNotification = async (newStatus, requestId) => {
       if (notificationError) {
         console.error("Erreur lors de l'insertion de la notification :");
       } else {
+        // Adding notification into a variable
         const notifId = notificationData[0].id;
 
-        // Étape 4: Récupérer le groupe de l'utilisateur ayant soumis la PR Request
+        /* --- Step 4 : Recover the user group having submitted the PR --- */
         const { data: userGroupData, error: userGroupError } = await supabase
           .from("project_users")
           .select("group")
@@ -62,8 +66,10 @@ const createAndSendNotification = async (newStatus, requestId) => {
           return;
         }
 
+        // Adding the user group having submitted the PR
         const userGroup = userGroupData[0].group;
 
+        /* --- Step 5 : Find all user that are in the same group and project that the user having submitted the PR --- */
         const { data: userListData, error: userListError } = await supabase
           .from("project_users")
           .select("user_uuid")
@@ -78,9 +84,10 @@ const createAndSendNotification = async (newStatus, requestId) => {
           );
         }
 
+        // Adding the user list with same project and group
         const userList = userListData.map((user) => user.user_uuid);
 
-        // Étape 6: Insérer dans la table notification_user pour chaque utilisateur
+        /* --- Step : Insert in notification_user every user of that list --- */
         userList.forEach(async (userId) => {
           const { error: insertError } = await supabase
             .from("notification_user")
