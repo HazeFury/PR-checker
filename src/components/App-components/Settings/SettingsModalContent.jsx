@@ -11,7 +11,7 @@ export default function SettingsModalContent({ content }) {
   const projectId = useParams();
 
   // Function to get the data from the project on screen
-  async function getProjectData() {
+  const getProjectData = async () => {
     try {
       const { data } = await supabase
         .from("projects")
@@ -23,7 +23,7 @@ export default function SettingsModalContent({ content }) {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     getProjectData();
@@ -32,8 +32,13 @@ export default function SettingsModalContent({ content }) {
 
   if (projectData) {
     return (
-      <section style={{ paddingTop: "1rem" }}>
-        {content === "Général" && <GeneralSettings projectData={projectData} />}
+      <section style={{ paddingTop: "1.5rem", width: "90%" }}>
+        {content === "Général" && (
+          <GeneralSettings
+            projectData={projectData}
+            getProjectData={getProjectData}
+          />
+        )}
         {content === "Membres" && <ContributorSettings />}
         {content === "Demandes" && <JoinSettings />}
       </section>

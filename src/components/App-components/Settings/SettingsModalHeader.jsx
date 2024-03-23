@@ -13,7 +13,7 @@ import useScreenSize from "../../../hooks/useScreenSize";
 
 const sectionNames = ["Général", "Membres", "Demandes"];
 
-export default function SettingsModalHeader({ content, handleClick }) {
+export default function SettingsModalHeader({ content, setContent }) {
   const width = useScreenSize();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,18 +25,19 @@ export default function SettingsModalHeader({ content, handleClick }) {
     setAnchorEl(null);
   };
 
+  const handleClick = (e) => {
+    setContent(e.target.innerText);
+    if (width <= 767) setAnchorEl(null);
+  };
+
   return (
     <header
       style={{
         width: "90%",
-        backdropFilter: "blur(10px)",
-        borderRadius: "10px",
-        position: "sticky",
-        top: 0,
       }}
     >
       <nav>
-        {width > 440 ? (
+        {width > 767 ? (
           <ul style={{ display: "flex", justifyContent: "space-around" }}>
             {sectionNames.map((name) => {
               return (
@@ -81,8 +82,7 @@ export default function SettingsModalHeader({ content, handleClick }) {
               slotProps={{
                 paper: {
                   sx: {
-                    bgcolor: "transparent",
-                    backdropFilter: "blur(10px)",
+                    bgcolor: "modal.background",
                   },
                 },
               }}
@@ -116,5 +116,5 @@ export default function SettingsModalHeader({ content, handleClick }) {
 
 SettingsModalHeader.propTypes = {
   content: PropTypes.string.isRequired,
-  handleClick: PropTypes.func.isRequired,
+  setContent: PropTypes.func.isRequired,
 };

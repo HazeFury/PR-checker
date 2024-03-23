@@ -1,15 +1,13 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Dialog } from "@mui/material";
+import { useTheme } from "@emotion/react";
 import SettingsModalHeader from "./SettingsModalHeader";
 import SettingsModalContent from "./SettingsModalContent";
 
 export default function SettingsModal({ open, handleClose }) {
   const [content, setContent] = useState("Général");
-
-  const handleClick = (e) => {
-    setContent(e.target.innerText);
-  };
+  const theme = useTheme();
 
   return (
     <Dialog
@@ -20,16 +18,29 @@ export default function SettingsModal({ open, handleClose }) {
       PaperProps={{
         sx: {
           bgcolor: "modal.background",
-          width: ["75svw", "75svw", "70svw", "60svw"],
-          maxHeight: ["80svh", "80svh", "70svh", "60svh"],
+          width: "60svw",
+          height: "70svh",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           padding: "1rem",
+
+          [theme.breakpoints.down("sm")]: {
+            width: "75svw",
+          },
+          [theme.breakpoints.down("md")]: {
+            height: "85svh",
+          },
+          [theme.breakpoints.between("sm", "lg")]: {
+            width: "70svw",
+          },
+          [theme.breakpoints.up("md")]: {
+            maxHeight: "500px",
+          },
         },
       }}
     >
-      <SettingsModalHeader content={content} handleClick={handleClick} />
+      <SettingsModalHeader content={content} setContent={setContent} />
       <SettingsModalContent content={content} />
     </Dialog>
   );
