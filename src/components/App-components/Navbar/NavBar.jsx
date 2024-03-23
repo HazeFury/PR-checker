@@ -19,6 +19,7 @@ import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
+import SettingsButton from "../Settings/SettingsButton";
 
 export default function NavBar({ userId, refreshData }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -95,6 +96,8 @@ export default function NavBar({ userId, refreshData }) {
           userId={userId}
           refreshData={refreshData}
         />
+        <SettingsButton />
+
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleMenuClick}

@@ -13,6 +13,7 @@ import ConfirmationModal from "../../components/App-components/Modals/Confirmati
 import refreshContext from "../../contexts/RefreshContext";
 import DropDownMenu from "../../components/App-components/Filters/DropDownMenu";
 import useScreenSize from "../../hooks/useScreenSize";
+import UserContext from "../../contexts/UserContext";
 
 const filters = [
   {
@@ -41,7 +42,7 @@ export default function RequestList() {
   // state for loader
   const [loading, setLoading] = useState(true);
   // state for the role of the user
-  const [userRole, setUserRole] = useState(null);
+  const { userRole, setUserRole } = useContext(UserContext);
   // get the userId from the context of the Outlet
   const [userId] = useOutletContext();
   // import the refresh state to actualize the list

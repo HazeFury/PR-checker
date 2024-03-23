@@ -6,6 +6,7 @@ import Connection from "./pages/Connection/Connection";
 import NavBar from "./components/App-components/Navbar/NavBar";
 import supabase from "./services/client";
 import refreshContext from "./contexts/RefreshContext";
+import { UserContextProvider } from "./contexts/UserContext";
 
 export default function App() {
   const [thisSession, setThisSession] = useState(null);
@@ -47,8 +48,10 @@ export default function App() {
   return (
     <div>
       <refreshContext.Provider value={contextValue}>
-        <NavBar userId={userId} refreshData={refreshData} />
-        <Outlet context={[userId]} />
+        <UserContextProvider>
+          <NavBar userId={userId} />
+          <Outlet context={[userId]} />
+        </UserContextProvider>
       </refreshContext.Provider>
     </div>
   );
