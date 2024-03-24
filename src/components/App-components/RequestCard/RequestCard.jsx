@@ -114,7 +114,7 @@ export default function RequestCard({
           </p>
           <p>
             Par :{screenSize < 1200 && screenSize > 1024 && <br />}{" "}
-            <b> Marco</b>
+            <b> {request.opened_by}</b>
           </p>
           {screenSize > 1024 ? (
             <p>
@@ -171,6 +171,7 @@ RequestCard.propTypes = {
     description: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
     user_uuid: PropTypes.string.isRequired,
+    opened_by: PropTypes.string.isRequired,
   }).isRequired,
   handleOpenModalAboutRequest: PropTypes.func.isRequired,
   handleOpenConfirmationModal: PropTypes.func.isRequired,

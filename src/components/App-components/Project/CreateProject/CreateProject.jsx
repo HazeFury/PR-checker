@@ -37,6 +37,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
+        const userFirstName = userData.session.user.user_metadata.first_name;
+        const userLastName = userData.session.user.user_metadata.last_name;
 
         // To get the picture
         const newPictureForProject = await axios
@@ -62,6 +64,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .from("project_users")
           .insert({
             user_uuid: userId,
+            user_firstname: userFirstName,
+            user_lastname: userLastName,
             project_uuid: projectId,
             role: "owner",
             pending: false,
@@ -69,6 +73,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .select();
 
         handleModalCloseCreate(); // close the modal
+        formik.resetForm();
         handleRefresh(); // refetch the project list after the creation
       } catch (error) {
         console.error("La création du projet n'a pas fonctionné");
@@ -88,7 +93,12 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 690,
+    width: {
+      sm: "400px",
+      md: "670px",
+      lg: "690px",
+      xl: "710px",
+    },
     height: 405,
     backgroundColor: "#292929",
     borderRadius: "0.625rem",
