@@ -83,6 +83,15 @@ export default function ComponentsPlayground() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    async function getSession() {
+      const { data } = await supabase.auth.getSession();
+      const userInfos = data.session.user.user_metadata.first_name;
+      console.info(userInfos);
+    }
+    getSession();
+  }, [refresh]);
   const insertTest = async () => {
     try {
       const { error } = await supabase.from("pr_request").insert({
