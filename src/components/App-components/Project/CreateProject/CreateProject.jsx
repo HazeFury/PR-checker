@@ -73,6 +73,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .select();
 
         handleModalCloseCreate(); // close the modal
+        formik.resetForm();
         handleRefresh(); // refetch the project list after the creation
       } catch (error) {
         console.error("La création du projet n'a pas fonctionné");
@@ -92,7 +93,12 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 690,
+    width: {
+      sm: "400px",
+      md: "670px",
+      lg: "690px",
+      xl: "710px",
+    },
     height: 405,
     backgroundColor: "#292929",
     borderRadius: "0.625rem",

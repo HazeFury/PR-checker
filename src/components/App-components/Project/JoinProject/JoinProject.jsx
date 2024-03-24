@@ -47,6 +47,7 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
         });
 
         handleModalCloseJoin();
+        formik.resetForm();
         toast.success("Votre demande a bien été envoyée");
       } catch (error) {
         toast.error("Votre demande n'a pas fonctionnée");
@@ -65,7 +66,12 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 690,
+    width: {
+      sm: "400px",
+      md: "670px",
+      lg: "690px",
+      xl: "710px",
+    },
     height: 405,
     backgroundColor: "#292929",
     borderRadius: "0.625rem",
