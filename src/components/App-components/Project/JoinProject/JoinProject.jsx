@@ -22,6 +22,8 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
+        const userFirstName = userData.session.user.user_metadata.first_name;
+        const userLastName = userData.session.user.user_metadata.last_name;
 
         // Check if the project exists
         const { data: projectData } = await supabase
@@ -40,6 +42,8 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
           .from("project_users")
           .insert({
             user_uuid: userId,
+            user_firstname: userFirstName,
+            user_lastname: userLastName,
             project_uuid: formik.values.project_id,
             pending: true, // Pending until accepted by project owner
           })

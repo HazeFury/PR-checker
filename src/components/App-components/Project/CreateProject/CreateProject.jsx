@@ -37,7 +37,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
-        console.info("le userId est : ", userId);
+        const userFirstName = userData.session.user.user_metadata.first_name;
+        const userLastName = userData.session.user.user_metadata.last_name;
 
         // To get the picture
         const newPictureForProject = await axios
@@ -63,6 +64,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .from("project_users")
           .insert({
             user_uuid: userId,
+            user_firstname: userFirstName,
+            user_lastname: userLastName,
             project_uuid: projectId,
             role: "owner",
             pending: false,
