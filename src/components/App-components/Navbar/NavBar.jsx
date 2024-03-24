@@ -1,52 +1,69 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
-
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
+import { useTheme } from "@emotion/react";
+import {
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Settings, Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
+import NotificationButtonNav from "./NotificationButtonNav";
 import SettingsButton from "../Settings/SettingsButton";
 
-export default function NavBar() {
+export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const theme = useTheme();
 
+  // to open the notification list
+  const handleOpenNotification = () => {
+    setOpenNotificationBox(true);
+  };
+
+  // to close the notification list
+  const handleCloseNotification = () => {
+    setOpenNotificationBox(false);
+  };
+
+  // to open the join project modal
   const handleOpenJoinProjectModal = () => {
     setOpenJoinProjectModal(true);
   };
-
+  // to close the join project modal
   const handleCloseJoinProjectModal = () => {
     setOpenJoinProjectModal(false);
   };
-
+  // to open the create project modal
   const handleOpenCreateProjectModal = () => {
     setOpenCreateProjectModal(true);
   };
-
+  // to open the create project modal
   const handleCloseCreateProjectModal = () => {
     setOpenCreateProjectModal(false);
   };
-
+  // to open the user menu
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+  // to close the user menu
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  // Function to logout
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -75,6 +92,12 @@ export default function NavBar() {
           onOpenJoinProjectModal={handleOpenJoinProjectModal}
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
+        />
+        <NotificationButtonNav
+          handleOpenNotification={handleOpenNotification}
+          handleCloseNotification={handleCloseNotification}
+          openNotificationBox={openNotificationBox}
+          userId={userId}
         />
 
         <SettingsButton />
@@ -127,7 +150,12 @@ export default function NavBar() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            color: theme.palette.text.primary,
+          }}
+        >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
@@ -151,3 +179,11 @@ export default function NavBar() {
     </nav>
   );
 }
+
+NavBar.propTypes = {
+  userId: PropTypes.string,
+};
+
+NavBar.defaultProps = {
+  userId: "",
+};
