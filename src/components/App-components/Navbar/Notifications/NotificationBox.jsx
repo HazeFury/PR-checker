@@ -1,30 +1,54 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import NotificationCard from "./NotificationCard";
 import supabase from "../../../../services/client";
 import styles from "./NotificationBox.module.css";
+import refreshContext from "../../../../contexts/RefreshContext";
 
 export default function NotificationBox({ userId }) {
   const [notifications, setNotifications] = useState([]);
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
 
   // Fetch all the notifications that the user are eligible to see
-  useEffect(() => {
-    async function getNotifications() {
-      if (userId !== null) {
-        const { data: notificationsData } = await supabase
-          .from("notification")
-          .select("*, notification_user!inner(*)")
-          .match({
-            "notification_user.user_uuid": userId,
-          })
-          .order("created_at", { ascending: false }) // Tri par date, du plus récent au plus ancien
-          .range(0, 19);
+  async function getNotifications() {
+    if (userId !== null) {
+      const { data: notificationsData } = await supabase
+        .from("notification")
+        .select("*, notification_user!inner(*)")
+        .match({
+          "notification_user.user_uuid": userId,
+        })
+        .order("created_at", { ascending: false }) // Tri par date, du plus récent au plus ancien
+        .range(0, 19);
 
-        setNotifications(notificationsData);
-      }
+      setNotifications(notificationsData);
     }
+  }
+  // mark notifications as read when unmounting the component
+  async function notificationsAreRead() {
+    const { error } = await supabase
+      .from("notification_user")
+      .update({ unread: false })
+      .eq("user_uuid", userId);
+
+    handleRefresh();
+
+    if (error) {
+      console.error("Les notifications n'ont pas pu êtres marqués comme lu");
+    }
+  }
+
+  useEffect(() => {
     getNotifications();
-  }, [userId]);
+    return () => {
+      notificationsAreRead();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, refreshData]);
 
   return (
     <div className={styles.notifications_container}>

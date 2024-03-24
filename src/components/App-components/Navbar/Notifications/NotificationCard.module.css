@@ -39,14 +39,15 @@
 
 .text_section p {
   display: flex;
-  color: rgb(0, 0, 0);
+  justify-content: flex-start;
+  color: white;
   font-size: 0.75rem;
 }
 
 .date_section p {
   display: flex;
   justify-content: flex-end;
-  color: rgb(0, 0, 0);
+  color: white;
   font-size: 0.6rem;
 }
 
