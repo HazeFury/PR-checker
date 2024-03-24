@@ -139,11 +139,14 @@ export default function ComponentsPlayground() {
   useEffect(() => {
     async function testQuery() {
       const { data } = await supabase
-        .from("pr_request")
-        .select("*")
-        .eq("project_uuid", "2bc9286a-bd67-44d3-996b-a6ad0bca02c8");
+        .from("notification_user")
+        .select("count")
+        .match({
+          user_uuid: "a6e76669-544d-4c82-8baa-84eb2479e830",
+          unread: true,
+        });
 
-      setTest(data);
+      setTest(data[0].count);
     }
     testQuery();
   }, [refresh]);
@@ -157,11 +160,11 @@ export default function ComponentsPlayground() {
       <div className="component-section">
         <div className="big_container">
           <ul>
-            {test.length > 0 ? (
-              test.map((el) => <li key={el.id}>{el.title}</li>)
+            {/* {test ? (
+              test.map((el) => <li key={el.id}>{`${el.id} - ${el.unread}`}</li>)
             ) : (
               <p>rien pour l'instant</p>
-            )}
+            )} */}
           </ul>
         </div>
         <button type="button" onClick={insertTest}>

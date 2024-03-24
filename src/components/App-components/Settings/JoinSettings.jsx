@@ -39,6 +39,7 @@ export default function JoinSettings() {
 
   useEffect(() => {
     getPendingUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
