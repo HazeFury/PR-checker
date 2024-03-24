@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { Divider, IconButton, Stack } from "@mui/material";
 import styles from "./RequestCard.module.css";
@@ -12,6 +13,7 @@ import github from "../../../assets/github.svg";
 import ModalDescriptionPR from "./ModalDescriptionPR/ModalDescriptionPR";
 import ManageRequestButton from "../../UI-components/Buttons/ManageRequestButton";
 import useScreenSize from "../../../hooks/useScreenSize";
+import supabase from "../../../services/client";
 
 const statusNames = [
   { name: "En attente de review", value: 1 },
@@ -79,6 +81,29 @@ export default function RequestCard({
   const screenSize = useScreenSize();
 
   const formattedDate = new Date(request.created_at).toLocaleString();
+  const [userFirstName, setUserFirstName] = useState("");
+  // To keep the id of the project using params
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
+  useEffect(() => {
+    async function fetchUserName() {
+      try {
+        const { data, error } = await supabase
+          .from("pr_request")
+          .select("opened_by")
+          .match({ project_uuid: projectId, id: request.id });
+        if (error) {
+          console.error(error);
+        } else {
+          console.info(data);
+          setUserFirstName(data[0].opened_by);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchUserName();
+  }, []);
 
   return (
     <Stack
@@ -114,7 +139,7 @@ export default function RequestCard({
           </p>
           <p>
             Par :{screenSize < 1200 && screenSize > 1024 && <br />}{" "}
-            <b> Marco</b>
+            <b> {userFirstName}</b>
           </p>
           {screenSize > 1024 ? (
             <p>

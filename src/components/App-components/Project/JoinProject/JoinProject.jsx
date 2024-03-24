@@ -38,16 +38,13 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
         }
 
         // Ask to join the project
-        await supabase
-          .from("project_users")
-          .insert({
-            user_uuid: userId,
-            user_firstname: userFirstName,
-            user_lastname: userLastName,
-            project_uuid: formik.values.project_id,
-            pending: true, // Pending until accepted by project owner
-          })
-          .select();
+        await supabase.from("project_users").insert({
+          user_uuid: userId,
+          user_firstname: userFirstName,
+          user_lastname: userLastName,
+          project_uuid: formik.values.project_id,
+          pending: true, // Pending until accepted by project owner
+        });
 
         handleModalCloseJoin();
         toast.success("Votre demande a bien été envoyée");
