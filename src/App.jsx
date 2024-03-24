@@ -40,19 +40,22 @@ export default function App() {
     });
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, []);
 
-  if (!thisSession) {
-    return <Connection />;
-  }
   return (
     <div>
-      <refreshContext.Provider value={contextValue}>
-        <UserContextProvider>
-          <NavBar userId={userId} />
-          <Outlet context={[userId]} />
-        </UserContextProvider>
-      </refreshContext.Provider>
+      {!thisSession ? (
+        <Connection />
+      ) : (
+        <div>
+          <refreshContext.Provider value={contextValue}>
+            <UserContextProvider>
+              <NavBar userId={userId} />
+              <Outlet context={[userId]} />
+            </UserContextProvider>
+          </refreshContext.Provider>
+        </div>
+      )}
     </div>
   );
 }

@@ -65,7 +65,6 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
             project_uuid: projectId,
             role: "owner",
             pending: false,
-            group: null,
           })
           .select();
 

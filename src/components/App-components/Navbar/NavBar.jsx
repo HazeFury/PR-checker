@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
@@ -83,9 +84,9 @@ export default function NavBar({ userId }) {
 
   return (
     <nav className={styles.nav_container}>
-      <a href="/">
+      <NavLink to="/">
         <img className={styles.logo} src={Logo} alt="PR-checker logo" />
-      </a>
+      </NavLink>
       <div className={styles.Tooltip}>
         <ProjectButtonNav
           openJoinProjectModal={openJoinProjectModal}

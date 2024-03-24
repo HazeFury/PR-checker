@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Button, Box, Modal, IconButton } from "@mui/material";
@@ -7,8 +8,15 @@ import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./JoinProject.module.css";
+import refreshContext from "../../../../contexts/RefreshContext";
 
 export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+
   const handleModalCloseJoin = () => {
     onCloseModalJoin(); // Call the function from NavBar to close the modal
   };
@@ -46,6 +54,7 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
           .select();
 
         handleModalCloseJoin();
+        handleRefresh();
         toast.success("Votre demande a bien été envoyée");
       } catch (error) {
         toast.error("Votre demande n'a pas fonctionnée");

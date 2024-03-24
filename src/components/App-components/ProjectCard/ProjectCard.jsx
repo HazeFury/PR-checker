@@ -3,10 +3,18 @@ import { Link } from "react-router-dom";
 import styles from "./ProjectCard.module.css";
 
 export default function ProjectCard({ project }) {
+  const userIsPending = project.project_users[0].pending === true;
   return (
-    <Link to={`/project/${project.id}`}>
-      <div className={styles.projectCardPage}>
-        <div key={project.id} className={styles.projectCardContainer}>
+    <div className={styles.projectCardPage}>
+      <Link to={userIsPending ? "/" : `/project/${project.id}`}>
+        <div
+          key={project.id}
+          className={
+            userIsPending
+              ? styles.projectCardContainerDisabled
+              : styles.projectCardContainer
+          }
+        >
           <img
             className={styles.projectCardPicture}
             src={project.picture}
@@ -33,6 +41,13 @@ export default function ProjectCard({ project }) {
                 ""
               )}
             </div>
+            {userIsPending ? (
+              <span className={styles.is_pending_info}>
+                En attente d'acceptation
+              </span>
+            ) : (
+              ""
+            )}
             <h2 className={styles.projectName}>{project.name}</h2>
             <div className={styles.projectUsersPR}>
               {project.totalUsers !== undefined &&
@@ -55,8 +70,8 @@ export default function ProjectCard({ project }) {
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
 
@@ -71,6 +86,7 @@ ProjectCard.propTypes = {
     project_users: PropTypes.arrayOf(
       PropTypes.shape({
         role: PropTypes.string.isRequired,
+        pending: PropTypes.bool.isRequired,
       })
     ).isRequired,
   }).isRequired,

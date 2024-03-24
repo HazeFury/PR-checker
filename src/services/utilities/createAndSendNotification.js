@@ -76,6 +76,7 @@ const createAndSendNotification = async (newStatus, requestId) => {
           .match({
             group: userGroup,
             project_uuid: prRequest.project_uuid,
+            role: "contributor",
           });
 
         if (userListError) {
