@@ -79,7 +79,7 @@ export default function RequestList() {
       .match({ user_uuid: userId, project_uuid: projectId })
       .single();
 
-    return userAccess; // the response will be either "null" or an object containing user information
+    return userAccess;
   }
 
   // Function to get all own pull request
@@ -269,15 +269,17 @@ export default function RequestList() {
             >
               {screenSize < 767 ? <Refresh /> : "Actualiser"}
             </Button>
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "button.main",
-              }}
-              onClick={handleOpenModalForNewRequest}
-            >
-              {screenSize < 767 ? <Add /> : "Nouvelle demande"}
-            </Button>
+            {userRole === "contributor" && (
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: "button.main",
+                }}
+                onClick={handleOpenModalForNewRequest}
+              >
+                {screenSize < 767 ? <Add /> : "Nouvelle demande"}
+              </Button>
+            )}
           </div>
           <Modal
             open={openModalAboutRequest}

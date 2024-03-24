@@ -49,7 +49,7 @@ export default function App() {
     <div>
       <refreshContext.Provider value={contextValue}>
         <UserContextProvider>
-          <NavBar />
+          <NavBar userId={userId} />
           <Outlet context={[userId]} />
         </UserContextProvider>
       </refreshContext.Provider>

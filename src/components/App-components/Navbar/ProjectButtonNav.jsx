@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { Button, Tooltip, IconButton } from "@mui/material";
+import { Button, Tooltip, IconButton, Menu, MenuItem } from "@mui/material";
 import useScreeSize from "../../../hooks/useScreenSize";
 import styles from "./ProjectButtonNav.module.css";
 
@@ -23,7 +21,10 @@ export default function ProjectButtonNav({
   };
   const location = useLocation();
 
+  // Button are visible on the first page only
   const isProjectPage = location.pathname === "/";
+
+  // Button to create and join a project
   const renderExtraButton = () => {
     if (isProjectPage) {
       if (width > 1064) {

@@ -20,7 +20,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
   };
 
   const handleModalCloseCreate = () => {
-    onCloseModalCreate(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalCreate(); // Call the function to close the modal
   };
 
   const formik = useFormik({
@@ -37,7 +37,6 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
-        console.info("le userId est : ", userId);
 
         // To get the picture
         const newPictureForProject = await axios
@@ -45,8 +44,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .then((res) => {
             return res.request.responseURL;
           })
-          .catch((err) => {
-            console.error(err);
+          .catch(() => {
+            console.error("impossible de récupérer une image");
           });
 
         // To create the project with name and picture
@@ -66,6 +65,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
             project_uuid: projectId,
             role: "owner",
             pending: false,
+            group: null,
           })
           .select();
 
@@ -81,6 +81,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     formik.handleSubmit();
   };
 
+  // CSS for the modal
   const style = {
     position: "absolute",
     display: "flex",

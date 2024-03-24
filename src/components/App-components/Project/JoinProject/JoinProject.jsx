@@ -10,7 +10,7 @@ import styles from "./JoinProject.module.css";
 
 export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
   const handleModalCloseJoin = () => {
-    onCloseModalJoin(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalJoin(); // Call the function from NavBar to close the modal
   };
 
   const formik = useFormik({
@@ -56,6 +56,7 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
     formik.handleSubmit();
   };
 
+  // CSS for the modal
   const style = {
     position: "absolute",
     display: "flex",
