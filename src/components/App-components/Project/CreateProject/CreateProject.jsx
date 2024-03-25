@@ -20,7 +20,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
   };
 
   const handleModalCloseCreate = () => {
-    onCloseModalCreate(); // Appel de la fonction onClose pour fermer la modal
+    onCloseModalCreate(); // Call the function to close the modal
   };
 
   const formik = useFormik({
@@ -37,7 +37,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
-        console.info("le userId est : ", userId);
+        const userFirstName = userData.session.user.user_metadata.first_name;
+        const userLastName = userData.session.user.user_metadata.last_name;
 
         // To get the picture
         const newPictureForProject = await axios
@@ -45,8 +46,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .then((res) => {
             return res.request.responseURL;
           })
-          .catch((err) => {
-            console.error(err);
+          .catch(() => {
+            console.error("impossible de récupérer une image");
           });
 
         // To create the project with name and picture
@@ -63,6 +64,8 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .from("project_users")
           .insert({
             user_uuid: userId,
+            user_firstname: userFirstName,
+            user_lastname: userLastName,
             project_uuid: projectId,
             role: "owner",
             pending: false,
@@ -70,6 +73,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
           .select();
 
         handleModalCloseCreate(); // close the modal
+        formik.resetForm();
         handleRefresh(); // refetch the project list after the creation
       } catch (error) {
         console.error("La création du projet n'a pas fonctionné");
@@ -81,6 +85,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     formik.handleSubmit();
   };
 
+  // CSS for the modal
   const style = {
     position: "absolute",
     display: "flex",
@@ -88,7 +93,12 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 690,
+    width: {
+      sm: "400px",
+      md: "670px",
+      lg: "690px",
+      xl: "710px",
+    },
     height: 405,
     backgroundColor: "#292929",
     borderRadius: "0.625rem",

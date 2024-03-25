@@ -431,11 +431,11 @@ export default function GeneralSettings({
       {(openConfirmUpdate.closedSettings ||
         openConfirmUpdate.changedSection !== "") && (
         <ConfirmationModal
-          handleLeftButtonClick={handleCloseUpdateModal}
-          handleRightButtonClick={handleConfirmUpdate}
+          handleLeftButtonClick={handleConfirmUpdate}
+          handleRightButtonClick={handleCloseUpdateModal}
           title="Voulez-vous sauvegarder les changements avant de quitter ?"
-          textButtonLeft="Quitter"
-          textButtonRight="Sauvegarder"
+          textButtonLeft="Sauvegarder"
+          textButtonRight="Quitter"
         />
       )}
     </>

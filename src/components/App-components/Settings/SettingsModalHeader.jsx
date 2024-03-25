@@ -57,10 +57,11 @@ export default function SettingsModalHeader({
               return (
                 <li key={name}>
                   <Button
+                    disabled={content === name}
                     onClick={handleClick}
                     sx={
                       content === name
-                        ? { color: "text.secondary" }
+                        ? { "&:disabled": { color: "text.secondary" } }
                         : { color: "button.main", textTransform: "none" }
                     }
                   >

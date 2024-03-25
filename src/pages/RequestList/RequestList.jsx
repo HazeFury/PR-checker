@@ -161,16 +161,18 @@ export default function RequestList() {
   // When mounting the component, we check if the connected user has the right to see the requests
   useEffect(() => {
     const fetchVerifiedUser = async () => {
-      const verifiedUser = await verifyUser();
-      if (verifiedUser !== null && verifiedUser.pending === false) {
-        // if the user exist and the pending === false, we can fetch all the request and we set the role
-        setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
-        getProjectName();
-        getAllPr();
-      }
-      if (verifiedUser === null) {
-        // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
-        navigate("/error");
+      if (userId !== null) {
+        const verifiedUser = await verifyUser();
+        if (verifiedUser !== null && verifiedUser.pending === false) {
+          // if the user exist and the pending === false, we can fetch all the request and we set the role
+          setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
+          getProjectName();
+          getAllPr();
+        }
+        if (verifiedUser === null) {
+          // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
+          navigate("/error");
+        }
       }
     };
     fetchVerifiedUser();
@@ -229,7 +231,7 @@ export default function RequestList() {
   if (loading)
     return (
       <div className={styles.loader}>
-        <CircularProgress />
+        <CircularProgress size={100} thickness={4} />
       </div>
     );
 
@@ -269,15 +271,17 @@ export default function RequestList() {
             >
               {screenSize < 767 ? <Refresh /> : "Actualiser"}
             </Button>
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: "button.main",
-              }}
-              onClick={handleOpenModalForNewRequest}
-            >
-              {screenSize < 767 ? <Add /> : "Nouvelle demande"}
-            </Button>
+            {userRole === "contributor" && (
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: "button.main",
+                }}
+                onClick={handleOpenModalForNewRequest}
+              >
+                {screenSize < 767 ? <Add /> : "Nouvelle demande"}
+              </Button>
+            )}
           </div>
           <Modal
             open={openModalAboutRequest}

@@ -1,7 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
 import supabase from "../../services/client";
 import styles from "./ProjectPage.module.css";
@@ -23,10 +22,7 @@ export default function ProjectPage() {
         const { data: projectsData } = await supabase
           .from("projects")
           .select("*, project_users!inner(*)")
-          .match({
-            "project_users.user_uuid": userId,
-            "project_users.pending": false,
-          });
+          .eq("project_users.user_uuid", userId);
         // this request fetch only projects that user is related to
         setProjects(projectsData);
         setLoading(false);
@@ -38,7 +34,7 @@ export default function ProjectPage() {
   if (loading)
     return (
       <div className={styles.loading_container}>
-        <CircularProgress />
+        <CircularProgress size={100} thickness={4} />
       </div>
     );
 

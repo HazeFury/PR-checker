@@ -1,0 +1,68 @@
+.notificationcard_container {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: solid rgba(60, 60, 60, 0.25) 1px;
+}
+
+.status_color {
+  height: 100%;
+  width: 5%;
+  background-color: rgb(209, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.is_new_badge {
+  height: 100%;
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.new_badge {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background-color: #3883ba;
+}
+
+.contentNotif {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+  flex-grow: 1;
+  padding: 0 10px;
+}
+
+.text_section p {
+  display: flex;
+  justify-content: flex-start;
+  color: white;
+  font-size: 0.75rem;
+}
+
+.date_section p {
+  display: flex;
+  justify-content: flex-end;
+  color: white;
+  font-size: 0.6rem;
+}
+
+.validation_color {
+  background-color: rgb(100, 176, 100);
+}
+
+.cancel_color {
+  background-color: rgb(241, 87, 87);
+}
+
+.correction_color {
+  background-color: rgb(255, 192, 75);
+}
+
+.boldIfUnread {
+  font-weight: 700;
+}

@@ -66,8 +66,12 @@ export default function ModalFormRequest({
     validationSchema: Yup.object({
       title: Yup.string().required("Le titre est requis"),
       description: Yup.string().required("La description est requise"),
-      trello: Yup.string().required("Le lien Trello est requis"),
-      github: Yup.string().required("Le lien Github est requis"),
+      trello: Yup.string()
+        .url("Le lien Trello doit être une URL valide")
+        .required("Le lien Trello est requis"),
+      github: Yup.string()
+        .url("Le lien Github doit être une URL valide")
+        .required("Le lien Github est requis"),
     }),
 
     onSubmit: async (values) => {
@@ -75,11 +79,14 @@ export default function ModalFormRequest({
         // Catch user id for this session
         const { data } = await supabase.auth.getSession();
         const userId = data.session.user.id;
+        const userFirstName = data.session.user.user_metadata.first_name;
+
         // Add project_uuid to the form data
         const formData = {
           ...values,
           project_uuid: projectId,
           user_uuid: userId,
+          opened_by: userFirstName,
         };
         if (requestData) {
           // update data to pr_request table with supabase
