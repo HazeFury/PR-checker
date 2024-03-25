@@ -6,12 +6,19 @@ import ContributorSettings from "./ContributorSettings";
 import JoinSettings from "./JoinSettings";
 import supabase from "../../../services/client";
 
-export default function SettingsModalContent({ content }) {
+export default function SettingsModalContent({
+  content,
+  setContent,
+  haveGeneralSettingsBeenUpdated,
+  openConfirmUpdate,
+  setOpenConfirmUpdate,
+  setOpenSettings,
+}) {
   const [projectData, setProjectData] = useState(null);
   const projectId = useParams();
 
   // Function to get the data from the project on screen
-  async function getProjectData() {
+  const getProjectData = async () => {
     try {
       const { data } = await supabase
         .from("projects")
@@ -23,7 +30,7 @@ export default function SettingsModalContent({ content }) {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     getProjectData();
@@ -32,8 +39,18 @@ export default function SettingsModalContent({ content }) {
 
   if (projectData) {
     return (
-      <section style={{ paddingTop: "1rem", width: "90%" }}>
-        {content === "Général" && <GeneralSettings projectData={projectData} />}
+      <section style={{ paddingTop: "1.5rem", width: "90%" }}>
+        {content === "Général" && (
+          <GeneralSettings
+            projectData={projectData}
+            getProjectData={getProjectData}
+            haveGeneralSettingsBeenUpdated={haveGeneralSettingsBeenUpdated}
+            openConfirmUpdate={openConfirmUpdate}
+            setOpenConfirmUpdate={setOpenConfirmUpdate}
+            setOpenSettings={setOpenSettings}
+            setContent={setContent}
+          />
+        )}
         {content === "Membres" && <ContributorSettings />}
         {content === "Demandes" && <JoinSettings />}
       </section>
@@ -43,4 +60,12 @@ export default function SettingsModalContent({ content }) {
 
 SettingsModalContent.propTypes = {
   content: PropTypes.string.isRequired,
+  setContent: PropTypes.func.isRequired,
+  haveGeneralSettingsBeenUpdated: PropTypes.func.isRequired,
+  openConfirmUpdate: PropTypes.shape({
+    closedSettings: PropTypes.bool.isRequired,
+    changedSection: PropTypes.string.isRequired,
+  }).isRequired,
+  setOpenConfirmUpdate: PropTypes.func.isRequired,
+  setOpenSettings: PropTypes.func.isRequired,
 };

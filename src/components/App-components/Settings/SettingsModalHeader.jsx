@@ -13,7 +13,13 @@ import useScreenSize from "../../../hooks/useScreenSize";
 
 const sectionNames = ["Général", "Membres", "Demandes"];
 
-export default function SettingsModalHeader({ content, handleClick }) {
+export default function SettingsModalHeader({
+  content,
+  setContent,
+  generalSettingsUpdated,
+  openConfirmUpdate,
+  setOpenConfirmUpdate,
+}) {
   const width = useScreenSize();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,27 +31,37 @@ export default function SettingsModalHeader({ content, handleClick }) {
     setAnchorEl(null);
   };
 
+  const handleClick = (e) => {
+    if (generalSettingsUpdated.current) {
+      // if user tries to change section without saving changes in general settings
+      setOpenConfirmUpdate({
+        ...openConfirmUpdate,
+        changedSection: e.target.innerText,
+      });
+    } else {
+      setContent(e.target.innerText);
+      if (width <= 767) setAnchorEl(null);
+    }
+  };
+
   return (
     <header
       style={{
         width: "90%",
-        backdropFilter: "blur(10px)",
-        borderRadius: "10px",
-        position: "sticky",
-        top: 0,
       }}
     >
       <nav>
-        {width > 440 ? (
+        {width > 767 ? (
           <ul style={{ display: "flex", justifyContent: "space-around" }}>
             {sectionNames.map((name) => {
               return (
                 <li key={name}>
                   <Button
+                    disabled={content === name}
                     onClick={handleClick}
                     sx={
                       content === name
-                        ? { color: "text.secondary" }
+                        ? { "&:disabled": { color: "text.secondary" } }
                         : { color: "button.main", textTransform: "none" }
                     }
                   >
@@ -81,8 +97,7 @@ export default function SettingsModalHeader({ content, handleClick }) {
               slotProps={{
                 paper: {
                   sx: {
-                    bgcolor: "transparent",
-                    backdropFilter: "blur(10px)",
+                    bgcolor: "modal.background",
                   },
                 },
               }}
@@ -116,5 +131,11 @@ export default function SettingsModalHeader({ content, handleClick }) {
 
 SettingsModalHeader.propTypes = {
   content: PropTypes.string.isRequired,
-  handleClick: PropTypes.func.isRequired,
+  setContent: PropTypes.func.isRequired,
+  generalSettingsUpdated: PropTypes.objectOf(PropTypes.bool).isRequired,
+  openConfirmUpdate: PropTypes.shape({
+    closedSettings: PropTypes.bool.isRequired,
+    changedSection: PropTypes.string.isRequired,
+  }).isRequired,
+  setOpenConfirmUpdate: PropTypes.func.isRequired,
 };

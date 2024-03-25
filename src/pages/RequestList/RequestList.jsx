@@ -230,7 +230,7 @@ export default function RequestList() {
   // Loader
   if (loading)
     return (
-      <div className={styles.requests_container}>
+      <div className={styles.loader}>
         <CircularProgress size={100} thickness={4} />
       </div>
     );
