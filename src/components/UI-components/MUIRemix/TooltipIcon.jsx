@@ -3,7 +3,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import Zoom from "@mui/material/Zoom";
 import PropTypes from "prop-types";
 
-export default function TooltipIconError({ tooltip, top, left }) {
+export default function TooltipIcon({ tooltip, top, left, color }) {
   return (
     <Tooltip
       title={tooltip}
@@ -18,15 +18,16 @@ export default function TooltipIconError({ tooltip, top, left }) {
           position: "absolute",
           top: `${top}`,
           left: `${left}`,
-          color: "#ed4337",
+          color: `${color}`,
         }}
       />
     </Tooltip>
   );
 }
 
-TooltipIconError.propTypes = {
+TooltipIcon.propTypes = {
   tooltip: PropTypes.string.isRequired,
   top: PropTypes.string.isRequired,
   left: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
 };

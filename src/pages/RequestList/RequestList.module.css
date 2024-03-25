@@ -67,6 +67,13 @@
   background-color: #292929;
 }
 
+.loader {
+  height: calc(100svh - 100px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media screen and (max-width: 1024px) {
   .request_list_container {
     padding-block: 1.5rem 2rem;

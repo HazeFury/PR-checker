@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Button, Box, Modal, IconButton } from "@mui/material";
@@ -7,8 +8,15 @@ import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import supabase from "../../../../services/client";
 import styles from "./JoinProject.module.css";
+import refreshContext from "../../../../contexts/RefreshContext";
 
 export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+
   const handleModalCloseJoin = () => {
     onCloseModalJoin(); // Call the function from NavBar to close the modal
   };
@@ -22,6 +30,8 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
         // Get the userId
         const { data: userData } = await supabase.auth.getSession();
         const userId = userData?.session.user.id;
+        const userFirstName = userData.session.user.user_metadata.first_name;
+        const userLastName = userData.session.user.user_metadata.last_name;
 
         // Check if the project exists
         const { data: projectData } = await supabase
@@ -36,17 +46,17 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
         }
 
         // Ask to join the project
-        await supabase
-          .from("project_users")
-          .insert({
-            user_uuid: userId,
-            project_uuid: formik.values.project_id,
-            pending: true, // Pending until accepted by project owner
-          })
-          .select();
+        await supabase.from("project_users").insert({
+          user_uuid: userId,
+          user_firstname: userFirstName,
+          user_lastname: userLastName,
+          project_uuid: formik.values.project_id,
+          pending: true, // Pending until accepted by project owner
+        });
 
         handleModalCloseJoin();
         formik.resetForm();
+        handleRefresh();
         toast.success("Votre demande a bien été envoyée");
       } catch (error) {
         toast.error("Votre demande n'a pas fonctionnée");

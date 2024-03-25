@@ -22,10 +22,7 @@ export default function ProjectPage() {
         const { data: projectsData } = await supabase
           .from("projects")
           .select("*, project_users!inner(*)")
-          .match({
-            "project_users.user_uuid": userId,
-            "project_users.pending": false,
-          });
+          .eq("project_users.user_uuid", userId);
         // this request fetch only projects that user is related to
         setProjects(projectsData);
         setLoading(false);
@@ -37,7 +34,7 @@ export default function ProjectPage() {
   if (loading)
     return (
       <div className={styles.loading_container}>
-        <CircularProgress />
+        <CircularProgress size={100} thickness={4} />
       </div>
     );
 

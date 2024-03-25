@@ -53,6 +53,7 @@ export default function NotificationButtonNav({
     handleCloseNotification();
     setAnchorEl(null);
   };
+
   const handleNotificationClick = (event) => {
     handleOpenNotification();
     setAnchorEl(event.currentTarget);
