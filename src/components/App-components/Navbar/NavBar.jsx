@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
@@ -27,6 +27,14 @@ export default function NavBar({ userId }) {
   const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const location = useLocation();
+
+  /* Used to close settings modal when leaving project without closing it manually */
+  useEffect(() => {
+    setOpenSettings(false);
+  }, [location]);
+
   const theme = useTheme();
 
   // to open the notification list
@@ -101,7 +109,10 @@ export default function NavBar({ userId }) {
           userId={userId}
         />
 
-        <SettingsButton />
+        <SettingsButton
+          openSettings={openSettings}
+          setOpenSettings={setOpenSettings}
+        />
 
         <Tooltip title="Account settings">
           <IconButton
