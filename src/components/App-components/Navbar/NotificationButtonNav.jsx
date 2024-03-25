@@ -111,7 +111,7 @@ NotificationButtonNav.propTypes = {
   openNotificationBox: PropTypes.bool.isRequired,
   handleOpenNotification: PropTypes.func.isRequired,
   handleCloseNotification: PropTypes.func.isRequired,
-  userId: PropTypes,
+  userId: PropTypes.string,
 };
 
 NotificationButtonNav.defaultProps = {
