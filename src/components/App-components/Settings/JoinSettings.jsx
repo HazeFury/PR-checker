@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
-
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
+import ConfirmationModal from "../Modals/ConfirmationModal";
 import check from "../../../assets/check.svg";
 import refusedCross from "../../../assets/refusedCross.svg";
-
 import supabase from "../../../services/client";
 import styles from "./JoinSettings.module.css";
 
 export default function JoinSettings() {
   // state to manage the data of the users
   const [pendingUsers, setPendingUsers] = useState([]);
-
+  // states to manage the open modalConfirmation with the id of the user will be refused
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   // To keep the id of the project using params
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
@@ -21,7 +24,7 @@ export default function JoinSettings() {
     try {
       const { data: userData, error } = await supabase
         .from("project_users")
-        .select("user_firstname, user_lastname")
+        .select("id, user_firstname, user_lastname")
         .match({
           pending: true,
           project_uuid: projectId,
@@ -42,26 +45,85 @@ export default function JoinSettings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // function to edit the pending (true to false) when the owner valid to add this user in the project
+  async function handleCheck(userId) {
+    try {
+      const { error } = await supabase
+        .from("project_users")
+        .update({ pending: false })
+        .match({ id: userId, project_uuid: projectId });
+
+      if (error) {
+        toast.error("L'ajout de l'utilisateur dans le projet a échoué");
+      } else {
+        toast.success("L'utilisateur a bien été ajouté au projet");
+        getPendingUsers();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // function to delete the user in project_users table, when the owner dosen't want to add the user in the project
+  async function handleRefused(userId) {
+    try {
+      const { error } = await supabase
+        .from("project_users")
+        .delete()
+        .match({ id: userId, project_uuid: projectId });
+
+      if (error) {
+        toast.error("Le refus de l'utilisateur dans le projet a échoué");
+      } else {
+        toast.info("La demande d'ajout a bien été rejetée");
+        getPendingUsers();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // function to open modal with the userId of the user will be refused
+  const handleUserRefused = (userId) => {
+    setUserIdToDelete(userId);
+    setShowConfirmationModal(true);
+  };
+  // function to close modal if owner dosen't want finally refused the user
+  const handleCloseModal = () => {
+    setShowConfirmationModal(false);
+    setUserIdToDelete(null);
+  };
   return (
     <div>
       {pendingUsers.map((user) => (
-        <div className={styles.block} key={user.id}>
+        <div key={user.id}>
           <div className={styles.pendingUsersRow}>
-            {user.user_firstname}
-            {user.user_lastname}
+            <div className={styles.userName}>
+              <p>{user.user_firstname}</p> <p>{user.user_lastname}</p>
+            </div>
             <div className={styles.buttonsBlock} key={user.id}>
-              <button type="button">
+              <button onClick={() => handleUserRefused(user.id)} type="button">
                 {" "}
                 <img src={refusedCross} alt="refusedCross" />
               </button>
-              <button type="button">
+              <button onClick={() => handleCheck(user.id)} type="button">
                 <img src={check} alt="check" />
               </button>
             </div>
           </div>
-          <Divider sx={{ bgcolor: "#e8e8e8", height: "1px" }} />
+          <Divider key={user.id} sx={{ bgcolor: "#e8e8e8", height: "1px" }} />
         </div>
       ))}
+      {showConfirmationModal && (
+        <ConfirmationModal
+          title="Êtes-vous sûr de vouloir refuser cet utilisateur ?"
+          textButtonLeft="Oui"
+          textButtonRight="Annuler"
+          handleLeftButtonClick={() => {
+            handleRefused(userIdToDelete);
+            handleCloseModal();
+          }}
+          handleRightButtonClick={handleCloseModal}
+        />
+      )}
     </div>
   );
 }

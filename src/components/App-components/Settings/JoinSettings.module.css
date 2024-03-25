@@ -1,15 +1,22 @@
 .pendingUsersRow {
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   margin-top: 1rem;
+  color: #ffffff;
 }
-
+.userName {
+  display: flex;
+  width: 50%;
+  flex-direction: row;
+  justify-content: space-around;
+}
 .buttonsBlock {
   display: flex;
-  width: 15rem;
+  width: 40%;
   flex-direction: row;
   justify-content: space-around;
 }

@@ -32,7 +32,7 @@ export default function SettingsModalContent({ content }) {
 
   if (projectData) {
     return (
-      <section style={{ paddingTop: "1rem" }}>
+      <section style={{ paddingTop: "1rem", width: "90%" }}>
         {content === "Général" && <GeneralSettings projectData={projectData} />}
         {content === "Membres" && <ContributorSettings />}
         {content === "Demandes" && <JoinSettings />}
