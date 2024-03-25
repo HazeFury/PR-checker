@@ -29,6 +29,10 @@
   padding-right: 40px;
 }
 
+.inputModify {
+  box-shadow: 0 0 0 2px var(--action);
+}
+
 .buttons {
   padding-top: 2rem;
   display: flex;

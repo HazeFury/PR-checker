@@ -13,7 +13,13 @@ import useScreenSize from "../../../hooks/useScreenSize";
 
 const sectionNames = ["Général", "Membres", "Demandes"];
 
-export default function SettingsModalHeader({ content, setContent }) {
+export default function SettingsModalHeader({
+  content,
+  setContent,
+  generalSettingsUpdated,
+  openConfirmUpdate,
+  setOpenConfirmUpdate,
+}) {
   const width = useScreenSize();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -26,8 +32,16 @@ export default function SettingsModalHeader({ content, setContent }) {
   };
 
   const handleClick = (e) => {
-    setContent(e.target.innerText);
-    if (width <= 767) setAnchorEl(null);
+    if (generalSettingsUpdated.current) {
+      // if user tries to change section without saving changes in general settings
+      setOpenConfirmUpdate({
+        ...openConfirmUpdate,
+        changedSection: e.target.innerText,
+      });
+    } else {
+      setContent(e.target.innerText);
+      if (width <= 767) setAnchorEl(null);
+    }
   };
 
   return (
@@ -117,4 +131,10 @@ export default function SettingsModalHeader({ content, setContent }) {
 SettingsModalHeader.propTypes = {
   content: PropTypes.string.isRequired,
   setContent: PropTypes.func.isRequired,
+  generalSettingsUpdated: PropTypes.objectOf(PropTypes.bool).isRequired,
+  openConfirmUpdate: PropTypes.shape({
+    closedSettings: PropTypes.bool.isRequired,
+    changedSection: PropTypes.string.isRequired,
+  }).isRequired,
+  setOpenConfirmUpdate: PropTypes.func.isRequired,
 };
