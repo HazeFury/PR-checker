@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
+
 import { Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-unresolved
@@ -9,42 +11,13 @@ import refusedCross from "../../../assets/refusedCross.svg";
 import supabase from "../../../services/client";
 import styles from "./JoinSettings.module.css";
 
-export default function JoinSettings() {
-  // state to manage the data of the users
-  const [pendingUsers, setPendingUsers] = useState([]);
+export default function JoinSettings({ pendingUsers }) {
   // states to manage the open modalConfirmation with the id of the user will be refused
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   // To keep the id of the project using params
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
-
-  // function to get the firstname and lastname of the users who are pending true for this project selected
-  async function getPendingUsers() {
-    try {
-      const { data: userData, error } = await supabase
-        .from("project_users")
-        .select("id, user_firstname, user_lastname")
-        .match({
-          pending: true,
-          project_uuid: projectId,
-        });
-
-      if (error) {
-        console.error(error);
-      } else {
-        setPendingUsers(userData);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    getPendingUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // function to edit the pending (true to false) when the owner valid to add this user in the project
   async function handleCheck(userId) {
     try {
@@ -57,7 +30,6 @@ export default function JoinSettings() {
         toast.error("L'ajout de l'utilisateur dans le projet a échoué");
       } else {
         toast.success("L'utilisateur a bien été ajouté au projet");
-        getPendingUsers();
       }
     } catch (error) {
       console.error(error);
@@ -75,7 +47,6 @@ export default function JoinSettings() {
         toast.error("Le refus de l'utilisateur dans le projet a échoué");
       } else {
         toast.info("La demande d'ajout a bien été rejetée");
-        getPendingUsers();
       }
     } catch (error) {
       console.error(error);
@@ -91,6 +62,7 @@ export default function JoinSettings() {
     setShowConfirmationModal(false);
     setUserIdToDelete(null);
   };
+
   return (
     <div>
       {pendingUsers.map((user) => (
@@ -127,3 +99,13 @@ export default function JoinSettings() {
     </div>
   );
 }
+
+JoinSettings.propTypes = {
+  pendingUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      user_firstname: PropTypes.string.isRequired,
+      user_lastname: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+};
