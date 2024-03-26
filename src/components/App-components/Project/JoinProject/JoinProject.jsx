@@ -45,6 +45,17 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
           return;
         }
 
+        const { data: userIsAlreadyInProject } = await supabase
+          .from("project_users")
+          .select("user_uuid")
+          .match({ project_uuid: formik.values.project_id, user_uuid: userId })
+          .single();
+
+        if (userIsAlreadyInProject !== null) {
+          toast.error("Vous faites déjà partie du projet");
+          return;
+        }
+
         // Ask to join the project
         await supabase.from("project_users").insert({
           user_uuid: userId,
