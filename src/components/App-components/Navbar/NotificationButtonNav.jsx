@@ -86,6 +86,7 @@ export default function NotificationButtonNav({
             onClose={() => {
               setUnreadNotificationsCount(0); // Reset the unread count when closing the menu
               handleNotificationClose();
+
               setAnchorEl(null);
             }}
             PaperProps={{
@@ -100,7 +101,12 @@ export default function NotificationButtonNav({
               },
             }}
           >
-            {openNotificationBox && <NotificationBox userId={userId} />}
+            {openNotificationBox && (
+              <NotificationBox
+                userId={userId}
+                onCloseNotificationBox={handleNotificationClose}
+              />
+            )}
           </Menu>
         </div>
       )}
