@@ -9,12 +9,8 @@ import supabase from "../../../services/client";
 import UserContext from "../../../contexts/UserContext";
 import refreshContext from "../../../contexts/RefreshContext";
 
-export default function NotificationButtonNav({
-  openNotificationBox,
-  handleOpenNotification,
-  handleCloseNotification,
-  userId,
-}) {
+export default function NotificationButtonNav({ userId }) {
+  const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
@@ -49,13 +45,14 @@ export default function NotificationButtonNav({
     fetchNotifications();
   }, [userId, refreshData]);
 
+  // To close the notification list
   const handleNotificationClose = async () => {
-    handleCloseNotification();
+    setOpenNotificationBox(false);
     setAnchorEl(null);
   };
-
+  // To open the notification list
   const handleNotificationClick = (event) => {
-    handleOpenNotification();
+    setOpenNotificationBox(true);
     setAnchorEl(event.currentTarget);
   };
 
@@ -84,7 +81,7 @@ export default function NotificationButtonNav({
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => {
-              setUnreadNotificationsCount(0); // Reset the unread count when closing the menu
+              // Reset the unread count when closing the menu
               handleNotificationClose();
 
               setAnchorEl(null);
@@ -101,12 +98,7 @@ export default function NotificationButtonNav({
               },
             }}
           >
-            {openNotificationBox && (
-              <NotificationBox
-                userId={userId}
-                onCloseNotificationBox={handleNotificationClose}
-              />
-            )}
+            {openNotificationBox && <NotificationBox userId={userId} />}
           </Menu>
         </div>
       )}
@@ -115,9 +107,6 @@ export default function NotificationButtonNav({
 }
 
 NotificationButtonNav.propTypes = {
-  openNotificationBox: PropTypes.bool.isRequired,
-  handleOpenNotification: PropTypes.func.isRequired,
-  handleCloseNotification: PropTypes.func.isRequired,
   userId: PropTypes.string,
 };
 

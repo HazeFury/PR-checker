@@ -24,7 +24,6 @@ import SettingsButton from "../Settings/SettingsButton";
 
 export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
@@ -36,16 +35,6 @@ export default function NavBar({ userId }) {
   }, [location]);
 
   const theme = useTheme();
-
-  // to open the notification list
-  const handleOpenNotification = () => {
-    setOpenNotificationBox(true);
-  };
-
-  // to close the notification list
-  const handleCloseNotification = () => {
-    setOpenNotificationBox(false);
-  };
 
   // to open the join project modal
   const handleOpenJoinProjectModal = () => {
@@ -102,12 +91,7 @@ export default function NavBar({ userId }) {
           openCreateProjectModal={openCreateProjectModal}
           onOpenCreateProjectModal={handleOpenCreateProjectModal}
         />
-        <NotificationButtonNav
-          handleOpenNotification={handleOpenNotification}
-          handleCloseNotification={handleCloseNotification}
-          openNotificationBox={openNotificationBox}
-          userId={userId}
-        />
+        <NotificationButtonNav userId={userId} />
 
         <SettingsButton
           openSettings={openSettings}
