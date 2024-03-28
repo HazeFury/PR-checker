@@ -22,10 +22,6 @@ export default function InfosUserModal({
     padding: 4,
   };
 
-  const email = userInfos ? userInfos[0] : "";
-  const firstName = userInfos ? userInfos[1] : "";
-  const lastName = userInfos ? userInfos[2] : "";
-
   const handleModalCloseCreate = () => {
     onCloseModalUserInfos();
   };
@@ -47,9 +43,9 @@ export default function InfosUserModal({
         >
           {" "}
         </IconButton>
-        <div>Email: {email}</div>
-        <div>First Name: {firstName}</div>
-        <div>Last Name: {lastName}</div>
+        {userInfos.email}
+        {userInfos.first_name}
+        {userInfos.last_name}
       </Box>
     </Modal>
   );

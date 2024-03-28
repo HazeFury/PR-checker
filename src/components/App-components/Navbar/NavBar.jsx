@@ -31,7 +31,7 @@ export default function NavBar({ userId }) {
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const [allowMenu, setAllowMenu] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
-  const [userInfos, setUserInfos] = useState(null);
+  const [userInfos, setUserInfos] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const location = useLocation();
 
@@ -102,17 +102,12 @@ export default function NavBar({ userId }) {
 
   const handleUserInfos = async () => {
     try {
-      const { data: userData } = await supabase.auth.getSession();
-      const userMetaData = userData.session.user.user_metadata;
-      const userInfosArray = [
-        userMetaData.email,
-        userMetaData.first_name,
-        userMetaData.last_name,
-      ];
+      const { data: user } = await supabase.auth.getUser();
+      const metadata = user.user.user_metadata;
 
-      setUserInfos(userInfosArray);
+      setUserInfos(metadata);
       setOpenModal(true);
-      console.info(userInfosArray);
+      console.info(metadata);
     } catch (error) {
       console.error(error);
     }
