@@ -42,7 +42,7 @@ export default function Connection() {
         </a>
         <div className={styles.infos}>
           <h1>Qu’est ce que PR Checker ?</h1>
-          <p>
+          <div>
             <h2>
               Bienvenue sur PR-Checker, l'outil révolutionnaire de gestion des
               pull requests conçu par une équipe de passionnés, pour simplifier
@@ -51,8 +51,8 @@ export default function Connection() {
             <br />
             <br />
             <h3> Comment ça fonctionne ?</h3> <br />
-            Vous pouvez créer un compte personnalisé et rejoindre des projets
-            existants ou en créer de nouveaux en toute simplicité.
+            Vous pouvez créer un compte et rejoindre des projets existants ou en
+            créer de nouveaux en toute simplicité.
             <br />
             <br />
             Une fois que vous avez rejoint un projet, vous serez en attente
@@ -75,7 +75,7 @@ export default function Connection() {
               Découvrez dès maintenant PR-Checker et révolutionnez votre façon
               de gérer les pull requests !
             </h3>
-          </p>
+          </div>
         </div>
         <footer className={styles.footer}>
           <div className={styles.separator} />
