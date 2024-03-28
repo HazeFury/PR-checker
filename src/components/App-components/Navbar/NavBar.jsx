@@ -12,7 +12,8 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { Settings, Logout } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
@@ -21,6 +22,7 @@ import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
 import SettingsButton from "../Settings/SettingsButton";
+import ModalUserInfo from "../Modals/InfosUserModal";
 
 export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,6 +31,8 @@ export default function NavBar({ userId }) {
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const [allowMenu, setAllowMenu] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
+  const [userInfos, setUserInfos] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const location = useLocation();
 
   /* Used to close settings modal when leaving project without closing it manually */
@@ -96,6 +100,27 @@ export default function NavBar({ userId }) {
     }
   };
 
+  const handleUserInfos = async () => {
+    try {
+      const { data: userData } = await supabase.auth.getSession();
+      const userMetaData = userData.session.user.user_metadata;
+      const userInfosArray = [
+        userMetaData.email,
+        userMetaData.first_name,
+        userMetaData.last_name,
+      ];
+
+      setUserInfos(userInfosArray);
+      setOpenModal(true);
+      console.info(userInfosArray);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCloseModalUserInfos = () => {
+    setOpenModal(false);
+  };
   return (
     <nav className={styles.nav_container}>
       <NavLink to="/">
@@ -169,22 +194,22 @@ export default function NavBar({ userId }) {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem
-          onClick={handleMenuClose}
+          onClick={handleUserInfos}
           sx={{
             color: theme.palette.text.primary,
           }}
         >
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <InfoOutlinedIcon fontSize="small" />
           </ListItemIcon>
-          Settings
+          Infos
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
-        </MenuItem>
+        </MenuItem>{" "}
       </Menu>
       <JoinProject
         openModalJoin={openJoinProjectModal}
@@ -193,6 +218,11 @@ export default function NavBar({ userId }) {
       <CreateProject
         openModalCreate={openCreateProjectModal}
         onCloseModalCreate={handleCloseCreateProjectModal}
+      />
+      <ModalUserInfo
+        openModalUserInfos={openModal}
+        onCloseModalUserInfos={handleCloseModalUserInfos}
+        userInfos={userInfos}
       />
     </nav>
   );
