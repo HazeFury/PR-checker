@@ -28,9 +28,9 @@ const createAndSendNotification = async (newStatus, requestId) => {
       // Create a notification message according to the statut
       let notificationMessage = "";
       if (newStatus === 5) {
-        notificationMessage = `Votre PR "${prRequest.title}" a été refusée.`;
+        notificationMessage = prRequest.title;
       } else if (newStatus === 6) {
-        notificationMessage = `Votre PR "${prRequest.title}" a été acceptée.`;
+        notificationMessage = prRequest.title;
       }
 
       /* --- Étape 3: Insert notification within table --- */

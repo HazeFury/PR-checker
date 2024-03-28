@@ -27,6 +27,7 @@ export default function NavBar({ userId }) {
   const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [allowMenu, setAllowMenu] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
   const location = useLocation();
 
@@ -40,11 +41,13 @@ export default function NavBar({ userId }) {
   // to open the notification list
   const handleOpenNotification = () => {
     setOpenNotificationBox(true);
+    setAllowMenu(false); // Prevent opening the menu when notification is clicked
   };
 
   // to close the notification list
   const handleCloseNotification = () => {
     setOpenNotificationBox(false);
+    setAllowMenu(true); // Allow opening the menu when notification is closed
   };
 
   // to open the join project modal
@@ -65,7 +68,10 @@ export default function NavBar({ userId }) {
   };
   // to open the user menu
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (allowMenu) {
+      // Check if menu opening is allowed
+      setAnchorEl(event.currentTarget);
+    }
   };
   // to close the user menu
   const handleMenuClose = () => {

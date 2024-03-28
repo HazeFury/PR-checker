@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
+import { CircularProgress } from "@mui/material";
 import NotificationCard from "./NotificationCard";
 import supabase from "../../../../services/client";
 import styles from "./NotificationBox.module.css";
@@ -7,6 +8,7 @@ import refreshContext from "../../../../contexts/RefreshContext";
 
 export default function NotificationBox({ userId }) {
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { refreshData, setRefreshData } = useContext(refreshContext);
 
   const handleRefresh = () => {
@@ -26,6 +28,7 @@ export default function NotificationBox({ userId }) {
         .range(0, 19);
 
       setNotifications(notificationsData);
+      setLoading(false);
     }
   }
   // mark notifications as read when unmounting the component
@@ -48,13 +51,17 @@ export default function NotificationBox({ userId }) {
       notificationsAreRead();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, refreshData]);
+  }, []);
 
   return (
     <div className={styles.notifications_container}>
       {!notifications || notifications.length === 0 ? (
         <div className={styles.nodata}>
-          <p>Vous n'avez actuellement aucune notification.</p>
+          {loading ? (
+            <CircularProgress size={60} thickness={2} />
+          ) : (
+            <p>Vous n'avez actuellement aucune notification.</p>
+          )}
         </div>
       ) : null}
       {notifications

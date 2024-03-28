@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import useScreeSize from "../../../../hooks/useScreenSize";
 import styles from "./NotificationCard.module.css";
 
 function formatRelativeTime(dateString) {
@@ -32,6 +33,7 @@ function formatRelativeTime(dateString) {
 }
 
 export default function NotificationCard({ notification }) {
+  const width = useScreeSize();
   // Function to choose the color depending on the type
   const getStatusColor = () => {
     if (notification.type === 1) {
@@ -50,7 +52,7 @@ export default function NotificationCard({ notification }) {
       return `${styles.new_badge}`;
     }
     if (notification.notification_user[0].unread === false) {
-      return `${styles.display_none_class}`;
+      return `${styles.display_none}`;
     }
     return "";
   };
@@ -65,6 +67,11 @@ export default function NotificationCard({ notification }) {
 
   const formattedDate = formatRelativeTime(notification.created_at);
 
+  const slicedMessage =
+    width > 664
+      ? notification.message.slice(0, 39)
+      : notification.message.slice(0, 34);
+
   return (
     <div className={styles.notificationcard_container}>
       <div className={`${styles.status_color} ${getStatusColor() || ""}`} />
@@ -73,7 +80,10 @@ export default function NotificationCard({ notification }) {
       </div>
       <div className={styles.contentNotif}>
         <div className={`${getTextClass()} ${styles.text_section}`}>
-          <p>{notification.message}</p>
+          <p>
+            Votre PR {slicedMessage} a été{" "}
+            {notification.type === 1 ? "acceptée" : "refusée"}
+          </p>
         </div>
         <div className={`${getTextClass()} ${styles.date_section}`}>
           <p>{formattedDate}</p>
