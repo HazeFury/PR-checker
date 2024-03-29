@@ -99,7 +99,7 @@ export default function NavBar({ userId }) {
       console.error(error);
     }
   };
-
+  // function to keep the users infos
   const handleUserInfos = async () => {
     try {
       const { data: user } = await supabase.auth.getUser();
@@ -107,12 +107,11 @@ export default function NavBar({ userId }) {
 
       setUserInfos(metadata);
       setOpenModal(true);
-      console.info(metadata);
     } catch (error) {
       console.error(error);
     }
   };
-
+  // function to close the modale with user infos
   const handleCloseModalUserInfos = () => {
     setOpenModal(false);
   };

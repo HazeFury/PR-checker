@@ -29,11 +29,11 @@ export default function InfosUserModal({
     padding: 4,
   };
 
-  const handleModalCloseCreate = () => {
+  const handleModalClose = () => {
     onCloseModalUserInfos();
   };
   return (
-    <Modal open={openModalUserInfos} onClose={handleModalCloseCreate}>
+    <Modal open={openModalUserInfos} onClose={handleModalClose}>
       <Box sx={style}>
         <IconButton
           style={{
@@ -45,7 +45,7 @@ export default function InfosUserModal({
             height: "2.5rem",
             borderRadius: "0px 7px 0px 10px",
           }}
-          onClick={handleModalCloseCreate}
+          onClick={handleModalClose}
           aria-label="close"
         >
           {" "}
