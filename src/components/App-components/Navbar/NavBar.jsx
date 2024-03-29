@@ -112,6 +112,7 @@ export default function NavBar({ userId }) {
         <SettingsButton
           openSettings={openSettings}
           setOpenSettings={setOpenSettings}
+          userId={userId}
         />
 
         <Tooltip title="Account settings">

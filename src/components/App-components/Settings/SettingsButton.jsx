@@ -7,7 +7,11 @@ import SettingsModal from "./SettingsModal";
 import UserContext from "../../../contexts/UserContext";
 import useScreenSize from "../../../hooks/useScreenSize";
 
-export default function SettingsButton({ openSettings, setOpenSettings }) {
+export default function SettingsButton({
+  openSettings,
+  setOpenSettings,
+  userId,
+}) {
   /* If user tries to close general settings with unsaved changes, this state is gonna be updated
    to open a confirmation modal thus preventing the user to lose unsaved changes without a warning */
   const [openConfirmUpdate, setOpenConfirmUpdate] = useState({
@@ -62,6 +66,7 @@ export default function SettingsButton({ openSettings, setOpenSettings }) {
           openConfirmUpdate={openConfirmUpdate}
           setOpenConfirmUpdate={setOpenConfirmUpdate}
           setOpenSettings={setOpenSettings}
+          userId={userId}
         />
       </>
     );
@@ -71,4 +76,5 @@ export default function SettingsButton({ openSettings, setOpenSettings }) {
 SettingsButton.propTypes = {
   openSettings: PropTypes.bool.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };

@@ -13,6 +13,7 @@ export default function SettingsModalContent({
   openConfirmUpdate,
   setOpenConfirmUpdate,
   setOpenSettings,
+  userId,
 }) {
   const [projectData, setProjectData] = useState(null);
   const projectId = useParams();
@@ -52,7 +53,7 @@ export default function SettingsModalContent({
           />
         )}
         {content === "Membres" && (
-          <ContributorSettings projectId={projectId.uuid} />
+          <ContributorSettings projectId={projectId.uuid} userId={userId} />
         )}
         {content === "Demandes" && <JoinSettings />}
       </section>
@@ -70,4 +71,5 @@ SettingsModalContent.propTypes = {
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };

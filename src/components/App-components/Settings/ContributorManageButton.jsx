@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import PropTypes from "prop-types";
 import supabase from "../../../services/client";
 import useScreenSize from "../../../hooks/useScreenSize";
+import ConfirmationModal from "../Modals/ConfirmationModal";
 
 export default function ContributorManageButton({
   user,
@@ -29,6 +30,7 @@ export default function ContributorManageButton({
   /* ----------------------------------------- */
 
   const [hoverRole, setHoverRole] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const { id: userId, role: userRole, user_firstname: userFirstName } = user;
   const targetUser = user;
   const screenSize = useScreenSize();
@@ -102,7 +104,17 @@ export default function ContributorManageButton({
   };
 
   const handleClickRemove = () => {
+    setAnchorEl(null);
+    setConfirmRemove(true);
+  };
+
+  const handleCancelRemove = () => {
+    setConfirmRemove(false);
+  };
+
+  const handleConfirmRemove = () => {
     removeUser(userId);
+    setConfirmRemove(false);
   };
 
   return (
@@ -139,6 +151,8 @@ export default function ContributorManageButton({
             },
           },
         }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <MenuItem
           onMouseEnter={handleHoverRole}
@@ -181,6 +195,16 @@ export default function ContributorManageButton({
           <PersonRemove sx={{ color: "var(--error)" }} />
         </MenuItem>
       </Menu>
+
+      {confirmRemove && (
+        <ConfirmationModal
+          handleLeftButtonClick={handleCancelRemove}
+          handleRightButtonClick={handleConfirmRemove}
+          title={`Voulez-vous vraiment retirer ${userFirstName} du projet ?`}
+          textButtonLeft="Annuler"
+          textButtonRight="Retirer"
+        />
+      )}
     </>
   );
 }

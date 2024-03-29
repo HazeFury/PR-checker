@@ -14,6 +14,7 @@ export default function SettingsModal({
   openConfirmUpdate,
   setOpenConfirmUpdate,
   setOpenSettings,
+  userId,
 }) {
   const [content, setContent] = useState("Général");
   const theme = useTheme();
@@ -79,6 +80,7 @@ export default function SettingsModal({
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
         setOpenSettings={setOpenSettings}
+        userId={userId}
       />
     </Dialog>
   );
@@ -95,4 +97,5 @@ SettingsModal.propTypes = {
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };
