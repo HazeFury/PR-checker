@@ -1,5 +1,7 @@
 import { Box, IconButton, Modal } from "@mui/material";
 import PropTypes from "prop-types";
+import CloseIcon from "@mui/icons-material/Close";
+import styles from "./InfosUserModal.module.css";
 
 export default function InfosUserModal({
   openModalUserInfos,
@@ -13,8 +15,13 @@ export default function InfosUserModal({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 1007,
-    height: 368,
+    width: {
+      sm: "400px",
+      md: "670px",
+      lg: "690px",
+      xl: "710px",
+    },
+    height: 405,
     backgroundColor: "#292929",
     borderRadius: "0.625rem",
     fontFamily: "Montserrat",
@@ -42,10 +49,23 @@ export default function InfosUserModal({
           aria-label="close"
         >
           {" "}
+          <CloseIcon style={{ color: "white" }} />
         </IconButton>
-        {userInfos.email}
-        {userInfos.first_name}
-        {userInfos.last_name}
+
+        <div className={styles.userInfosBlock}>
+          <h2>Informations de l'utilisateur</h2>
+          <div className={styles.infos}>
+            <p>
+              Prénom : <span>{userInfos.first_name}</span>
+            </p>
+            <p>
+              Nom : <span>{userInfos.last_name}</span>{" "}
+            </p>
+            <p>
+              Email : <span>{userInfos.email}</span>{" "}
+            </p>
+          </div>
+        </div>
       </Box>
     </Modal>
   );
