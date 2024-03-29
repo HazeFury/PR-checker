@@ -32,3 +32,18 @@
 .infos span {
   font-weight: bold;
 }
+
+@media screen and (max-width: 767px) {
+  .infos p {
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+
+  .infos span {
+    margin-top: 0.2rem;
+  }
+
+  .userInfosBlock h2 {
+    font-size: 32px;
+  }
+}
