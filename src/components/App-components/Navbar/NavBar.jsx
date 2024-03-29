@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Logout } from "@mui/icons-material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
@@ -139,7 +138,7 @@ export default function NavBar({ userId }) {
           setOpenSettings={setOpenSettings}
         />
 
-        <Tooltip title="Account settings">
+        <Tooltip title="Compte">
           <IconButton
             onClick={handleMenuClick}
             size="large"
@@ -194,7 +193,7 @@ export default function NavBar({ userId }) {
           }}
         >
           <ListItemIcon>
-            <InfoOutlinedIcon fontSize="small" />
+            <PersonOutlineIcon fontSize="medium" />
           </ListItemIcon>
           Infos
         </MenuItem>
