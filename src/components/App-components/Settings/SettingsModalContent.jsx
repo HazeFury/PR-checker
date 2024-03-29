@@ -51,7 +51,9 @@ export default function SettingsModalContent({
             setContent={setContent}
           />
         )}
-        {content === "Membres" && <ContributorSettings />}
+        {content === "Membres" && (
+          <ContributorSettings projectId={projectId.uuid} />
+        )}
         {content === "Demandes" && <JoinSettings />}
       </section>
     );

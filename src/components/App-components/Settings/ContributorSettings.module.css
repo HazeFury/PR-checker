@@ -1,0 +1,66 @@
+.header {
+  position: sticky;
+  top: 0;
+}
+
+.header > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.row {
+  margin-block: 1rem;
+  color: var(--light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row > *,
+.header > div > * {
+  flex: 2;
+}
+
+.row > p:first-of-type,
+.header > div > p:first-of-type {
+  flex: 3;
+}
+
+.input {
+  width: 3rem;
+  height: 2rem;
+  font: var(--input-text);
+  background-color: var(--light);
+  border-radius: 0.25rem;
+  box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.group,
+.header > div > p:nth-of-type(3) {
+  flex: 1;
+  text-align: center;
+}
+
+.group > label {
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+}
+
+.button,
+.header > div > p:nth-of-type(4) {
+  flex: 3;
+  text-align: end;
+}
+
+@media screen and (max-width: 767px) {
+  .button,
+  .header > div > p:nth-of-type(4) {
+    flex: 2;
+  }
+}

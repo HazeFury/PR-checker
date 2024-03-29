@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -43,6 +43,13 @@ export default function SettingsModalHeader({
       if (width <= 767) setAnchorEl(null);
     }
   };
+
+  useEffect(() => {
+    // Reset content state when component unmounts
+    return () => {
+      setContent("Général");
+    };
+  }, [setContent]);
 
   return (
     <header
