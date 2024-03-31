@@ -12,7 +12,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { Settings, Logout } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
@@ -21,13 +21,17 @@ import supabase from "../../../services/client";
 import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
 import SettingsButton from "../Settings/SettingsButton";
+import ModalUserInfo from "../Modals/InfosUserModal";
 
 export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openNotificationBox, setOpenNotificationBox] = useState(false);
   const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [allowMenu, setAllowMenu] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
+  const [userInfos, setUserInfos] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const location = useLocation();
 
   /* Used to close settings modal when leaving project without closing it manually */
@@ -40,11 +44,13 @@ export default function NavBar({ userId }) {
   // to open the notification list
   const handleOpenNotification = () => {
     setOpenNotificationBox(true);
+    setAllowMenu(false); // Prevent opening the menu when notification is clicked
   };
 
   // to close the notification list
   const handleCloseNotification = () => {
     setOpenNotificationBox(false);
+    setAllowMenu(true); // Allow opening the menu when notification is closed
   };
 
   // to open the join project modal
@@ -65,7 +71,10 @@ export default function NavBar({ userId }) {
   };
   // to open the user menu
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    if (allowMenu) {
+      // Check if menu opening is allowed
+      setAnchorEl(event.currentTarget);
+    }
   };
   // to close the user menu
   const handleMenuClose = () => {
@@ -89,7 +98,22 @@ export default function NavBar({ userId }) {
       console.error(error);
     }
   };
+  // function to keep the users infos
+  const handleUserInfos = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      const metadata = user.user.user_metadata;
 
+      setUserInfos(metadata);
+      setOpenModal(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  // function to close the modale with user infos
+  const handleCloseModalUserInfos = () => {
+    setOpenModal(false);
+  };
   return (
     <nav className={styles.nav_container}>
       <NavLink to="/">
@@ -114,7 +138,7 @@ export default function NavBar({ userId }) {
           setOpenSettings={setOpenSettings}
         />
 
-        <Tooltip title="Account settings">
+        <Tooltip title="Compte">
           <IconButton
             onClick={handleMenuClick}
             size="large"
@@ -163,22 +187,22 @@ export default function NavBar({ userId }) {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem
-          onClick={handleMenuClose}
+          onClick={handleUserInfos}
           sx={{
             color: theme.palette.text.primary,
           }}
         >
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <PersonOutlineIcon fontSize="medium" />
           </ListItemIcon>
-          Settings
+          Infos
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
-        </MenuItem>
+        </MenuItem>{" "}
       </Menu>
       <JoinProject
         openModalJoin={openJoinProjectModal}
@@ -187,6 +211,11 @@ export default function NavBar({ userId }) {
       <CreateProject
         openModalCreate={openCreateProjectModal}
         onCloseModalCreate={handleCloseCreateProjectModal}
+      />
+      <ModalUserInfo
+        openModalUserInfos={openModal}
+        onCloseModalUserInfos={handleCloseModalUserInfos}
+        userInfos={userInfos}
       />
     </nav>
   );

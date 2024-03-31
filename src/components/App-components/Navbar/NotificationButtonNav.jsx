@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Menu, Badge, IconButton } from "@mui/material";
+import { Badge, IconButton } from "@mui/material";
 
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import NotificationBox from "./Notifications/NotificationBox";
@@ -10,13 +10,12 @@ import UserContext from "../../../contexts/UserContext";
 import refreshContext from "../../../contexts/RefreshContext";
 
 export default function NotificationButtonNav({
+  userId,
   openNotificationBox,
   handleOpenNotification,
   handleCloseNotification,
-  userId,
 }) {
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-  const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const { userRole } = useContext(UserContext);
   const { refreshData } = useContext(refreshContext);
@@ -49,14 +48,15 @@ export default function NotificationButtonNav({
     fetchNotifications();
   }, [userId, refreshData]);
 
-  const handleNotificationClose = async () => {
-    handleCloseNotification();
-    setAnchorEl(null);
-  };
+  // To close the notification list
 
-  const handleNotificationClick = (event) => {
+  const handleNotificationClose = async () => {
+    setUnreadNotificationsCount(0);
+    handleCloseNotification();
+  };
+  // To open the notification list
+  const handleNotificationClick = () => {
     handleOpenNotification();
-    setAnchorEl(event.currentTarget);
   };
 
   const isOnPRList =
@@ -68,7 +68,20 @@ export default function NotificationButtonNav({
     <div>
       {isOnPRList && (
         <div>
-          <IconButton onClick={handleNotificationClick} color="inherit">
+          <IconButton
+            onClick={() => {
+              if (openNotificationBox) {
+                handleNotificationClose(); // Si la boîte de notification est ouverte, fermez-la
+              } else {
+                handleNotificationClick(); // Sinon, ouvrez-la
+              }
+              // Réinitialisez le compteur d'notifications lors de la fermeture
+              setUnreadNotificationsCount(
+                openNotificationBox ? 0 : unreadNotificationsCount
+              );
+            }}
+            color="inherit"
+          >
             <Badge
               badgeContent={
                 unreadNotificationsCount > 0 ? unreadNotificationsCount : null
@@ -80,34 +93,8 @@ export default function NotificationButtonNav({
               />
             </Badge>
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => {
-              setUnreadNotificationsCount(0); // Reset the unread count when closing the menu
-              handleNotificationClose();
 
-              setAnchorEl(null);
-            }}
-            PaperProps={{
-              sx: {
-                width: 450,
-                height: 210,
-                background:
-                  "radial-gradient(circle, rgb(40, 40, 40) 0%, rgb(29, 29, 29) 100%)",
-                borderRadius: "0 0 10px 10px",
-                boxShadow:
-                  "0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12)",
-              },
-            }}
-          >
-            {openNotificationBox && (
-              <NotificationBox
-                userId={userId}
-                onCloseNotificationBox={handleNotificationClose}
-              />
-            )}
-          </Menu>
+          {openNotificationBox && <NotificationBox userId={userId} />}
         </div>
       )}
     </div>

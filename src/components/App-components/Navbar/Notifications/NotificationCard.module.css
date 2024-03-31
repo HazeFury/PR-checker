@@ -35,11 +35,11 @@
   max-width: 85%;
   flex-grow: 1;
   padding: 0 10px;
+  text-overflow: ellipsis;
 }
 
-.text_section p {
-  display: flex;
-  justify-content: flex-start;
+.text_section {
+  text-align: start;
   color: white;
   font-size: 0.75rem;
 }
@@ -65,4 +65,10 @@
 
 .boldIfUnread {
   font-weight: 700;
+}
+
+@media (max-width: 664px) {
+  .notificationcard_container {
+    height: 90px;
+  }
 }
