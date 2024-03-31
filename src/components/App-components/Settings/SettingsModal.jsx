@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
 import { Dialog, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useTheme } from "@emotion/react";
 import SettingsModalHeader from "./SettingsModalHeader";
 import SettingsModalContent from "./SettingsModalContent";
+import supabase from "../../../services/client";
+import refreshContext from "../../../contexts/RefreshContext";
 
 export default function SettingsModal({
   open,
@@ -17,7 +20,39 @@ export default function SettingsModal({
 }) {
   const [content, setContent] = useState("Général");
   const theme = useTheme();
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [pendingUsersLength, setPendingUsersLength] = useState(0);
+  // To keep the id of the project using params
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
+  const { refreshData } = useContext(refreshContext);
 
+  // function to get the firstname and lastname of the users who are pending true for this project selected
+  async function getPendingUsers() {
+    try {
+      const { data: userData, error } = await supabase
+        .from("project_users")
+        .select("id, user_firstname, user_lastname")
+        .match({
+          pending: true,
+          project_uuid: projectId,
+        });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setPendingUsers(userData);
+        setPendingUsersLength(userData.length);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getPendingUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshData]);
   return (
     <Dialog
       onClose={handleClose}
@@ -71,6 +106,7 @@ export default function SettingsModal({
         generalSettingsUpdated={generalSettingsUpdated}
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
+        pendingUsersLength={pendingUsersLength}
       />
       <SettingsModalContent
         content={content}
@@ -79,6 +115,7 @@ export default function SettingsModal({
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
         setOpenSettings={setOpenSettings}
+        pendingUsers={pendingUsers}
       />
     </Dialog>
   );

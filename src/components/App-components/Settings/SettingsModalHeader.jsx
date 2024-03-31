@@ -1,5 +1,5 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
 import {
   Button,
   Divider,
@@ -8,8 +8,10 @@ import {
   MenuItem,
   MenuList,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Close, Menu as MenuIcon } from "@mui/icons-material";
 import useScreenSize from "../../../hooks/useScreenSize";
+import supabase from "../../../services/client";
 
 const sectionNames = ["Général", "Membres", "Demandes"];
 
@@ -19,6 +21,7 @@ export default function SettingsModalHeader({
   generalSettingsUpdated,
   openConfirmUpdate,
   setOpenConfirmUpdate,
+  pendingUsersLength,
 }) {
   const width = useScreenSize();
 
@@ -27,6 +30,7 @@ export default function SettingsModalHeader({
   const handleClickMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -43,6 +47,31 @@ export default function SettingsModalHeader({
       if (width <= 767) setAnchorEl(null);
     }
   };
+  const [totalMembers, setTotalMembers] = useState(null);
+
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch total members
+        const { data: totalData, error: totalError } = await supabase
+          .from("project_users")
+          .select("*")
+          .match({ project_uuid: projectId });
+
+        if (totalError) {
+          console.error(totalError);
+        } else {
+          setTotalMembers(totalData.length);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+  }, [projectId]);
 
   return (
     <header
@@ -57,15 +86,21 @@ export default function SettingsModalHeader({
               return (
                 <li key={name}>
                   <Button
-                    disabled={content === name}
+                    disabled={content.startsWith(name)}
                     onClick={handleClick}
                     sx={
-                      content === name
+                      content.startsWith(name)
                         ? { "&:disabled": { color: "text.secondary" } }
                         : { color: "button.main", textTransform: "none" }
                     }
                   >
                     {name}
+                    {name === "Membres" && totalMembers !== null && (
+                      <span>({totalMembers})</span>
+                    )}
+                    {name === "Demandes" && pendingUsersLength !== null && (
+                      <span> ({pendingUsersLength})</span>
+                    )}{" "}
                   </Button>
                 </li>
               );
@@ -114,7 +149,7 @@ export default function SettingsModalHeader({
                             : { color: "button.main", textTransform: "none" }
                         }
                       >
-                        {name}
+                        {name}{" "}
                       </Button>
                     </MenuItem>
                   );
@@ -138,4 +173,5 @@ SettingsModalHeader.propTypes = {
     changedSection: PropTypes.string.isRequired,
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
+  pendingUsersLength: PropTypes.number.isRequired,
 };
