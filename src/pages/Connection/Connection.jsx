@@ -51,26 +51,31 @@ export default function Connection() {
             <br />
             <br />
             <h3> Comment ça fonctionne ?</h3> <br />
-            Vous pouvez créer un compte et rejoindre des projets existants ou en
-            créer de nouveaux en toute simplicité.
-            <br />
-            <br />
-            Une fois que vous avez rejoint un projet, vous serez en attente
-            jusqu'à ce que le propriétaire du projet vous accepte. Lorsque vous
-            êtes intégré à un projet, vous pouvez soumettre des demandes de pull
-            request en toute confiance, sachant qu'elles seront examinées par le
-            propriétaire du projet ou le formateur désigné. <br />
-            <br /> Le tableau de bord intuitif offre aux propriétaires de projet
-            une vue d'ensemble de leurs membres, des demandes de participation
-            en attente et des fonctionnalités de modification de projet.
-            <br />
-            <br />
-            D'abord conçu pour les formateurs et leurs élèves en développement
-            web, PR-Checker évolue vers une solution polyvalente pour les
-            entreprises. Basé sur l'expérience d'un de nos développeurs, il
-            résoud les défis de gestion des pull requests, offrant une solution
-            robuste pour le développement collaboratif.
-            <br /> <br />{" "}
+            <p>
+              {" "}
+              Vous pouvez créer un compte et rejoindre des projets existants ou
+              en créer de nouveaux en toute simplicité.
+              <br />
+              <br />
+              Une fois que vous avez rejoint un projet, vous serez en attente
+              jusqu'à ce que le propriétaire du projet vous accepte. Lorsque
+              vous êtes intégré à un projet, vous pouvez soumettre des demandes
+              de pull request en toute confiance, sachant qu'elles seront
+              examinées par le propriétaire du projet ou le formateur désigné.{" "}
+              <br />
+              <br /> Le tableau de bord intuitif offre aux propriétaires de
+              projet une vue d'ensemble de leurs membres, des demandes de
+              participation en attente et des fonctionnalités de modification de
+              projet.
+              <br />
+              <br />
+              D'abord conçu pour les formateurs et leurs élèves en développement
+              web, PR-Checker évolue vers une solution polyvalente pour les
+              entreprises. Basé sur l'expérience d'un de nos développeurs, il
+              résoud les défis de gestion des pull requests, offrant une
+              solution robuste pour le développement collaboratif.
+              <br /> <br />{" "}
+            </p>
             <h3 className={styles.endOfText}>
               Découvrez dès maintenant PR-Checker et révolutionnez votre façon
               de gérer les pull requests !
