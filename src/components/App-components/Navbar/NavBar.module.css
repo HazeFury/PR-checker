@@ -1,5 +1,4 @@
 .nav_container {
-  width: 100vw;
   height: 100px;
   display: flex;
   justify-content: space-between;
@@ -8,6 +7,21 @@
 }
 
 .logo {
-  height: 60px;
-  margin-left: 40px;
+  height: 40px;
+  margin-left: 10px;
+}
+
+.Tooltip {
+  display: flex;
+}
+
+@media screen and (min-width: 600px) {
+  .logo {
+    height: 60px;
+    margin-left: 40px;
+  }
+  .Tooltip {
+    align-items: center;
+    text-align: center;
+  }
 }

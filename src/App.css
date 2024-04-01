@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   border: none;
+  list-style-type: none;
 
   /* --- CSS Variables --- */
 
@@ -13,6 +14,14 @@
   --background: #1d1d1d;
   --error: #ed4337;
 
+  --waitingReview: #6ca8e0;
+  --inProgress: #e0db6c;
+  --waitingCorrection: #e0ab6c;
+  --correctionDone: #ad6ce0;
+  --requestRejected: #e07a6c;
+  --requestValidated: #7add84;
+  --defaultColor: var(--action);
+
   /* Fonts */
   --global-font: "Montserrat", sans-serif;
   --input-label: 400 1.1em var(--global-font);
@@ -21,8 +30,10 @@
 }
 
 body {
+  font-family: var(--global-font);
   background: radial-gradient(circle, rgb(40, 40, 40) 0%, rgb(29, 29, 29) 100%);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 html {
@@ -36,7 +47,30 @@ h4,
 h5,
 h6,
 p,
+a,
 label,
 button {
   color: var(--light);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* For browsers that support `scrollbar-*` properties */
+@supports (scrollbar-color: auto) {
+  body {
+    scrollbar-color: var(--action) transparent;
+  }
+}
+
+/* Otherwise, use `::-webkit-scrollbar-*` pseudo-elements */
+@supports selector(::-webkit-scrollbar) {
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  body::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-button {
+    background: var(--action);
+  }
 }

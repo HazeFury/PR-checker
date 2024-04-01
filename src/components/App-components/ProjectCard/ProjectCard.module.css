@@ -1,8 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
 .projectCardPage {
- margin: 40px 80px;
-  
+  margin: 40px 80px;
 }
 
 .projectCardContainer {
@@ -11,6 +10,19 @@
   height: 14.04rem;
   margin-bottom: 1.25rem;
   cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.projectCardContainer:hover {
+  scale: 1.04;
+}
+.projectCardContainerDisabled {
+  position: relative;
+  width: 22.78rem;
+  height: 14.04rem;
+  margin-bottom: 1.25rem;
+  filter: grayscale(1);
+  cursor: default;
 }
 
 .projectCardPicture {
@@ -100,4 +112,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.is_pending_info {
+  position: absolute;
+  right: 20px;
+  bottom: 45px;
+  background-color: #3883ba;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  filter: grayscale(0);
 }

@@ -1,58 +1,162 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, NavLink } from "react-router-dom";
+import PropTypes from "prop-types";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import Box from "@mui/material/Box";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
+import { useTheme } from "@emotion/react";
+import {
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
+import JoinProject from "../Project/JoinProject/JoinProject";
+import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
+import ProjectButtonNav from "./ProjectButtonNav";
+import NotificationButtonNav from "./NotificationButtonNav";
+import SettingsButton from "../Settings/SettingsButton";
+import ModalUserInfo from "../Modals/InfosUserModal";
 
-async function signOut() {
-  await supabase.auth.signOut();
-}
-
-export default function NavBar() {
+export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [openNotificationBox, setOpenNotificationBox] = useState(false);
+  const [openJoinProjectModal, setOpenJoinProjectModal] = useState(false);
+  const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+  const [allowMenu, setAllowMenu] = useState(true);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [userInfos, setUserInfos] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const location = useLocation();
+
+  /* Used to close settings modal when leaving project without closing it manually */
+  useEffect(() => {
+    setOpenSettings(false);
+  }, [location]);
+
+  const theme = useTheme();
+
+  // to open the notification list
+  const handleOpenNotification = () => {
+    setOpenNotificationBox(true);
+    setAllowMenu(false); // Prevent opening the menu when notification is clicked
   };
-  const handleClose = () => {
-    setAnchorEl(null);
+
+  // to close the notification list
+  const handleCloseNotification = () => {
+    setOpenNotificationBox(false);
+    setAllowMenu(true); // Allow opening the menu when notification is closed
   };
-  const handleLogout = () => {
-    signOut();
+
+  // to open the join project modal
+  const handleOpenJoinProjectModal = () => {
+    setOpenJoinProjectModal(true);
+  };
+  // to close the join project modal
+  const handleCloseJoinProjectModal = () => {
+    setOpenJoinProjectModal(false);
+  };
+  // to open the create project modal
+  const handleOpenCreateProjectModal = () => {
+    setOpenCreateProjectModal(true);
+  };
+  // to open the create project modal
+  const handleCloseCreateProjectModal = () => {
+    setOpenCreateProjectModal(false);
+  };
+  // to open the user menu
+  const handleMenuClick = (event) => {
+    if (allowMenu) {
+      // Check if menu opening is allowed
+      setAnchorEl(event.currentTarget);
+    }
+  };
+  // to close the user menu
+  const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  // Function to logout
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      } else {
+        handleMenuClose();
+        toast.info("À bientôt !", {
+          icon: "👋",
+        });
+      }
+    } catch (error) {
+      toast.error("Une erreur s'est produite");
+      console.error(error);
+    }
+  };
+  // function to keep the users infos
+  const handleUserInfos = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      const metadata = user.user.user_metadata;
+
+      setUserInfos(metadata);
+      setOpenModal(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  // function to close the modale with user infos
+  const handleCloseModalUserInfos = () => {
+    setOpenModal(false);
+  };
   return (
     <nav className={styles.nav_container}>
-      <img className={styles.logo} src={Logo} alt="PR-checker logo" />
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <Tooltip title="Account settings">
+      <NavLink to="/">
+        <img className={styles.logo} src={Logo} alt="PR-checker logo" />
+      </NavLink>
+      <div className={styles.Tooltip}>
+        <ProjectButtonNav
+          openJoinProjectModal={openJoinProjectModal}
+          onOpenJoinProjectModal={handleOpenJoinProjectModal}
+          openCreateProjectModal={openCreateProjectModal}
+          onOpenCreateProjectModal={handleOpenCreateProjectModal}
+        />
+        <NotificationButtonNav
+          handleOpenNotification={handleOpenNotification}
+          handleCloseNotification={handleCloseNotification}
+          openNotificationBox={openNotificationBox}
+          userId={userId}
+        />
+
+        <SettingsButton
+          openSettings={openSettings}
+          setOpenSettings={setOpenSettings}
+        />
+
+        <Tooltip title="Compte">
           <IconButton
-            onClick={handleClick}
+            onClick={handleMenuClick}
             size="large"
             sx={{ ml: 2, mx: 5 }}
-            aria-controls={open ? "account-menu" : undefined}
+            aria-controls={anchorEl ? "account-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={anchorEl ? "true" : undefined}
           >
             <PersonOutlineIcon sx={{ color: "white", scale: "1.8" }} />
           </IconButton>
         </Tooltip>
-      </Box>
+      </div>
+
       <Menu
-        anchorEl={anchorEl}
         id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -82,19 +186,45 @@ export default function NavBar() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={handleUserInfos}
+          sx={{
+            color: theme.palette.text.primary,
+          }}
+        >
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <PersonOutlineIcon fontSize="medium" />
           </ListItemIcon>
-          Settings
+          Infos
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
-        </MenuItem>
+        </MenuItem>{" "}
       </Menu>
+      <JoinProject
+        openModalJoin={openJoinProjectModal}
+        onCloseModalJoin={handleCloseJoinProjectModal}
+      />
+      <CreateProject
+        openModalCreate={openCreateProjectModal}
+        onCloseModalCreate={handleCloseCreateProjectModal}
+      />
+      <ModalUserInfo
+        openModalUserInfos={openModal}
+        onCloseModalUserInfos={handleCloseModalUserInfos}
+        userInfos={userInfos}
+      />
     </nav>
   );
 }
+
+NavBar.propTypes = {
+  userId: PropTypes.string,
+};
+
+NavBar.defaultProps = {
+  userId: "",
+};

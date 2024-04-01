@@ -1,32 +1,14 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+// eslint-disable-next-line import/no-unresolved
+import { toast } from "sonner";
 import TextInput from "../../../UI-components/TextInput/TextInput";
 import styles from "./Register.module.css";
-import TooltipIconError from "../../../UI-components/MUIRemix/TooltipIconError";
-import ShowPassword from "../../../UI-components/MUIRemix/ShowPassword";
+import TooltipIcon from "../../../UI-components/MUIRemix/TooltipIcon";
+import supabase from "../../../../services/client";
 
 export default function Register() {
-  const revealPass = () => {
-    const passwordInput = document.getElementById("password");
-    passwordInput.type = "text";
-  };
-
-  const hidePass = () => {
-    const passwordInput = document.getElementById("password");
-    passwordInput.type = "password";
-  };
-
-  const revealConfirm = () => {
-    const confirmInput = document.getElementById("confirm");
-    confirmInput.type = "text";
-  };
-
-  const hideConfirm = () => {
-    const confirmInput = document.getElementById("confirm");
-    confirmInput.type = "password";
-  };
-
   const formik = useFormik({
     initialValues: {
       lastname: "",
@@ -44,16 +26,32 @@ export default function Register() {
       password: Yup.string()
         .matches(
           "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{14,}$",
-          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)",
+          "Le mot de passe doit contenir au moins 14 caractères, dont 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole (@$!%*?&)"
         )
         .required("Veuillez entrer un mot de passe"),
       confirm: Yup.string()
         .oneOf([Yup.ref("password")], "Les mots de passe ne correspondent pas")
         .required("Veuillez confirmer votre mot de passe"),
     }),
-    // onSubmit: (values) => {
-    //   console.info(JSON.stringify(values, null, 2));
-    // },
+    onSubmit: async (values) => {
+      try {
+        const { error } = await supabase.auth.signUp({
+          email: values.mail,
+          password: values.password,
+          options: {
+            data: {
+              first_name: values.firstname,
+              last_name: values.lastname,
+            },
+          },
+        });
+        if (error) throw error;
+        else toast.info("Un mail de validation vous a été envoyé");
+      } catch (error) {
+        toast.error("Une erreur s'est produite, veuillez réessayer plus tard");
+        console.error(error);
+      }
+    },
   });
 
   return (
@@ -73,10 +71,11 @@ export default function Register() {
               value={formik.values.lastname}
             />
             {formik.touched.lastname && formik.errors.lastname ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.lastname}
                 top="0"
                 left="50px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -91,10 +90,11 @@ export default function Register() {
               value={formik.values.firstname}
             />
             {formik.touched.firstname && formik.errors.firstname ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.firstname}
                 top="0"
                 left="80px"
+                color="var(--error)"
               />
             ) : null}
           </div>
@@ -110,10 +110,11 @@ export default function Register() {
             value={formik.values.mail}
           />
           {formik.touched.mail && formik.errors.mail ? (
-            <TooltipIconError
+            <TooltipIcon
               tooltip={formik.errors.mail}
               top="0"
               left="120px"
+              color="var(--error)"
             />
           ) : null}
         </div>
@@ -129,13 +130,13 @@ export default function Register() {
               value={formik.values.password}
             />
             {formik.touched.password && formik.errors.password ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.password}
                 top="1px"
-                left="150px"
+                left="125px"
+                color="var(--error)"
               />
             ) : null}
-            <ShowPassword reveal={revealPass} hide={hidePass} />
           </div>
           <div className={styles.input}>
             <TextInput
@@ -148,13 +149,13 @@ export default function Register() {
               value={formik.values.confirm}
             />
             {formik.touched.confirm && formik.errors.confirm ? (
-              <TooltipIconError
+              <TooltipIcon
                 tooltip={formik.errors.confirm}
                 top="1px"
-                left="150px"
+                left="125px"
+                color="var(--error)"
               />
             ) : null}
-            <ShowPassword reveal={revealConfirm} hide={hideConfirm} />
           </div>
         </div>
         <Button
