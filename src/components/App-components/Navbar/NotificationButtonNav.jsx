@@ -80,7 +80,7 @@ export default function NotificationButtonNav({
                 openNotificationBox ? 0 : unreadNotificationsCount
               );
             }}
-            color="inherit"
+            color="inherit" // Utilisation de la couleur primaire lorsque les notifications sont non lues
           >
             <Badge
               badgeContent={
@@ -89,7 +89,13 @@ export default function NotificationButtonNav({
               color="error"
             >
               <NotificationsNoneOutlinedIcon
-                sx={{ color: "white", scale: "1.8" }}
+                sx={{
+                  color:
+                    unreadNotificationsCount > 0
+                      ? "rgb(56, 131, 186)"
+                      : "white",
+                  scale: "1.8",
+                }}
               />
             </Badge>
           </IconButton>
