@@ -32,6 +32,7 @@ export default function SettingsModalHeader({
   };
 
   const handleClick = (e) => {
+    if (width <= 767) setAnchorEl(null);
     if (generalSettingsUpdated.current) {
       // if user tries to change section without saving changes in general settings
       setOpenConfirmUpdate({
@@ -40,7 +41,6 @@ export default function SettingsModalHeader({
       });
     } else {
       setContent(e.target.innerText);
-      if (width <= 767) setAnchorEl(null);
     }
   };
 

@@ -325,11 +325,14 @@ export default function GeneralSettings({
         </div>
         {/* _____ Project picture _____ */}
         <div className={styles.item}>
-          <div>
-            <label htmlFor="project-pic">Image du projet</label>
+          <div className={styles.label}>
+            <p>Image du projet</p>
             <IconButton
               onClick={() => setShowPic(true)}
               sx={{
+                position: "absolute",
+                top: 0,
+                left: "130px",
                 "&.MuiIconButton-root": { padding: 0, paddingLeft: "0.5rem" },
               }}
             >
@@ -366,7 +369,7 @@ export default function GeneralSettings({
         {/* _____ Project delete _____ */}
         <div className={styles.item}>
           <div className={styles.label}>
-            <label htmlFor="delete-project">Supprimer le projet</label>
+            <p>Supprimer le projet</p>
             <TooltipIcon
               tooltip="Supprimez votre projet avec toutes les demandes de PR qu'il contient."
               top="0"

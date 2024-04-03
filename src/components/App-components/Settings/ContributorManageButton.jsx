@@ -32,6 +32,7 @@ export default function ContributorManageButton({
   /* ----------------------------------------- */
   const [openGroupChange, setOpenGroupChange] = useState(false);
   const handleGroupChangeClick = () => {
+    setAnchorEl(null);
     setOpenGroupChange(true);
   };
 

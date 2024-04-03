@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider, Tooltip } from "@mui/material";
+import { Divider, Skeleton, Tooltip } from "@mui/material";
 import { Star } from "@mui/icons-material";
 import supabase from "../../../services/client";
 import ContributorManageButton from "./ContributorManageButton";
@@ -55,6 +55,57 @@ export default function ContributorSettings({ projectId, userId }) {
         </ul>
         <Divider sx={{ bgcolor: "#e8e8e8", height: "2px" }} />
       </header>
+      {!contributors.length && (
+        // Loading content
+        <>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ flex: "3" }}>
+              <Skeleton
+                variant="text"
+                animation="wave"
+                width={180}
+                sx={{
+                  fontSize: "1.5rem",
+                  marginBlock: "1rem",
+                  bgcolor: "#e8e8e820",
+                }}
+              />
+            </div>
+            {screenSize > 767 && (
+              <div style={{ flex: "1" }}>
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  width={40}
+                  sx={{
+                    fontSize: "1.5rem",
+                    margin: "1rem auto",
+                    bgcolor: "#e8e8e820",
+                  }}
+                />
+              </div>
+            )}
+            <div style={{ flex: screenSize > 767 ? "3" : "1" }}>
+              <Skeleton
+                variant="text"
+                animation="wave"
+                width={screenSize > 767 ? 120 : 80}
+                sx={{
+                  fontSize: "1.5rem",
+                  margin: `1rem calc(100% - ${screenSize > 767 ? "120px" : "80px"})`,
+                  bgcolor: "#e8e8e820",
+                }}
+              />
+            </div>
+          </div>
+          <Skeleton
+            variant="rectangular"
+            animation="wave"
+            height={5}
+            sx={{ bgcolor: "#e8e8e820" }}
+          />
+        </>
+      )}
       <ul>
         {contributors.map((user) => {
           return (
