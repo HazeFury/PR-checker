@@ -44,22 +44,13 @@
   text-overflow: ellipsis;
 }
 
-.role {
-  flex: 2;
+.name > span {
+  color: goldenrod;
 }
 
 .group {
   flex: 1;
   text-align: center;
-}
-
-.group > label {
-  clip: rect(0 0 0 0);
-  height: 1px;
-  width: 1px;
-  margin: -1px;
-  overflow: hidden;
-  position: absolute;
 }
 
 .input {
@@ -77,38 +68,18 @@
   text-align: end;
 }
 
+.menu > *:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 @media screen and (max-width: 767px) {
-  .header > ul {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .row > div,
-  .header > ul > div {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .name {
-    max-width: 60%;
-    flex: none;
-  }
-
-  .role {
-    flex: none;
-    text-align: end;
-  }
-
-  .group {
-    flex: none;
-    text-align: start;
+    flex: 3;
   }
 
   .button {
-    flex: none;
+    flex: 1;
   }
 }

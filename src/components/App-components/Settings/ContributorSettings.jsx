@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider } from "@mui/material";
+import { Divider, Tooltip } from "@mui/material";
+import { Star } from "@mui/icons-material";
 import supabase from "../../../services/client";
 import ContributorManageButton from "./ContributorManageButton";
+import useScreenSize from "../../../hooks/useScreenSize";
 import styles from "./ContributorSettings.module.css";
-import ContributorGroupInput from "./ContributorGroupInput";
 
 export default function ContributorSettings({ projectId, userId }) {
   const [contributors, setContributors] = useState([]);
+  const screenSize = useScreenSize();
 
   const getContributors = async () => {
     try {
@@ -25,7 +27,7 @@ export default function ContributorSettings({ projectId, userId }) {
         setContributors(
           userData
             // Sorting members by group and removing connected owner from list
-            .sort((a, b) => a.group + b.group)
+            .sort((a, b) => a.group - b.group)
             .filter((el) => el.user_uuid !== userId)
         );
       }
@@ -45,10 +47,9 @@ export default function ContributorSettings({ projectId, userId }) {
         <ul>
           <div>
             <li className={styles.name}>Nom</li>
-            <li className={styles.role}>Rôle</li>
+            {screenSize > 767 && <li className={styles.group}>Groupe</li>}
           </div>
           <div>
-            <li className={styles.group}>Groupe</li>
             <li className={styles.button}>-</li>
           </div>
         </ul>
@@ -61,18 +62,18 @@ export default function ContributorSettings({ projectId, userId }) {
               <div className={styles.row}>
                 <div>
                   <p className={styles.name}>
-                    {`${user.user_firstname} ${user.user_lastname}`}
-                  </p>
-                  <p className={styles.role}>
-                    {user.role === "owner" ? "Admin" : "Membre"}
-                  </p>
+                    {`${user.user_firstname} ${user.user_lastname}`}{" "}
+                    {user.role === "owner" ? (
+                      <Tooltip title="Admin" placement="top" arrow>
+                        <Star sx={{ color: "goldenrod", fontSize: "1em" }} />
+                      </Tooltip>
+                    ) : null}
+                  </p>{" "}
+                  {screenSize > 767 && (
+                    <p className={styles.group}>{user.group}</p>
+                  )}
                 </div>
                 <div>
-                  <ContributorGroupInput
-                    user={user}
-                    contributors={contributors}
-                    setContributors={setContributors}
-                  />
                   <div className={styles.button}>
                     <ContributorManageButton
                       user={user}

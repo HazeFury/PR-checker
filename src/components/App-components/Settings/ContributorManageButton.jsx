@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Group,
   KeyboardArrowDown,
   KeyboardDoubleArrowUp,
   ManageAccounts,
@@ -12,6 +13,7 @@ import PropTypes from "prop-types";
 import supabase from "../../../services/client";
 import useScreenSize from "../../../hooks/useScreenSize";
 import ConfirmationModal from "../Modals/ConfirmationModal";
+import ContributorGroupModal from "./ContributorGroupModal";
 
 export default function ContributorManageButton({
   user,
@@ -28,8 +30,19 @@ export default function ContributorManageButton({
     setAnchorEl(null);
   };
   /* ----------------------------------------- */
+  const [openGroupChange, setOpenGroupChange] = useState(false);
+  const handleGroupChangeClick = () => {
+    setOpenGroupChange(true);
+  };
 
-  const [hoverRole, setHoverRole] = useState(false);
+  const handleGroupChangeClose = () => {
+    setOpenGroupChange(false);
+  };
+
+  const [hover, setHover] = useState({
+    group: false,
+    promote: false,
+  });
   const [confirmRemove, setConfirmRemove] = useState(false);
   const { id: userId, role: userRole, user_firstname: userFirstName } = user;
   const targetUser = user;
@@ -95,8 +108,12 @@ export default function ContributorManageButton({
     }
   };
 
-  const handleHoverRole = () => {
-    setHoverRole(!hoverRole);
+  const handleMouseEnter = (e) => {
+    setHover({ ...hover, [e.target.id]: true });
+  };
+
+  const handleMouseLeave = (e) => {
+    setHover({ ...hover, [e.target.id]: false });
   };
 
   const handleClickRole = () => {
@@ -148,6 +165,11 @@ export default function ContributorManageButton({
             sx: {
               backgroundColor: "#3E3E3E",
               color: "#FFFFFF",
+              ".MuiMenu-list": {
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.2rem",
+              },
             },
           },
         }}
@@ -155,8 +177,23 @@ export default function ContributorManageButton({
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <MenuItem
-          onMouseEnter={handleHoverRole}
-          onMouseLeave={handleHoverRole}
+          id="group"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleGroupChangeClick}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            "&:hover": { bgcolor: "button.main" },
+          }}
+        >
+          <p style={{ fontSize: "0.8em", paddingRight: "1rem" }}>Groupe</p>
+          <Group sx={{ color: hover.group ? "var(--light)" : "button.main" }} />
+        </MenuItem>
+        <MenuItem
+          id="promote"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           onClick={handleClickRole}
           sx={{
             display: "flex",
@@ -171,12 +208,12 @@ export default function ContributorManageButton({
             sx={
               userRole === "owner"
                 ? {
-                    color: "var(--error)",
+                    color: hover.promote ? "var(--light)" : "var(--error)",
                     transform: "rotate(180deg)",
                     transition: "transform 0.3s ease",
                   }
                 : {
-                    color: hoverRole ? "var(--light)" : "button.main",
+                    color: hover.promote ? "var(--light)" : "button.main",
                     transition: "transform 0.3s ease",
                   }
             }
@@ -191,10 +228,18 @@ export default function ContributorManageButton({
             "&:hover": { bgcolor: "button.main" },
           }}
         >
-          <p style={{ fontSize: "0.8em", paddingRight: "1rem" }}>Supprimer</p>
+          <p style={{ fontSize: "0.8em", paddingRight: "1rem" }}>Retirer</p>
           <PersonRemove sx={{ color: "var(--error)" }} />
         </MenuItem>
       </Menu>
+
+      <ContributorGroupModal
+        user={user}
+        contributors={contributors}
+        setContributors={setContributors}
+        openGroupChange={openGroupChange}
+        handleGroupChangeClose={handleGroupChangeClose}
+      />
 
       {confirmRemove && (
         <ConfirmationModal
