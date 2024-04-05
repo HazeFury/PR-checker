@@ -138,6 +138,7 @@ export default function RequestList() {
   const handleCloseModals = () => {
     setopenModalAboutRequest(false);
     setOpenConfirmationModal(false);
+    setRequestId(null);
   };
   // Function to re-open request modal after don't confirm the exit of the modal
   const handleReOpenRequestModal = () => {
@@ -154,6 +155,7 @@ export default function RequestList() {
     setRefreshData(!refreshData);
     setRequestId(null);
   };
+
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------

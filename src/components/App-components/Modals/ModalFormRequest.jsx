@@ -117,6 +117,12 @@ export default function ModalFormRequest({
   const updateFormValues = (newData) => {
     formik.setValues(newData);
   };
+  // function to check if a value has been changed in the form. If don't : close directly modal
+  const isDataChanged = requestId
+    ? Object.keys(formik.values).some(
+        (key) => formik.values[key] !== requestData[key]
+      )
+    : Object.values(formik.values).some((value) => value !== "");
 
   // Update form values when initialValues change
   useEffect(() => {
@@ -136,7 +142,11 @@ export default function ModalFormRequest({
       <button
         className={styles.buttonClose}
         onClick={() => {
-          handleOpenConfirmationModal();
+          if (isDataChanged) {
+            handleOpenConfirmationModal();
+          } else {
+            handleClose();
+          }
         }}
         type="button"
       >
