@@ -177,20 +177,24 @@ export default function ContributorManageButton({
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem
-          id="group"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onClick={handleGroupChangeClick}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            "&:hover": { bgcolor: "button.main" },
-          }}
-        >
-          <p style={{ fontSize: "0.8em", paddingRight: "1rem" }}>Groupe</p>
-          <Group sx={{ color: hover.group ? "var(--light)" : "button.main" }} />
-        </MenuItem>
+        {userRole !== "owner" && (
+          <MenuItem
+            id="group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleGroupChangeClick}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              "&:hover": { bgcolor: "button.main" },
+            }}
+          >
+            <p style={{ fontSize: "0.8em", paddingRight: "1rem" }}>Groupe</p>
+            <Group
+              sx={{ color: hover.group ? "var(--light)" : "button.main" }}
+            />
+          </MenuItem>
+        )}
         <MenuItem
           id="promote"
           onMouseEnter={handleMouseEnter}

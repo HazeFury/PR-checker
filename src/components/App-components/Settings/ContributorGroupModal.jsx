@@ -31,7 +31,11 @@ export default function ContributorGroupModal({
       else {
         const targetUserIndex = contributors.indexOf(targetUser);
         targetUser.group = data.group;
-        setContributors(contributors.toSpliced(targetUserIndex, 1, targetUser));
+        setContributors(
+          contributors
+            .toSpliced(targetUserIndex, 1, targetUser)
+            .sort((a, b) => a.group - b.group)
+        );
       }
     } catch (error) {
       console.error(error);

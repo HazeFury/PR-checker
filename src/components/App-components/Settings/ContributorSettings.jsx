@@ -121,7 +121,9 @@ export default function ContributorSettings({ projectId, userId }) {
                     ) : null}
                   </p>{" "}
                   {screenSize > 767 && (
-                    <p className={styles.group}>{user.group}</p>
+                    <p className={styles.group}>
+                      {user.role !== "owner" ? user.group : "-"}
+                    </p>
                   )}
                 </div>
                 <div>
