@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
 import { Dialog, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useTheme } from "@emotion/react";
 import SettingsModalHeader from "./SettingsModalHeader";
 import SettingsModalContent from "./SettingsModalContent";
+import supabase from "../../../services/client";
+import refreshContext from "../../../contexts/RefreshContext";
 
 export default function SettingsModal({
   open,
@@ -18,6 +21,65 @@ export default function SettingsModal({
 }) {
   const [content, setContent] = useState("Général");
   const theme = useTheme();
+  const [contributors, setContributors] = useState([]);
+  const [pendingUsers, setPendingUsers] = useState([]);
+  // To keep the id of the project using params
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
+  const { refreshData } = useContext(refreshContext);
+
+  // Fetch datas used in contributors settings
+  const getContributors = async () => {
+    try {
+      const { data: userData, error } = await supabase
+        .from("project_users")
+        .select("id, user_uuid, role, group, user_firstname, user_lastname")
+        .match({
+          pending: false,
+          project_uuid: projectId,
+        });
+
+      if (error) {
+        throw error;
+      } else {
+        setContributors(
+          userData
+            // Sorting members by group and removing connected owner from list
+            .sort((a, b) => a.group - b.group)
+            .filter((el) => el.user_uuid !== userId)
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // function to get the firstname and lastname of the users who are pending true for this project selected
+  async function getPendingUsers() {
+    try {
+      const { data: userData, error } = await supabase
+        .from("project_users")
+        .select("id, user_firstname, user_lastname")
+        .match({
+          pending: true,
+          project_uuid: projectId,
+        });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setPendingUsers(userData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getContributors();
+    getPendingUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshData]);
 
   return (
     <Dialog
@@ -72,6 +134,8 @@ export default function SettingsModal({
         generalSettingsUpdated={generalSettingsUpdated}
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
+        nbOfContributors={contributors.length}
+        nbOfPending={pendingUsers.length}
       />
       <SettingsModalContent
         content={content}
@@ -81,6 +145,9 @@ export default function SettingsModal({
         setOpenConfirmUpdate={setOpenConfirmUpdate}
         setOpenSettings={setOpenSettings}
         userId={userId}
+        contributors={contributors}
+        setContributors={setContributors}
+        pendingUsers={pendingUsers}
       />
     </Dialog>
   );

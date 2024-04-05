@@ -19,6 +19,8 @@ export default function SettingsModalHeader({
   generalSettingsUpdated,
   openConfirmUpdate,
   setOpenConfirmUpdate,
+  nbOfContributors,
+  nbOfPending,
 }) {
   const width = useScreenSize();
 
@@ -27,6 +29,7 @@ export default function SettingsModalHeader({
   const handleClickMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -64,15 +67,21 @@ export default function SettingsModalHeader({
               return (
                 <li key={name}>
                   <Button
-                    disabled={content === name}
+                    disabled={content.startsWith(name)}
                     onClick={handleClick}
                     sx={
-                      content === name
+                      content.startsWith(name)
                         ? { "&:disabled": { color: "text.secondary" } }
                         : { color: "button.main", textTransform: "none" }
                     }
                   >
-                    {name}
+                    {name}{" "}
+                    {name === "Membres" &&
+                      nbOfContributors !== null &&
+                      `(${nbOfContributors})`}
+                    {name === "Demandes" &&
+                      nbOfPending !== null &&
+                      `(${nbOfPending})`}
                   </Button>
                 </li>
               );
@@ -121,7 +130,7 @@ export default function SettingsModalHeader({
                             : { color: "button.main", textTransform: "none" }
                         }
                       >
-                        {name}
+                        {name}{" "}
                       </Button>
                     </MenuItem>
                   );
@@ -145,4 +154,6 @@ SettingsModalHeader.propTypes = {
     changedSection: PropTypes.string.isRequired,
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
+  nbOfContributors: PropTypes.number.isRequired,
+  nbOfPending: PropTypes.number.isRequired,
 };

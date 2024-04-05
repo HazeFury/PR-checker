@@ -14,6 +14,9 @@ export default function SettingsModalContent({
   setOpenConfirmUpdate,
   setOpenSettings,
   userId,
+  contributors,
+  setContributors,
+  pendingUsers,
 }) {
   const [projectData, setProjectData] = useState(null);
   const projectId = useParams();
@@ -52,10 +55,17 @@ export default function SettingsModalContent({
             setContent={setContent}
           />
         )}
-        {content === "Membres" && (
-          <ContributorSettings projectId={projectId.uuid} userId={userId} />
+        {content.startsWith("Membres") && (
+          <ContributorSettings
+            projectId={projectId.uuid}
+            userId={userId}
+            contributors={contributors}
+            setContributors={setContributors}
+          />
         )}
-        {content === "Demandes" && <JoinSettings />}
+        {content.startsWith("Demandes") && (
+          <JoinSettings pendingUsers={pendingUsers} />
+        )}
       </section>
     );
   }
@@ -65,6 +75,13 @@ SettingsModalContent.propTypes = {
   content: PropTypes.string.isRequired,
   setContent: PropTypes.func.isRequired,
   haveGeneralSettingsBeenUpdated: PropTypes.func.isRequired,
+  pendingUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      user_firstname: PropTypes.string.isRequired,
+      user_lastname: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
   openConfirmUpdate: PropTypes.shape({
     closedSettings: PropTypes.bool.isRequired,
     changedSection: PropTypes.string.isRequired,
@@ -72,4 +89,14 @@ SettingsModalContent.propTypes = {
   setOpenConfirmUpdate: PropTypes.func.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
+  contributors: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      group: PropTypes.number.isRequired,
+      role: PropTypes.string.isRequired,
+      user_firstname: PropTypes.string.isRequired,
+      user_lastname: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  setContributors: PropTypes.func.isRequired,
 };

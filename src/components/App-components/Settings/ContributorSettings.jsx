@@ -1,45 +1,12 @@
-import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Divider, Skeleton, Tooltip } from "@mui/material";
 import { Star } from "@mui/icons-material";
-import supabase from "../../../services/client";
 import ContributorManageButton from "./ContributorManageButton";
 import useScreenSize from "../../../hooks/useScreenSize";
 import styles from "./ContributorSettings.module.css";
 
-export default function ContributorSettings({ projectId, userId }) {
-  const [contributors, setContributors] = useState([]);
+export default function ContributorSettings({ contributors, setContributors }) {
   const screenSize = useScreenSize();
-
-  const getContributors = async () => {
-    try {
-      const { data: userData, error } = await supabase
-        .from("project_users")
-        .select("id, user_uuid, role, group, user_firstname, user_lastname")
-        .match({
-          pending: false,
-          project_uuid: projectId,
-        });
-
-      if (error) {
-        throw error;
-      } else {
-        setContributors(
-          userData
-            // Sorting members by group and removing connected owner from list
-            .sort((a, b) => a.group - b.group)
-            .filter((el) => el.user_uuid !== userId)
-        );
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getContributors();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -146,6 +113,14 @@ export default function ContributorSettings({ projectId, userId }) {
 }
 
 ContributorSettings.propTypes = {
-  projectId: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
+  contributors: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      group: PropTypes.number.isRequired,
+      role: PropTypes.string.isRequired,
+      user_firstname: PropTypes.string.isRequired,
+      user_lastname: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  setContributors: PropTypes.func.isRequired,
 };

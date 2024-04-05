@@ -18,3 +18,20 @@
   font-size: 12px;
   margin-inline: 1.5rem;
 }
+
+@media screen and (max-width: 320px) {
+  .modal {
+    width: 250px;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+    justify-content: space-around;
+    height: 50%;
+    align-items: center;
+  }
+
+  .buttonStyle {
+    width: 60%;
+  }
+}

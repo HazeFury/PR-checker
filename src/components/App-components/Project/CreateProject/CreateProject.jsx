@@ -40,6 +40,16 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         const userFirstName = userData.session.user.user_metadata.first_name;
         const userLastName = userData.session.user.user_metadata.last_name;
 
+        const existingProject = await supabase
+          .from("projects")
+          .select("name, project_users(*)")
+          .eq("name", formik.values.name)
+          .eq("project_users.user_uuid", userId);
+
+        if (existingProject.data.length > 0) {
+          toast.error("Vous avez déjà un projet avec ce nom !");
+          return;
+        }
         // To get the picture
         const newPictureForProject = await axios
           .get("https://source.unsplash.com/random?wallpapers")

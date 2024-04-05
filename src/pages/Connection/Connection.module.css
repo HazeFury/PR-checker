@@ -57,12 +57,17 @@
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.34);
 }
 
+.infos h1,
+h2,
+.endOfText {
+  text-align: center;
+}
+
 .infos {
   width: 60%;
   max-height: 70%;
   overflow-y: auto;
   scrollbar-width: thin;
-  text-align: center;
 }
 
 .infos h1 {

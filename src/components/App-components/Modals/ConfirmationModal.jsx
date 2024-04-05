@@ -26,33 +26,35 @@ export default function ConfirmationModal({
     fontSize: "20px",
     textAlign: "center",
     width: {
-      sm: "380px",
+      xs: "300px",
+      sm: "320px",
       md: "430px",
       lg: "480px",
-      xl: "530px",
     },
   };
   const theme = useTheme();
 
   return (
     <div className={styles.backdrop}>
-      <Box sx={style}>
+      <Box sx={style} className={styles.modal}>
         <p>{title}</p>
         <div className={styles.buttonContainer}>
           <Button
+            className={styles.buttonStyle}
             variant="contained"
             sx={{
               backgroundColor: theme.palette.button.main,
-              width: "350px",
+              width: { xs: "350px" },
             }}
             onClick={handleLeftButtonClick}
           >
             {textButtonLeft}
           </Button>
           <Button
+            className={styles.buttonStyle}
             variant="contained"
             sx={{
-              width: "350px",
+              width: { xs: "350px" },
               backgroundColor: theme.palette.button.secondary,
               "&:hover": {
                 backgroundColor: theme.palette.button.hover,
