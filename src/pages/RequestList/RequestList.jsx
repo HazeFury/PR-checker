@@ -1,4 +1,4 @@
-import { Box, Button, Modal } from "@mui/material";
+import { Button } from "@mui/material";
 import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
@@ -237,27 +237,6 @@ export default function RequestList() {
       </div>
     );
 
-  // modal style
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    height: 700,
-    bgcolor: "#292929",
-    borderRadius: "10px",
-    boxShadow: 24,
-    p: 4,
-    display: "flex",
-    justifyContent: "center",
-    width: {
-      sm: "400px",
-      md: "450px",
-      lg: "500px",
-      xl: "550px",
-    },
-  };
-
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
@@ -284,42 +263,32 @@ export default function RequestList() {
                 {screenSize < 767 ? <Add /> : "Nouvelle demande"}
               </Button>
             )}
-          </div>
-          <Modal
-            open={openModalAboutRequest}
-            onClose={() => {
-              handleOpenConfirmationModal();
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              {" "}
-              <ModalFormRequest
-                title="Enregistrer"
-                text="Enregistrer"
-                projectId={projectId}
-                handleClose={handleCloseModals}
-                handleOpenConfirmationModal={handleOpenConfirmationModal}
-                handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
-                requestId={requestId}
-              />
-              {openConfirmationModal && (
-                <ConfirmationModal
-                  title="Voulez-vous vraiment quitter votre enregistrement ?"
-                  textButtonLeft="Revenir à mon enregistrement"
-                  textButtonRight="Quitter"
-                  handleRightButtonClick={() => {
-                    handleCloseModals();
-                  }}
-                  handleLeftButtonClick={() => {
-                    handleReOpenRequestModal();
-                  }}
-                />
-              )}
-            </Box>
-          </Modal>
-
+          </div>{" "}
+          {openModalAboutRequest && (
+            <ModalFormRequest
+              title="Enregistrer"
+              text="Enregistrer"
+              projectId={projectId}
+              handleClose={handleCloseModals}
+              handleOpenConfirmationModal={handleOpenConfirmationModal}
+              handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
+              requestId={requestId}
+              openModalAboutRequest={openModalAboutRequest}
+            />
+          )}
+          {openConfirmationModal && (
+            <ConfirmationModal
+              title="Voulez-vous vraiment quitter votre enregistrement ?"
+              textButtonLeft="Revenir à mon enregistrement"
+              textButtonRight="Quitter"
+              handleRightButtonClick={() => {
+                handleCloseModals();
+              }}
+              handleLeftButtonClick={() => {
+                handleReOpenRequestModal();
+              }}
+            />
+          )}
           <div className={styles.head_btn_filters}>
             <DropDownMenu
               buttonText="Filtres"
