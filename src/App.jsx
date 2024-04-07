@@ -12,6 +12,7 @@ export default function App() {
   const [thisSession, setThisSession] = useState(null);
   const [userId, setUserId] = useState(null);
   const [refreshData, setRefreshData] = useState(false);
+  const supabaseStorageKey = import.meta.env.VITE_SUPABASE_STORAGE;
   const navigate = useNavigate();
 
   const contextValue = useMemo(() => {
@@ -38,7 +39,16 @@ export default function App() {
         navigate("/"); // always return to "/" to avoid being on the route of a project that a user is not allowed to be part of
       }
     });
-    return () => subscription.unsubscribe();
+    const disconnectUserOnClosing = () => {
+      localStorage.removeItem(supabaseStorageKey);
+    };
+
+    window.addEventListener("beforeunload", disconnectUserOnClosing);
+
+    return () => {
+      window.removeEventListener("beforeunload", disconnectUserOnClosing);
+      subscription.unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
