@@ -13,7 +13,6 @@ import App from "./App";
 import RequestList from "./pages/RequestList/RequestList";
 import ProjectPage from "./pages/ProjectPage/ProjectPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
-import ComponentsPlayground from "./pages/ComponentsPlayground";
 
 const theme = createTheme({
   palette: {
@@ -43,10 +42,6 @@ const theme = createTheme({
   },
 });
 const router = createBrowserRouter([
-  {
-    path: "/components", // To remove before prod
-    element: <ComponentsPlayground />, // Use to dev the main components of the app
-  },
   {
     path: "/*",
     element: <NotFoundPage />,
