@@ -13,6 +13,9 @@ export default function SettingsModalContent({
   openConfirmUpdate,
   setOpenConfirmUpdate,
   setOpenSettings,
+  userId,
+  contributors,
+  setContributors,
   pendingUsers,
 }) {
   const [projectData, setProjectData] = useState(null);
@@ -52,7 +55,14 @@ export default function SettingsModalContent({
             setContent={setContent}
           />
         )}
-        {content === "Membres" && <ContributorSettings />}
+        {content.startsWith("Membres") && (
+          <ContributorSettings
+            projectId={projectId.uuid}
+            userId={userId}
+            contributors={contributors}
+            setContributors={setContributors}
+          />
+        )}
         {content.startsWith("Demandes") && (
           <JoinSettings pendingUsers={pendingUsers} />
         )}
@@ -78,4 +88,15 @@ SettingsModalContent.propTypes = {
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
+  contributors: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      group: PropTypes.number.isRequired,
+      role: PropTypes.string.isRequired,
+      user_firstname: PropTypes.string.isRequired,
+      user_lastname: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  setContributors: PropTypes.func.isRequired,
 };

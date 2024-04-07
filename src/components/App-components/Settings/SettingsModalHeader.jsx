@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
 import {
   Button,
   Divider,
@@ -8,10 +8,8 @@ import {
   MenuItem,
   MenuList,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { Close, Menu as MenuIcon } from "@mui/icons-material";
 import useScreenSize from "../../../hooks/useScreenSize";
-import supabase from "../../../services/client";
 
 const sectionNames = ["Général", "Membres", "Demandes"];
 
@@ -21,7 +19,8 @@ export default function SettingsModalHeader({
   generalSettingsUpdated,
   openConfirmUpdate,
   setOpenConfirmUpdate,
-  pendingUsersLength,
+  nbOfContributors,
+  nbOfPending,
 }) {
   const width = useScreenSize();
 
@@ -36,6 +35,7 @@ export default function SettingsModalHeader({
   };
 
   const handleClick = (e) => {
+    if (width <= 767) setAnchorEl(null);
     if (generalSettingsUpdated.current) {
       // if user tries to change section without saving changes in general settings
       setOpenConfirmUpdate({
@@ -44,34 +44,15 @@ export default function SettingsModalHeader({
       });
     } else {
       setContent(e.target.innerText);
-      if (width <= 767) setAnchorEl(null);
     }
   };
-  const [totalMembers, setTotalMembers] = useState(null);
 
-  const getProjectId = useParams();
-  const projectId = getProjectId.uuid;
   useEffect(() => {
-    async function fetchData() {
-      try {
-        // Fetch total members
-        const { data: totalData, error: totalError } = await supabase
-          .from("project_users")
-          .select("*")
-          .match({ project_uuid: projectId });
-
-        if (totalError) {
-          console.error(totalError);
-        } else {
-          setTotalMembers(totalData.length);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchData();
-  }, [projectId]);
+    // Reset content state when component unmounts
+    return () => {
+      setContent("Général");
+    };
+  }, [setContent]);
 
   return (
     <header
@@ -94,13 +75,13 @@ export default function SettingsModalHeader({
                         : { color: "button.main", textTransform: "none" }
                     }
                   >
-                    {name}
-                    {name === "Membres" && totalMembers !== null && (
-                      <span>({totalMembers})</span>
-                    )}
-                    {name === "Demandes" && pendingUsersLength !== null && (
-                      <span> ({pendingUsersLength})</span>
-                    )}{" "}
+                    {name}{" "}
+                    {name === "Membres" &&
+                      nbOfContributors !== null &&
+                      `(${nbOfContributors})`}
+                    {name === "Demandes" &&
+                      nbOfPending !== null &&
+                      `(${nbOfPending})`}
                   </Button>
                 </li>
               );
@@ -173,5 +154,6 @@ SettingsModalHeader.propTypes = {
     changedSection: PropTypes.string.isRequired,
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
-  pendingUsersLength: PropTypes.number.isRequired,
+  nbOfContributors: PropTypes.number.isRequired,
+  nbOfPending: PropTypes.number.isRequired,
 };

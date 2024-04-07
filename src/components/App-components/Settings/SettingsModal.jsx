@@ -17,15 +17,42 @@ export default function SettingsModal({
   openConfirmUpdate,
   setOpenConfirmUpdate,
   setOpenSettings,
+  userId,
 }) {
   const [content, setContent] = useState("Général");
   const theme = useTheme();
+  const [contributors, setContributors] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
-  const [pendingUsersLength, setPendingUsersLength] = useState(0);
   // To keep the id of the project using params
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
   const { refreshData } = useContext(refreshContext);
+
+  // Fetch datas used in contributors settings
+  const getContributors = async () => {
+    try {
+      const { data: userData, error } = await supabase
+        .from("project_users")
+        .select("id, user_uuid, role, group, user_firstname, user_lastname")
+        .match({
+          pending: false,
+          project_uuid: projectId,
+        });
+
+      if (error) {
+        throw error;
+      } else {
+        setContributors(
+          userData
+            // Sorting members by group and removing connected owner from list
+            .sort((a, b) => a.group - b.group)
+            .filter((el) => el.user_uuid !== userId)
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // function to get the firstname and lastname of the users who are pending true for this project selected
   async function getPendingUsers() {
@@ -42,7 +69,6 @@ export default function SettingsModal({
         console.error(error);
       } else {
         setPendingUsers(userData);
-        setPendingUsersLength(userData.length);
       }
     } catch (error) {
       console.error(error);
@@ -50,9 +76,11 @@ export default function SettingsModal({
   }
 
   useEffect(() => {
+    getContributors();
     getPendingUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshData]);
+
   return (
     <Dialog
       onClose={handleClose}
@@ -106,7 +134,8 @@ export default function SettingsModal({
         generalSettingsUpdated={generalSettingsUpdated}
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
-        pendingUsersLength={pendingUsersLength}
+        nbOfContributors={contributors.length}
+        nbOfPending={pendingUsers.length}
       />
       <SettingsModalContent
         content={content}
@@ -115,6 +144,9 @@ export default function SettingsModal({
         openConfirmUpdate={openConfirmUpdate}
         setOpenConfirmUpdate={setOpenConfirmUpdate}
         setOpenSettings={setOpenSettings}
+        userId={userId}
+        contributors={contributors}
+        setContributors={setContributors}
         pendingUsers={pendingUsers}
       />
     </Dialog>
@@ -132,4 +164,5 @@ SettingsModal.propTypes = {
   }).isRequired,
   setOpenConfirmUpdate: PropTypes.func.isRequired,
   setOpenSettings: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };

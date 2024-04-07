@@ -67,24 +67,20 @@ export default function GeneralSettings({
 
   const updateProjectData = async () => {
     const updatedData = getUpdatedDataOnly();
-    if (updatedData.name?.length <= 0) {
-      toast.error("Veuillez renseigner un nom pour le projet");
-    } else {
-      try {
-        const { error } = await supabase
-          .from("projects")
-          .update(updatedData)
-          .eq("id", projectData.id);
+    try {
+      const { error } = await supabase
+        .from("projects")
+        .update(updatedData)
+        .eq("id", projectData.id);
 
-        if (error) throw error;
-        else {
-          getProjectData();
-          toast.success("Les données ont bien été mises à jour");
-        }
-      } catch (error) {
-        toast.error("Un problème est survenu, veuillez rééssayer plus tard");
-        console.error(error);
+      if (error) throw error;
+      else {
+        getProjectData();
+        toast.success("Les données ont bien été mises à jour");
       }
+    } catch (error) {
+      toast.error("Un problème est survenu, veuillez rééssayer plus tard");
+      console.error(error);
     }
   };
 
@@ -125,6 +121,14 @@ export default function GeneralSettings({
   };
 
   const handleNameUpdate = () => {
+    setModifyName(!modifyName);
+  };
+
+  const handleNameBlur = () => {
+    if (!newData.name) {
+      // Reset to original project name if user leaves the field empty
+      setNewData({ ...newData, name: projectData.name });
+    }
     setModifyName(!modifyName);
   };
 
@@ -248,7 +252,7 @@ export default function GeneralSettings({
               disabled={!modifyName}
               value={newData.name}
               onChange={handleNameChange}
-              onBlur={handleNameUpdate}
+              onBlur={handleNameBlur}
               className={[
                 styles.input,
                 modifyName ? styles.inputModify : null,
@@ -272,7 +276,7 @@ export default function GeneralSettings({
           <div className={styles.label}>
             <p>Statut du projet</p>
             <TooltipIcon
-              tooltip="Changez le statut de votre projet selon s'il est actif, en pause ou terminé."
+              tooltip="Un projet inactif ne peut plus recevoir de demandes de PR."
               top="0"
               left="132px"
               color="var(--action)"
@@ -321,11 +325,14 @@ export default function GeneralSettings({
         </div>
         {/* _____ Project picture _____ */}
         <div className={styles.item}>
-          <div>
-            <label htmlFor="project-pic">Image du projet</label>
+          <div className={styles.label}>
+            <p>Image du projet</p>
             <IconButton
               onClick={() => setShowPic(true)}
               sx={{
+                position: "absolute",
+                top: 0,
+                left: "130px",
                 "&.MuiIconButton-root": { padding: 0, paddingLeft: "0.5rem" },
               }}
             >
@@ -362,7 +369,7 @@ export default function GeneralSettings({
         {/* _____ Project delete _____ */}
         <div className={styles.item}>
           <div className={styles.label}>
-            <label htmlFor="delete-project">Supprimer le projet</label>
+            <p>Supprimer le projet</p>
             <TooltipIcon
               tooltip="Supprimez votre projet avec toutes les demandes de PR qu'il contient."
               top="0"

@@ -1,0 +1,85 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgba(62, 62, 62, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.header > ul {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: var(--light);
+}
+
+.row {
+  margin-block: 1rem;
+  color: var(--light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row > div,
+.header > ul > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row > div:first-of-type,
+.header > ul > div:first-of-type {
+  flex: 4;
+}
+
+.row > div:last-of-type,
+.header > ul > div:last-of-type {
+  flex: 3;
+}
+
+.name {
+  flex: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name > span {
+  color: goldenrod;
+}
+
+.group {
+  flex: 1;
+  text-align: center;
+}
+
+.input {
+  width: 3rem;
+  height: 2rem;
+  font: var(--input-text);
+  background-color: var(--light);
+  border-radius: 0.25rem;
+  box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.button {
+  flex: 3;
+  text-align: end;
+}
+
+.menu > *:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media screen and (max-width: 767px) {
+  .name {
+    flex: 3;
+  }
+
+  .button {
+    flex: 1;
+  }
+}
