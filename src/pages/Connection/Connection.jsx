@@ -84,7 +84,10 @@ export default function Connection() {
         </div>
         <footer className={styles.footer}>
           <div className={styles.separator} />
-          <p> 🧑🏼‍💻Made with passion by Marco, Anthony, Guillaume and Vanessa </p>
+          <p>
+            {" "}
+            🧑🏼‍💻Réalisé avec passion par Marco, Anthony, Guillaume and Vanessa{" "}
+          </p>
         </footer>
       </section>
     </div>
