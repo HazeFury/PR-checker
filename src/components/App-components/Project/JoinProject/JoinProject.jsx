@@ -44,6 +44,10 @@ export default function JoinProject({ openModalJoin, onCloseModalJoin }) {
           toast.error("Le projet n'existe pas");
           return;
         }
+        if (projectData.invitation === false) {
+          toast.error("Le projet n'accepte pas de demandes pour le moment");
+          return;
+        }
 
         const { data: userIsAlreadyInProject } = await supabase
           .from("project_users")

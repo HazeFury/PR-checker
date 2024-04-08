@@ -8,7 +8,7 @@ export default function NotFoundPage() {
       <img src={logo} alt="logo" />
       <div className={styles.notFoundBlock}>
         <h1>404</h1>
-        <p>Vous avez perdu votre chemin ? </p>
+        <p>Une erreur s'est produite</p>
         <Button variant="contained">
           {" "}
           <a href="/">Retourner en lieu sûr</a>
