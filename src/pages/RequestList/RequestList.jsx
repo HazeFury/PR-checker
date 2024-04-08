@@ -52,9 +52,10 @@ export default function RequestList() {
   // To keep the id of the project using params
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
-  // states for requestList and projectName
+  // states for requestList, projectName and projectStatus
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
+  const [projectStatus, setProjectStatus] = useState(null);
   // state to save the Id of the PR that will be used
   const [requestId, setRequestId] = useState(null);
   // state for open request and confirmation modals
@@ -94,14 +95,15 @@ export default function RequestList() {
   }
 
   // Function to get the name of the project
-  async function getProjectName() {
+  async function getProjectData() {
     const { data } = await supabase
       .from("projects")
-      .select("name")
+      .select("name, status")
       .eq("id", projectId)
       .single();
 
     setProjectName(data.name);
+    setProjectStatus(data.status);
   }
   // function to delete a PR
   const deleteRequest = async (id) => {
@@ -166,7 +168,7 @@ export default function RequestList() {
         if (verifiedUser !== null && verifiedUser.pending === false) {
           // if the user exist and the pending === false, we can fetch all the request and we set the role
           setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
-          getProjectName();
+          getProjectData();
           getAllPr();
         }
         if (verifiedUser === null) {
@@ -180,11 +182,12 @@ export default function RequestList() {
       setUserRole(null); // set null to userRole on component unmounting
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refreshData]);
   // ----------------------------
   // this useEffect is just used to refetch data when you press the "actualiser" button
   useEffect(() => {
     if (userRole !== null) {
+      getProjectData();
       getAllPr();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,6 +281,7 @@ export default function RequestList() {
                   bgcolor: "button.main",
                 }}
                 onClick={handleOpenModalForNewRequest}
+                disabled={projectStatus === false}
               >
                 {screenSize < 767 ? <Add /> : "Nouvelle demande"}
               </Button>
