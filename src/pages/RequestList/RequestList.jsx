@@ -141,7 +141,8 @@ export default function RequestList() {
     setRequestId(null);
   };
   // Function to re-open request modal after don't confirm the exit of the modal
-  const handleReOpenRequestModal = () => {
+  const handleReOpenRequestModal = (id) => {
+    setRequestId(id);
     setOpenConfirmationModal(false);
     setopenModalAboutRequest(true);
   };

@@ -31,7 +31,6 @@ export default function ModalFormRequest({
 
   // state to manage the data of request
   const [requestData, setRequestData] = useState(null);
-
   const { refreshData, setRefreshData } = useContext(refreshContext);
 
   // function to fetch data of the PR which is used
@@ -169,7 +168,7 @@ export default function ModalFormRequest({
       open={openModalAboutRequest}
       onClose={() => {
         if (isDataChanged) {
-          handleOpenConfirmationModal();
+          handleOpenConfirmationModal(requestId);
         } else {
           handleClose();
         }
@@ -183,7 +182,7 @@ export default function ModalFormRequest({
             className={styles.buttonClose}
             onClick={() => {
               if (isDataChanged) {
-                handleOpenConfirmationModal();
+                handleOpenConfirmationModal(requestId);
               } else {
                 handleClose();
               }
@@ -296,7 +295,7 @@ export default function ModalFormRequest({
                 handleCloseModals();
               }}
               handleLeftButtonClick={() => {
-                handleReOpenRequestModal();
+                handleReOpenRequestModal(requestId);
               }}
             />
           )}
