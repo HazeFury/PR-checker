@@ -5,8 +5,21 @@ import ContributorManageButton from "./ContributorManageButton";
 import useScreenSize from "../../../hooks/useScreenSize";
 import styles from "./ContributorSettings.module.css";
 
-export default function ContributorSettings({ contributors, setContributors }) {
+export default function ContributorSettings({
+  userId,
+  contributors,
+  setContributors,
+}) {
   const screenSize = useScreenSize();
+
+  const projectOwner = contributors
+    .slice()
+    .sort((a, b) => a.id - b.id)
+    .shift();
+
+  const connectedAdmin = contributors
+    .slice()
+    .filter((el) => el.user_uuid === userId)[0];
 
   return (
     <>
@@ -81,9 +94,22 @@ export default function ContributorSettings({ contributors, setContributors }) {
                 <div>
                   <p className={styles.name}>
                     {`${user.user_firstname} ${user.user_lastname}`}{" "}
+                    {user === connectedAdmin ? "(moi)" : null}{" "}
                     {user.role === "owner" ? (
-                      <Tooltip title="Admin" placement="top" arrow>
-                        <Star sx={{ color: "goldenrod", fontSize: "1em" }} />
+                      <Tooltip
+                        title={user === projectOwner ? "Propriétaire" : "Admin"}
+                        placement="top"
+                        arrow
+                      >
+                        <Star
+                          sx={{
+                            color:
+                              user === projectOwner
+                                ? "goldenrod"
+                                : "var(--action)",
+                            fontSize: "1em",
+                          }}
+                        />
                       </Tooltip>
                     ) : null}
                   </p>{" "}
@@ -96,6 +122,8 @@ export default function ContributorSettings({ contributors, setContributors }) {
                 <div>
                   <div className={styles.button}>
                     <ContributorManageButton
+                      projectOwner={projectOwner}
+                      connectedAdmin={connectedAdmin}
                       user={user}
                       contributors={contributors}
                       setContributors={setContributors}
@@ -113,6 +141,7 @@ export default function ContributorSettings({ contributors, setContributors }) {
 }
 
 ContributorSettings.propTypes = {
+  userId: PropTypes.string.isRequired,
   contributors: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
