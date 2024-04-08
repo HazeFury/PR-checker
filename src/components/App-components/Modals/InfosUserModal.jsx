@@ -73,5 +73,9 @@ export default function InfosUserModal({
 InfosUserModal.propTypes = {
   openModalUserInfos: PropTypes.bool.isRequired,
   onCloseModalUserInfos: PropTypes.func.isRequired,
-  userInfos: PropTypes.arrayOf.isRequired,
+  userInfos: PropTypes.shape({
+    first_name: PropTypes.string,
+    last_name: PropTypes.string,
+    email: PropTypes.string,
+  }).isRequired,
 };
