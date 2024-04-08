@@ -185,7 +185,7 @@ export default function RequestList() {
       setUserRole(null); // set null to userRole on component unmounting
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshData]);
+  }, []);
   // ----------------------------
   // this useEffect is just used to refetch data when you press the "actualiser" button
   useEffect(() => {
