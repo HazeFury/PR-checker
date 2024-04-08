@@ -201,7 +201,7 @@ export default function NavBar({ userId }) {
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          Déconnexion
         </MenuItem>{" "}
       </Menu>
       <JoinProject
