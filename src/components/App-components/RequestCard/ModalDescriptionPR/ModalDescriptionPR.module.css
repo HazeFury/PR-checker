@@ -7,21 +7,41 @@
 .moreInfos {
   font: --section-title;
   text-align: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   border-bottom: solid 1px;
   padding-bottom: 1rem;
 }
 
 .descriptionTitle {
-  padding-top: 2.5rem;
+  padding-top: 2rem;
   font-family: "Montserrat";
-  font-weight: 300;
+  font-weight: 500;
   font-size: 1.25rem;
 }
 
 .descriptionText {
-  padding-top: 2.5rem;
+  padding-top: 1rem;
   font-family: "Montserrat";
   font-weight: 200;
   font-size: 1.25rem;
+}
+
+@media screen and (max-width: 767px) {
+  .moreInfos {
+    font-size: 1.25rem;
+  }
+
+  .descriptionTitle {
+    font-size: 1rem;
+  }
+
+  .descriptionText {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .boxStyle {
+    width: 250px;
+  }
 }
