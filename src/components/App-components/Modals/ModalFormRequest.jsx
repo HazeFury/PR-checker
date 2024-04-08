@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Modal, Button } from "@mui/material";
+import { Modal, Button, Box } from "@mui/material";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -14,6 +14,7 @@ import styles from "./ModalFormRequest.module.css";
 import TextArea from "../../UI-components/TextArea/TextArea";
 import supabase from "../../../services/client";
 import TooltipIcon from "../../UI-components/MUIRemix/TooltipIcon";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default function ModalFormRequest({
   projectId,
@@ -22,6 +23,9 @@ export default function ModalFormRequest({
   requestId,
   handleCreateOrUpdateRequest,
   openModalAboutRequest,
+  openConfirmationModal,
+  handleCloseModals,
+  handleReOpenRequestModal,
 }) {
   const theme = useTheme();
 
@@ -162,7 +166,6 @@ export default function ModalFormRequest({
 
   return (
     <Modal
-      sx={style}
       open={openModalAboutRequest}
       onClose={() => {
         if (isDataChanged) {
@@ -174,116 +177,131 @@ export default function ModalFormRequest({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <div className={styles.formStyle}>
-        <button
-          className={styles.buttonClose}
-          onClick={() => {
-            if (isDataChanged) {
-              handleOpenConfirmationModal();
-            } else {
-              handleClose();
-            }
-          }}
-          type="button"
-        >
-          X
-        </button>
-        <form onSubmit={formik.handleSubmit} className={styles.form}>
-          <h1>{modalTitle} </h1>
-          <div className={styles.input}>
-            <div className={styles.inputStyle}>
-              <TextInput
-                label="Nom de la PR"
-                type="text"
-                id="title"
-                placeholder="Nommez votre PR"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.title}
-                readOnly={false}
-              />
-              {formik.touched.title && formik.errors.title ? (
-                <TooltipIcon
-                  tooltip={formik.errors.title}
-                  top="0"
-                  left="130px"
-                  color="var(--error)"
+      <Box sx={style}>
+        <div className={styles.formStyle}>
+          <button
+            className={styles.buttonClose}
+            onClick={() => {
+              if (isDataChanged) {
+                handleOpenConfirmationModal();
+              } else {
+                handleClose();
+              }
+            }}
+            type="button"
+          >
+            X
+          </button>
+          <form onSubmit={formik.handleSubmit} className={styles.form}>
+            <h1>{modalTitle} </h1>
+            <div className={styles.input}>
+              <div className={styles.inputStyle}>
+                <TextInput
+                  label="Nom de la PR"
+                  type="text"
+                  id="title"
+                  placeholder="Nommez votre PR"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.title}
+                  readOnly={false}
                 />
-              ) : null}
-            </div>
-            <div className={styles.inputStyle}>
-              <TextArea
-                label="Description"
-                type="text"
-                id="description"
-                placeholder="Décrivez votre PR"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.description}
-              />
-              {formik.touched.description && formik.errors.description ? (
-                <TooltipIcon
-                  tooltip={formik.errors.description}
-                  top="0"
-                  left="110px"
-                  color="var(--error)"
+                {formik.touched.title && formik.errors.title ? (
+                  <TooltipIcon
+                    tooltip={formik.errors.title}
+                    top="0"
+                    left="130px"
+                    color="var(--error)"
+                  />
+                ) : null}
+              </div>
+              <div className={styles.inputStyle}>
+                <TextArea
+                  label="Description"
+                  type="text"
+                  id="description"
+                  placeholder="Décrivez votre PR"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.description}
                 />
-              ) : null}
-            </div>
-            <div className={styles.inputStyle}>
-              <TextInput
-                label="Lien Trello"
-                type="text"
-                id="trello"
-                placeholder="Insérez le lien vers Trello"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.trello}
-              />
-              {formik.touched.trello && formik.errors.trello ? (
-                <TooltipIcon
-                  tooltip={formik.errors.trello}
-                  top="0"
-                  left="100px"
-                  color="var(--error)"
+                {formik.touched.description && formik.errors.description ? (
+                  <TooltipIcon
+                    tooltip={formik.errors.description}
+                    top="0"
+                    left="110px"
+                    color="var(--error)"
+                  />
+                ) : null}
+              </div>
+              <div className={styles.inputStyle}>
+                <TextInput
+                  label="Lien Trello"
+                  type="text"
+                  id="trello"
+                  placeholder="Insérez le lien vers Trello"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.trello}
                 />
-              ) : null}
-            </div>
-            <div className={styles.inputStyle}>
-              <TextInput
-                label="Lien Github"
-                type="text"
-                id="github"
-                placeholder="Insérez le lien vers Github"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.github}
-              />
-              {formik.touched.github && formik.errors.github ? (
-                <TooltipIcon
-                  tooltip={formik.errors.github}
-                  top="0"
-                  left="110px"
-                  color="var(--error)"
+                {formik.touched.trello && formik.errors.trello ? (
+                  <TooltipIcon
+                    tooltip={formik.errors.trello}
+                    top="0"
+                    left="100px"
+                    color="var(--error)"
+                  />
+                ) : null}
+              </div>
+              <div className={styles.inputStyle}>
+                <TextInput
+                  label="Lien Github"
+                  type="text"
+                  id="github"
+                  placeholder="Insérez le lien vers Github"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.github}
                 />
-              ) : null}
+                {formik.touched.github && formik.errors.github ? (
+                  <TooltipIcon
+                    tooltip={formik.errors.github}
+                    top="0"
+                    left="110px"
+                    color="var(--error)"
+                  />
+                ) : null}
+              </div>
             </div>
-          </div>
-          <div className={styles.button}>
-            <Button
-              variant="contained"
-              onClick={handleSaveClick}
-              sx={{
-                width: ["100%", "100%", "40%"],
-                background: theme.palette.button.main,
-                fontFamily: theme.typography.fontFamily,
+            <div className={styles.button}>
+              <Button
+                variant="contained"
+                onClick={handleSaveClick}
+                sx={{
+                  width: ["100%", "100%", "40%"],
+                  background: theme.palette.button.main,
+                  fontFamily: theme.typography.fontFamily,
+                }}
+              >
+                {modalTitle}
+              </Button>
+            </div>
+          </form>
+          {openConfirmationModal && (
+            <ConfirmationModal
+              title="Voulez-vous vraiment quitter votre enregistrement ?"
+              textButtonLeft="Revenir à mon enregistrement"
+              textButtonRight="Quitter"
+              handleRightButtonClick={() => {
+                handleCloseModals();
               }}
-            >
-              {modalTitle}
-            </Button>
-          </div>
-        </form>
-      </div>
+              handleLeftButtonClick={() => {
+                handleReOpenRequestModal();
+              }}
+            />
+          )}
+        </div>
+      </Box>
     </Modal>
   );
 }
@@ -293,7 +311,10 @@ ModalFormRequest.propTypes = {
   handleOpenConfirmationModal: PropTypes.func.isRequired,
   requestId: PropTypes.number,
   handleCreateOrUpdateRequest: PropTypes.func.isRequired,
+  handleCloseModals: PropTypes.func.isRequired,
+  handleReOpenRequestModal: PropTypes.func.isRequired,
   openModalAboutRequest: PropTypes.bool.isRequired,
+  openConfirmationModal: PropTypes.bool.isRequired,
 };
 ModalFormRequest.defaultProps = {
   requestId: null,

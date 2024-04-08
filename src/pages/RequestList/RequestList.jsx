@@ -274,19 +274,9 @@ export default function RequestList() {
               handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
               requestId={requestId}
               openModalAboutRequest={openModalAboutRequest}
-            />
-          )}
-          {openConfirmationModal && (
-            <ConfirmationModal
-              title="Voulez-vous vraiment quitter votre enregistrement ?"
-              textButtonLeft="Revenir à mon enregistrement"
-              textButtonRight="Quitter"
-              handleRightButtonClick={() => {
-                handleCloseModals();
-              }}
-              handleLeftButtonClick={() => {
-                handleReOpenRequestModal();
-              }}
+              handleReOpenRequestModal={handleReOpenRequestModal}
+              openConfirmationModal={openConfirmationModal}
+              handleCloseModals={handleCloseModals}
             />
           )}
           <div className={styles.head_btn_filters}>
