@@ -242,7 +242,7 @@ export default function RequestList() {
       selectedFilters?.Demandes?.join("") === "1"
     ) {
       requestsToDisplay = requestsToDisplay.filter((el) =>
-        groupIds.some((user) => user.user_uuid === el.user_uuid)
+        groupIds?.some((user) => user.user_uuid === el.user_uuid)
       );
     }
 
