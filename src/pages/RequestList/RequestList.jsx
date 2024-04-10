@@ -30,8 +30,8 @@ const filters = [
   {
     Demandes: [
       ["Toutes", "0"],
-      ["Moi", "1"],
-      ["Mon groupe", "2"],
+      ["Mon groupe", "1"],
+      ["Moi", "2"],
     ],
   },
 ];
@@ -64,6 +64,7 @@ export default function RequestList() {
   // states for filters
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [filteredRequestList, setFilteredRequestList] = useState([]);
+  const [groupIds, setGroupIds] = useState(null);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
   const [sortBy, setSortBy] = useState("old");
   // for styling
@@ -112,6 +113,20 @@ export default function RequestList() {
       toast.success("La PR a bien été supprimée");
     } catch (error) {
       toast.error("Erreur lors de la suppression de la PR");
+    }
+  };
+
+  const getGroupIds = async (groupId) => {
+    // Get uuids from users belonging to the same group in the same project
+    try {
+      const { data: groupData } = await supabase
+        .from("project_users")
+        .select("user_uuid")
+        .match({ project_uuid: projectId, group: groupId });
+
+      setGroupIds(groupData);
+    } catch (error) {
+      console.error(error);
     }
   };
   // --------------------------------------------------------------------------------
@@ -173,6 +188,7 @@ export default function RequestList() {
           setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
           getProjectData();
           getAllPr();
+          getGroupIds(verifiedUser.group);
         }
         if (verifiedUser === null) {
           // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
@@ -214,12 +230,22 @@ export default function RequestList() {
     // If user is contributor, tries to filter on PR creator id
     if (
       userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "1"
+      selectedFilters?.Demandes?.join("") === "2"
     ) {
       requestsToDisplay = requestsToDisplay.filter(
         (el) => el.user_uuid === userId
       );
     }
+
+    if (
+      userRole === "contributor" &&
+      selectedFilters?.Demandes?.join("") === "1"
+    ) {
+      requestsToDisplay = requestsToDisplay.filter((el) =>
+        groupIds?.some((user) => user.user_uuid === el.user_uuid)
+      );
+    }
+
     // Sort is happening after content has been filtered
     requestsToDisplay.sort((a, b) =>
       sortBy === "old"
@@ -328,9 +354,9 @@ export default function RequestList() {
             }}
           />
         )}
-        {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
+        {filteredRequestList.length === 0 && requestList.length !== 0 ? (
           <p className={styles.no_content_text}>
-            Aucune demande de PR ne correspond à votre recherche
+            Aucune demande de PR ne correspond aux filtres sélectionnés
           </p>
         ) : null}
         {requestList.length === 0 && !haveFiltersBeenUsed ? (
