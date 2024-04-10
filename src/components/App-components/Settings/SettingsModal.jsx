@@ -44,9 +44,14 @@ export default function SettingsModal({
       } else {
         setContributors(
           userData
-            // Sorting members by group and removing connected owner from list
-            .sort((a, b) => a.group - b.group)
-            .filter((el) => el.user_uuid !== userId)
+            // Sorting members by role, then by group, then by name
+            .sort(
+              (a, b) =>
+                a.role.localeCompare(b.role) * -1 ||
+                a.group - b.group ||
+                a.user_firstname.localeCompare(b.user_firstname) ||
+                a.user_lastname.localeCompare(b.user_lastname)
+            )
         );
       }
     } catch (error) {

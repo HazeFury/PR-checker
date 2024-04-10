@@ -34,7 +34,14 @@ export default function ContributorGroupModal({
         setContributors(
           contributors
             .toSpliced(targetUserIndex, 1, targetUser)
-            .sort((a, b) => a.group - b.group)
+            // Sorting members by role, then by group, then by name
+            .sort(
+              (a, b) =>
+                a.role.localeCompare(b.role) * -1 ||
+                a.group - b.group ||
+                a.user_firstname.localeCompare(b.user_firstname) ||
+                a.user_lastname.localeCompare(b.user_lastname)
+            )
         );
       }
     } catch (error) {

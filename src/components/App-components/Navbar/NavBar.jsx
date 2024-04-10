@@ -30,7 +30,7 @@ export default function NavBar({ userId }) {
   const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
   const [allowMenu, setAllowMenu] = useState(true);
   const [openSettings, setOpenSettings] = useState(false);
-  const [userInfos, setUserInfos] = useState([]);
+  const [userInfos, setUserInfos] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const location = useLocation();
 
@@ -202,7 +202,7 @@ export default function NavBar({ userId }) {
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          Déconnexion
         </MenuItem>{" "}
       </Menu>
       <JoinProject

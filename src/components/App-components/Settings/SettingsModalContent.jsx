@@ -57,7 +57,6 @@ export default function SettingsModalContent({
         )}
         {content.startsWith("Membres") && (
           <ContributorSettings
-            projectId={projectId.uuid}
             userId={userId}
             contributors={contributors}
             setContributors={setContributors}
