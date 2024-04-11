@@ -1,8 +1,48 @@
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
+import supabase from "../../../services/client";
 import styles from "./ProjectCard.module.css";
 
 export default function ProjectCard({ project }) {
+  const [userId] = useOutletContext();
+
+  const [projectUserRole, setProjectUserRole] = useState(null);
+
+  useEffect(() => {
+    async function fetchProjectUsers() {
+      try {
+        const { data: isCreatorId, error } = await supabase
+          .from("project_users")
+          .select("*")
+          .match({ project_uuid: project.id, role: "owner" })
+          .order("id", { ascending: true })
+          .limit(1);
+
+        if (error) {
+          throw error;
+        } else {
+          const projectUsers = isCreatorId[0].user_uuid;
+          if (userId !== undefined && projectUsers !== null) {
+            if (isCreatorId[0].role === "owner" && projectUsers === userId) {
+              setProjectUserRole("Propriétaire");
+            } else if (
+              project.project_users[0].role === "owner" &&
+              projectUsers !== userId
+            ) {
+              setProjectUserRole("Admin");
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchProjectUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id, userId]);
+
   const userIsPending = project.project_users[0].pending === true;
   return (
     <div className={styles.projectCardPage}>
@@ -33,12 +73,10 @@ export default function ProjectCard({ project }) {
                   {project.status === true ? "En cours" : "Terminé"}
                 </span>
               </div>
-              {project.project_users[0].role === "owner" ? (
+              {projectUserRole && (
                 <div className={styles.projectRoles}>
-                  <span>Propriétaire</span>
+                  <span>{projectUserRole}</span>
                 </div>
-              ) : (
-                ""
               )}
             </div>
             {userIsPending ? (
@@ -78,6 +116,7 @@ export default function ProjectCard({ project }) {
 ProjectCard.propTypes = {
   project: PropTypes.shape({
     id: PropTypes.string.isRequired,
+    user_uuid: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     status: PropTypes.bool.isRequired,
     totalUsers: PropTypes.number,
@@ -85,6 +124,9 @@ ProjectCard.propTypes = {
     picture: PropTypes.string.isRequired,
     project_users: PropTypes.arrayOf(
       PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        user_uuid: PropTypes.string.isRequired,
+        project_uuid: PropTypes.string.isRequired,
         role: PropTypes.string.isRequired,
         pending: PropTypes.bool.isRequired,
       })
