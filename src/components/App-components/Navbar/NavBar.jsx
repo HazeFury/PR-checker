@@ -15,6 +15,7 @@ import {
 import { Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
+import smallLogo from "../../../assets/logo-sm.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
@@ -22,6 +23,7 @@ import ProjectButtonNav from "./ProjectButtonNav";
 import NotificationButtonNav from "./NotificationButtonNav";
 import SettingsButton from "../Settings/SettingsButton";
 import ModalUserInfo from "../Modals/InfosUserModal";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 export default function NavBar({ userId }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -33,6 +35,7 @@ export default function NavBar({ userId }) {
   const [userInfos, setUserInfos] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const location = useLocation();
+  const screenSize = useScreenSize();
 
   /* Used to close settings modal when leaving project without closing it manually */
   useEffect(() => {
@@ -115,109 +118,119 @@ export default function NavBar({ userId }) {
     setOpenModal(false);
   };
   return (
-    <nav className={styles.nav_container}>
-      <NavLink to="/">
-        <img className={styles.logo} src={Logo} alt="PR-checker logo" />
-      </NavLink>
-      <div className={styles.Tooltip}>
-        <ProjectButtonNav
-          openJoinProjectModal={openJoinProjectModal}
-          onOpenJoinProjectModal={handleOpenJoinProjectModal}
-          openCreateProjectModal={openCreateProjectModal}
-          onOpenCreateProjectModal={handleOpenCreateProjectModal}
-        />
-        <NotificationButtonNav
-          handleOpenNotification={handleOpenNotification}
-          handleCloseNotification={handleCloseNotification}
-          openNotificationBox={openNotificationBox}
-          userId={userId}
-        />
+    <nav>
+      <div className={styles.nav_container}>
+        <NavLink to="/">
+          <img
+            className={styles.logo}
+            src={screenSize < 767 ? smallLogo : Logo}
+            alt="PR-checker logo"
+          />
+        </NavLink>
+        <div className={styles.buttons}>
+          <ProjectButtonNav
+            openJoinProjectModal={openJoinProjectModal}
+            onOpenJoinProjectModal={handleOpenJoinProjectModal}
+            openCreateProjectModal={openCreateProjectModal}
+            onOpenCreateProjectModal={handleOpenCreateProjectModal}
+          />
+          <NotificationButtonNav
+            handleOpenNotification={handleOpenNotification}
+            handleCloseNotification={handleCloseNotification}
+            openNotificationBox={openNotificationBox}
+            userId={userId}
+          />
 
-        <SettingsButton
-          openSettings={openSettings}
-          setOpenSettings={setOpenSettings}
-          userId={userId}
-        />
+          <SettingsButton
+            openSettings={openSettings}
+            setOpenSettings={setOpenSettings}
+            userId={userId}
+          />
 
-        <Tooltip title="Compte">
-          <IconButton
-            onClick={handleMenuClick}
-            size="large"
-            sx={{ ml: 2, mx: 5 }}
-            aria-controls={anchorEl ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={anchorEl ? "true" : undefined}
-          >
-            <PersonOutlineIcon sx={{ color: "white", scale: "1.8" }} />
-          </IconButton>
-        </Tooltip>
-      </div>
+          <Tooltip title="Compte">
+            <IconButton
+              onClick={handleMenuClick}
+              size="large"
+              sx={{
+                ml: 2,
+                mx: 5,
+                "&.MuiButtonBase-root": { marginLeft: 0, marginRight: 0 },
+              }}
+              aria-controls={anchorEl ? "account-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={anchorEl ? "true" : undefined}
+            >
+              <PersonOutlineIcon sx={{ color: "white", scale: "1.8" }} />
+            </IconButton>
+          </Tooltip>
+        </div>
 
-      <Menu
-        id="account-menu"
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
+        <Menu
+          id="account-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&::before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
             },
-            "&::before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem
-          onClick={handleUserInfos}
-          sx={{
-            color: theme.palette.text.primary,
           }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <ListItemIcon>
-            <PersonOutlineIcon fontSize="medium" />
-          </ListItemIcon>
-          Infos
-        </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Déconnexion
-        </MenuItem>{" "}
-      </Menu>
-      <JoinProject
-        openModalJoin={openJoinProjectModal}
-        onCloseModalJoin={handleCloseJoinProjectModal}
-      />
-      <CreateProject
-        openModalCreate={openCreateProjectModal}
-        onCloseModalCreate={handleCloseCreateProjectModal}
-      />
-      <ModalUserInfo
-        openModalUserInfos={openModal}
-        onCloseModalUserInfos={handleCloseModalUserInfos}
-        userInfos={userInfos}
-      />
+          <MenuItem
+            onClick={handleUserInfos}
+            sx={{
+              color: theme.palette.text.primary,
+            }}
+          >
+            <ListItemIcon>
+              <PersonOutlineIcon fontSize="medium" />
+            </ListItemIcon>
+            Infos
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Déconnexion
+          </MenuItem>{" "}
+        </Menu>
+        <JoinProject
+          openModalJoin={openJoinProjectModal}
+          onCloseModalJoin={handleCloseJoinProjectModal}
+        />
+        <CreateProject
+          openModalCreate={openCreateProjectModal}
+          onCloseModalCreate={handleCloseCreateProjectModal}
+        />
+        <ModalUserInfo
+          openModalUserInfos={openModal}
+          onCloseModalUserInfos={handleCloseModalUserInfos}
+          userInfos={userInfos}
+        />
+      </div>
     </nav>
   );
 }
