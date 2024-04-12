@@ -15,7 +15,7 @@ import {
 import { Logout } from "@mui/icons-material";
 import styles from "./NavBar.module.css";
 import Logo from "../../../assets/logo.svg";
-import smallLogo from "../../../assets/logo-sm.svg";
+import SmallLogo from "../../../assets/logo-sm.svg";
 import JoinProject from "../Project/JoinProject/JoinProject";
 import CreateProject from "../Project/CreateProject/CreateProject";
 import supabase from "../../../services/client";
@@ -123,7 +123,7 @@ export default function NavBar({ userId }) {
         <NavLink to="/">
           <img
             className={styles.logo}
-            src={screenSize < 767 ? smallLogo : Logo}
+            src={screenSize < 767 ? SmallLogo : Logo}
             alt="PR-checker logo"
           />
         </NavLink>

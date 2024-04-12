@@ -1,14 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
-
-.projectCardPage {
-  margin: 40px 80px;
-}
-
 .projectCardContainer {
   position: relative;
-  width: 22.78rem;
+  width: 80svw;
+  max-width: 22.78rem;
   height: 14.04rem;
-  margin-bottom: 1.25rem;
   cursor: pointer;
   transition: all ease-in-out 0.2s;
 }
@@ -18,9 +12,9 @@
 }
 .projectCardContainerDisabled {
   position: relative;
-  width: 22.78rem;
+  width: 80svw;
+  max-width: 22.78rem;
   height: 14.04rem;
-  margin-bottom: 1.25rem;
   filter: grayscale(1);
   cursor: default;
 }
