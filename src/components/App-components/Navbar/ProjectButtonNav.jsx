@@ -27,7 +27,7 @@ export default function ProjectButtonNav({
   // Button to create and join a project
   const renderExtraButton = () => {
     if (isProjectPage) {
-      if (width > 1064) {
+      if (width >= 1120) {
         return (
           <>
             <Button
@@ -66,7 +66,7 @@ export default function ProjectButtonNav({
         <>
           <div className={styles.containerTooltip}>
             {" "}
-            <Tooltip title="Button section">
+            <Tooltip title="Projets">
               <IconButton
                 onClick={handleClickButtonSection}
                 size="large"
