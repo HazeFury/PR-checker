@@ -1,16 +1,19 @@
 import { useOutletContext } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { Button, CircularProgress } from "@mui/material";
+import { Refresh } from "@mui/icons-material";
 import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard";
 import supabase from "../../services/client";
 import styles from "./ProjectPage.module.css";
 import refreshContext from "../../contexts/RefreshContext";
+import useScreenSize from "../../hooks/useScreenSize";
 
 export default function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [userId] = useOutletContext();
   const { refreshData, setRefreshData } = useContext(refreshContext);
+  const screenSize = useScreenSize();
 
   const handleRefresh = () => {
     setRefreshData(!refreshData);
@@ -49,10 +52,11 @@ export default function ProjectPage() {
             fontFamily: "Montserrat, sans serif",
             mx: 2,
             my: 2,
+            "&.MuiButtonBase-root": { mr: 0 },
           }}
           onClick={handleRefresh}
         >
-          Actualiser{" "}
+          {screenSize > 440 ? "Actualiser" : <Refresh />}
         </Button>
       </div>
       <div className={styles.project_container}>
@@ -65,6 +69,8 @@ export default function ProjectPage() {
             Vous ne faites partie d&#39;aucun projet pour l&#39;instant
           </p>
         )}
+        {screenSize > 970 && <div className={styles.hidden} />}
+        {screenSize > 1486 && <div className={styles.hidden} />}
       </div>
     </div>
   );
