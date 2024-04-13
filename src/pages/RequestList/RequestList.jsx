@@ -14,6 +14,8 @@ import refreshContext from "../../contexts/RefreshContext";
 import DropDownMenu from "../../components/App-components/Filters/DropDownMenu";
 import useScreenSize from "../../hooks/useScreenSize";
 import UserContext from "../../contexts/UserContext";
+import RefreshUser from "../../contexts/RefreshUser";
+import subscribeToNewChannel from "../../services/utilities/subscribingToChannel";
 
 const filters = [
   {
@@ -45,8 +47,10 @@ export default function RequestList() {
   const { userRole, setUserRole } = useContext(UserContext);
   // get the userId from the context of the Outlet
   const [userId] = useOutletContext();
-  // import the refresh state to actualize the list
+  // import the refresh data state to actualize the list
   const { refreshData, setRefreshData } = useContext(refreshContext);
+  // import the refresh user state to actualize the user rights
+  const { refreshUser, setRefreshUser } = useContext(RefreshUser);
   // useNavigate to navigate to different page
   const navigate = useNavigate();
   // To keep the id of the project using params
@@ -133,9 +137,13 @@ export default function RequestList() {
 
   // ---------------------------- (3) handle function ------------------------------
 
-  // Function to refresh
+  // Function to refresh data
   const handleRefresh = () => {
     setRefreshData(!refreshData);
+  };
+  // Function to refresh user
+  const handleRefreshUser = () => {
+    setRefreshUser(!refreshUser);
   };
   // function to manage the state to open the modal to edit a PR
   const handleOpenModalToEditRequest = (id) => {
@@ -201,7 +209,7 @@ export default function RequestList() {
       setUserRole(null); // set null to userRole on component unmounting
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refreshUser]);
   // ----------------------------
 
   // this useEffect is just used to refetch data when you press the "actualiser" button
@@ -261,29 +269,46 @@ export default function RequestList() {
   }, [selectedFilters, requestList, sortBy]);
   // ----------------------------
 
+  // ---------------------- (5) SUBSCRIBE TO DATABASE CHANGES --------------------
   // Subscribe to database changes to refresh data when it's necessary
 
-  const channels = supabase
-    .channel("project-pr-room")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "pr_request" },
-      () => {
-        // console.log("change received !");
-        handleRefresh();
-      }
-    )
-    .subscribe();
+  // changes on pr_request :
+  subscribeToNewChannel(
+    "project-pr-room",
+    "pr_request",
+    "project_uuid",
+    "eq",
+    projectId,
+    handleRefresh
+  );
+
+  // changes on project_users :
+  subscribeToNewChannel(
+    "user-room",
+    "project_users",
+    "project_uuid",
+    "eq",
+    projectId,
+    handleRefreshUser
+  );
+
+  // changes on projects :
+  subscribeToNewChannel(
+    "project-room",
+    "projects",
+    "id",
+    "eq",
+    projectId,
+    handleRefresh
+  );
+
   useEffect(() => {
-    // console.log("subscribed successfully !");
     return () => {
-      channels.unsubscribe();
-      //  console.log("unsubscribe succesfully !");
+      supabase.removeAllChannels(); // unsubscribe from channels when unmounting the component
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ----------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
 
   // Loader
   if (loading)

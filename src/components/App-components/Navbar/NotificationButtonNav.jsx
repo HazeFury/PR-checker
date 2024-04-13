@@ -8,6 +8,7 @@ import NotificationBox from "./Notifications/NotificationBox";
 import supabase from "../../../services/client";
 import UserContext from "../../../contexts/UserContext";
 import refreshContext from "../../../contexts/RefreshContext";
+import subscribeToNewChannel from "../../../services/utilities/subscribingToChannel";
 
 export default function NotificationButtonNav({
   userId,
@@ -18,9 +19,17 @@ export default function NotificationButtonNav({
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const location = useLocation();
   const { userRole } = useContext(UserContext);
-  const { refreshData } = useContext(refreshContext);
+  const { refreshData, setRefreshData } = useContext(refreshContext);
 
   const { uuid } = useParams();
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
+  const isOnPRList =
+    location.pathname.startsWith("/project/") &&
+    uuid &&
+    userRole === "contributor";
 
   /* --- Function to get the number of notifications unread to display in the badge --- */
   useEffect(() => {
@@ -48,6 +57,28 @@ export default function NotificationButtonNav({
     fetchNotifications();
   }, [userId, refreshData]);
 
+  // ---------------------- SUBSCRIBE TO DATABASE CHANGES --------------------
+  // Subscribe to database changes to refresh data when it's necessary
+
+  // changes on notification_user when you are on requestPage :
+  if (isOnPRList === true) {
+    subscribeToNewChannel(
+      "notification-room",
+      "notification_user",
+      "user_uuid",
+      "eq",
+      userId,
+      handleRefresh
+    );
+  }
+
+  useEffect(() => {
+    return () => {
+      supabase.removeAllChannels(); // unsubscribe from channels when unmounting the component
+    };
+  }, []);
+  // -----------------------------------------------------------------------------
+
   // To close the notification list
 
   const handleNotificationClose = async () => {
@@ -58,11 +89,6 @@ export default function NotificationButtonNav({
   const handleNotificationClick = () => {
     handleOpenNotification();
   };
-
-  const isOnPRList =
-    location.pathname.startsWith("/project/") &&
-    uuid &&
-    userRole === "contributor";
 
   return (
     <div>

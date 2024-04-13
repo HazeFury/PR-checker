@@ -7,6 +7,7 @@ import NavBar from "./components/App-components/Navbar/NavBar";
 import supabase from "./services/client";
 import refreshContext from "./contexts/RefreshContext";
 import { UserContextProvider } from "./contexts/UserContext";
+import { RefreshUserProvider } from "./contexts/RefreshUser";
 
 export default function App() {
   const [thisSession, setThisSession] = useState(null);
@@ -60,8 +61,10 @@ export default function App() {
         <div>
           <refreshContext.Provider value={contextValue}>
             <UserContextProvider>
-              <NavBar userId={userId} />
-              <Outlet context={[userId]} />
+              <RefreshUserProvider>
+                <NavBar userId={userId} />
+                <Outlet context={[userId]} />
+              </RefreshUserProvider>
             </UserContextProvider>
           </refreshContext.Provider>
         </div>
