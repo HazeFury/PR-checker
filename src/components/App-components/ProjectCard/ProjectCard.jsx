@@ -121,7 +121,6 @@ ProjectCard.propTypes = {
     project_users: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
-        user_uuid: PropTypes.string.isRequired,
         project_uuid: PropTypes.string.isRequired,
         role: PropTypes.string.isRequired,
         pending: PropTypes.bool.isRequired,
