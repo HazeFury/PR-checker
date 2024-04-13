@@ -203,6 +203,7 @@ export default function RequestList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // ----------------------------
+
   // this useEffect is just used to refetch data when you press the "actualiser" button
   useEffect(() => {
     if (userRole !== null) {
@@ -211,6 +212,8 @@ export default function RequestList() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshData]);
+  // ----------------------------
+
   // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
   useEffect(() => {
     if (userRole !== null) {
@@ -256,6 +259,29 @@ export default function RequestList() {
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters, requestList, sortBy]);
+  // ----------------------------
+
+  // Subscribe to database changes to refresh data when it's necessary
+
+  const channels = supabase
+    .channel("project-pr-room")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "pr_request" },
+      () => {
+        // console.log("change received !");
+        handleRefresh();
+      }
+    )
+    .subscribe();
+  useEffect(() => {
+    // console.log("subscribed successfully !");
+    return () => {
+      channels.unsubscribe();
+      //  console.log("unsubscribe succesfully !");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ----------------------------------------------------------------------------------
 

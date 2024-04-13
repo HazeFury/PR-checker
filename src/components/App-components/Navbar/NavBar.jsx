@@ -91,6 +91,7 @@ export default function NavBar({ userId }) {
       if (error) {
         throw error;
       } else {
+        await supabase.removeAllChannels();
         handleMenuClose();
         toast.info("À bientôt !", {
           icon: "👋",
