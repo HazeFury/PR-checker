@@ -65,6 +65,13 @@ export default function DropDownMenu({
     const isFilterSelected = selectedFilters[targetFilter].indexOf(
       e.target.name
     );
+    if (targetFilter === "Demandes") {
+      setSelectedFilters({
+        ...selectedFilters,
+        Demandes: [e.target.name],
+      });
+      return;
+    }
     // If the filters array is composed of every filter options when we are to add a new one, the filter array is set to ["0"] which represents all the filters
     const filtersCopy = selectedFilters[targetFilter].slice();
     filtersCopy.push(e.target.name);
@@ -171,6 +178,7 @@ export default function DropDownMenu({
                 color: "#FFFFFF",
                 paddingInline: "1rem",
                 borderTopRightRadius: "0",
+                maxHeight: "60%",
               },
             },
           }}

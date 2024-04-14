@@ -8,6 +8,7 @@ import SettingsModalHeader from "./SettingsModalHeader";
 import SettingsModalContent from "./SettingsModalContent";
 import supabase from "../../../services/client";
 import refreshContext from "../../../contexts/RefreshContext";
+import subscribeToNewChannel from "../../../services/utilities/subscribingToChannel";
 
 export default function SettingsModal({
   open,
@@ -26,7 +27,11 @@ export default function SettingsModal({
   // To keep the id of the project using params
   const getProjectId = useParams();
   const projectId = getProjectId.uuid;
-  const { refreshData } = useContext(refreshContext);
+  const { refreshData, setRefreshData } = useContext(refreshContext);
+
+  const handleRefresh = () => {
+    setRefreshData(!refreshData);
+  };
 
   // Fetch datas used in contributors settings
   const getContributors = async () => {
@@ -44,9 +49,14 @@ export default function SettingsModal({
       } else {
         setContributors(
           userData
-            // Sorting members by group and removing connected owner from list
-            .sort((a, b) => a.group - b.group)
-            .filter((el) => el.user_uuid !== userId)
+            // Sorting members by role, then by group, then by name
+            .sort(
+              (a, b) =>
+                a.role.localeCompare(b.role) * -1 ||
+                a.group - b.group ||
+                a.user_firstname.localeCompare(b.user_firstname) ||
+                a.user_lastname.localeCompare(b.user_lastname)
+            )
         );
       }
     } catch (error) {
@@ -80,6 +90,26 @@ export default function SettingsModal({
     getPendingUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshData]);
+
+  // ---------------------- SUBSCRIBE TO DATABASE CHANGES --------------------
+  // Subscribe to database changes to refresh data when it's necessary
+
+  // changes on project_users :
+  subscribeToNewChannel(
+    "settings-room",
+    "project_users",
+    "project_uuid",
+    "eq",
+    projectId,
+    handleRefresh
+  );
+
+  useEffect(() => {
+    return () => {
+      supabase.removeAllChannels(); // unsubscribe from channels when unmounting the component
+    };
+  }, []);
+  // -----------------------------------------------------------------------------
 
   return (
     <Dialog

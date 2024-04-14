@@ -16,6 +16,8 @@ import ConfirmationModal from "../Modals/ConfirmationModal";
 import ContributorGroupModal from "./ContributorGroupModal";
 
 export default function ContributorManageButton({
+  projectOwner,
+  connectedAdmin,
   user,
   contributors,
   setContributors,
@@ -62,7 +64,17 @@ export default function ContributorManageButton({
       else {
         const targetUserIndex = contributors.indexOf(targetUser);
         targetUser.role = data.role;
-        setContributors(contributors.toSpliced(targetUserIndex, 1, targetUser));
+        setContributors(
+          contributors
+            .toSpliced(targetUserIndex, 1, targetUser) // Sorting members by role, then by group, then by name
+            .sort(
+              (a, b) =>
+                a.role.localeCompare(b.role) * -1 ||
+                a.group - b.group ||
+                a.user_firstname.localeCompare(b.user_firstname) ||
+                a.user_lastname.localeCompare(b.user_lastname)
+            )
+        );
       }
     } catch (error) {
       console.error(error);
@@ -119,6 +131,7 @@ export default function ContributorManageButton({
 
   const handleClickRole = () => {
     updateUserRole(userId);
+    setAnchorEl(null);
   };
 
   const handleClickRemove = () => {
@@ -138,6 +151,7 @@ export default function ContributorManageButton({
   return (
     <>
       <Button
+        disabled={user === projectOwner || user === connectedAdmin}
         size="small"
         variant="contained"
         onClick={handleClick}
@@ -214,12 +228,9 @@ export default function ContributorManageButton({
               userRole === "owner"
                 ? {
                     color: hover.promote ? "var(--light)" : "var(--error)",
-                    transform: "rotate(180deg)",
-                    transition: "transform 0.3s ease",
                   }
                 : {
                     color: hover.promote ? "var(--light)" : "button.main",
-                    transition: "transform 0.3s ease",
                   }
             }
           />
@@ -260,12 +271,19 @@ export default function ContributorManageButton({
 }
 
 ContributorManageButton.propTypes = {
+  projectOwner: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  ).isRequired,
+  connectedAdmin: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  ).isRequired,
   user: PropTypes.shape({
     id: PropTypes.number.isRequired,
     group: PropTypes.number.isRequired,
     role: PropTypes.string.isRequired,
     user_firstname: PropTypes.string.isRequired,
     user_lastname: PropTypes.string.isRequired,
+    user_uuid: PropTypes.string.isRequired,
   }).isRequired,
   contributors: PropTypes.arrayOf(
     PropTypes.shape({
@@ -274,6 +292,7 @@ ContributorManageButton.propTypes = {
       role: PropTypes.string.isRequired,
       user_firstname: PropTypes.string.isRequired,
       user_lastname: PropTypes.string.isRequired,
+      user_uuid: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
   setContributors: PropTypes.func.isRequired,

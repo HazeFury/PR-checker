@@ -1,4 +1,4 @@
-import { Box, Button, Modal } from "@mui/material";
+import { Button } from "@mui/material";
 import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
@@ -14,6 +14,8 @@ import refreshContext from "../../contexts/RefreshContext";
 import DropDownMenu from "../../components/App-components/Filters/DropDownMenu";
 import useScreenSize from "../../hooks/useScreenSize";
 import UserContext from "../../contexts/UserContext";
+import RefreshUser from "../../contexts/RefreshUser";
+import subscribeToNewChannel from "../../services/utilities/subscribingToChannel";
 
 const filters = [
   {
@@ -30,8 +32,8 @@ const filters = [
   {
     Demandes: [
       ["Toutes", "0"],
-      ["Moi", "1"],
-      ["Mon groupe", "2"],
+      ["Mon groupe", "1"],
+      ["Moi", "2"],
     ],
   },
 ];
@@ -45,8 +47,10 @@ export default function RequestList() {
   const { userRole, setUserRole } = useContext(UserContext);
   // get the userId from the context of the Outlet
   const [userId] = useOutletContext();
-  // import the refresh state to actualize the list
+  // import the refresh data state to actualize the list
   const { refreshData, setRefreshData } = useContext(refreshContext);
+  // import the refresh user state to actualize the user rights
+  const { refreshUser, setRefreshUser } = useContext(RefreshUser);
   // useNavigate to navigate to different page
   const navigate = useNavigate();
   // To keep the id of the project using params
@@ -64,6 +68,7 @@ export default function RequestList() {
   // states for filters
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [filteredRequestList, setFilteredRequestList] = useState([]);
+  const [groupIds, setGroupIds] = useState(null);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
   const [sortBy, setSortBy] = useState("old");
   // for styling
@@ -114,13 +119,31 @@ export default function RequestList() {
       toast.error("Erreur lors de la suppression de la PR");
     }
   };
+
+  const getGroupIds = async (groupId) => {
+    // Get uuids from users belonging to the same group in the same project
+    try {
+      const { data: groupData } = await supabase
+        .from("project_users")
+        .select("user_uuid")
+        .match({ project_uuid: projectId, group: groupId });
+
+      setGroupIds(groupData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // --------------------------------------------------------------------------------
 
   // ---------------------------- (3) handle function ------------------------------
 
-  // Function to refresh
+  // Function to refresh data
   const handleRefresh = () => {
     setRefreshData(!refreshData);
+  };
+  // Function to refresh user
+  const handleRefreshUser = () => {
+    setRefreshUser(!refreshUser);
   };
   // function to manage the state to open the modal to edit a PR
   const handleOpenModalToEditRequest = (id) => {
@@ -140,9 +163,11 @@ export default function RequestList() {
   const handleCloseModals = () => {
     setopenModalAboutRequest(false);
     setOpenConfirmationModal(false);
+    setRequestId(null);
   };
   // Function to re-open request modal after don't confirm the exit of the modal
-  const handleReOpenRequestModal = () => {
+  const handleReOpenRequestModal = (id) => {
+    setRequestId(id);
     setOpenConfirmationModal(false);
     setopenModalAboutRequest(true);
   };
@@ -156,6 +181,7 @@ export default function RequestList() {
     setRefreshData(!refreshData);
     setRequestId(null);
   };
+
   // ----------------------------------------------------------------------------------
 
   // ---------------------- (4) Mounting the component (useEffect) --------------------
@@ -170,6 +196,7 @@ export default function RequestList() {
           setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
           getProjectData();
           getAllPr();
+          getGroupIds(verifiedUser.group);
         }
         if (verifiedUser === null) {
           // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
@@ -182,8 +209,9 @@ export default function RequestList() {
       setUserRole(null); // set null to userRole on component unmounting
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshData]);
+  }, [refreshUser]);
   // ----------------------------
+
   // this useEffect is just used to refetch data when you press the "actualiser" button
   useEffect(() => {
     if (userRole !== null) {
@@ -192,6 +220,8 @@ export default function RequestList() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshData]);
+  // ----------------------------
+
   // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
   useEffect(() => {
     if (userRole !== null) {
@@ -211,12 +241,22 @@ export default function RequestList() {
     // If user is contributor, tries to filter on PR creator id
     if (
       userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "1"
+      selectedFilters?.Demandes?.join("") === "2"
     ) {
       requestsToDisplay = requestsToDisplay.filter(
         (el) => el.user_uuid === userId
       );
     }
+
+    if (
+      userRole === "contributor" &&
+      selectedFilters?.Demandes?.join("") === "1"
+    ) {
+      requestsToDisplay = requestsToDisplay.filter((el) =>
+        groupIds?.some((user) => user.user_uuid === el.user_uuid)
+      );
+    }
+
     // Sort is happening after content has been filtered
     requestsToDisplay.sort((a, b) =>
       sortBy === "old"
@@ -227,8 +267,48 @@ export default function RequestList() {
     setFilteredRequestList(requestsToDisplay);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters, requestList, sortBy]);
+  // ----------------------------
 
-  // ----------------------------------------------------------------------------------
+  // ---------------------- (5) SUBSCRIBE TO DATABASE CHANGES --------------------
+  // Subscribe to database changes to refresh data when it's necessary
+
+  // changes on pr_request :
+  subscribeToNewChannel(
+    "project-pr-room",
+    "pr_request",
+    "project_uuid",
+    "eq",
+    projectId,
+    handleRefresh
+  );
+
+  // changes on project_users :
+  subscribeToNewChannel(
+    "user-room",
+    "project_users",
+    "project_uuid",
+    "eq",
+    projectId,
+    handleRefreshUser
+  );
+
+  // changes on projects :
+  subscribeToNewChannel(
+    "project-room",
+    "projects",
+    "id",
+    "eq",
+    projectId,
+    handleRefresh
+  );
+
+  useEffect(() => {
+    return () => {
+      supabase.removeAllChannels(); // unsubscribe from channels when unmounting the component
+    };
+  }, []);
+
+  // -----------------------------------------------------------------------------
 
   // Loader
   if (loading)
@@ -237,27 +317,6 @@ export default function RequestList() {
         <CircularProgress size={100} thickness={4} />
       </div>
     );
-
-  // modal style
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    height: 700,
-    bgcolor: "#292929",
-    borderRadius: "10px",
-    boxShadow: 24,
-    p: 4,
-    display: "flex",
-    justifyContent: "center",
-    width: {
-      sm: "400px",
-      md: "450px",
-      lg: "500px",
-      xl: "550px",
-    },
-  };
 
   return (
     <div className={styles.request_list_container}>
@@ -286,42 +345,22 @@ export default function RequestList() {
                 {screenSize < 767 ? <Add /> : "Nouvelle demande"}
               </Button>
             )}
-          </div>
-          <Modal
-            open={openModalAboutRequest}
-            onClose={() => {
-              handleOpenConfirmationModal();
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              {" "}
-              <ModalFormRequest
-                title="Enregistrer"
-                text="Enregistrer"
-                projectId={projectId}
-                handleClose={handleCloseModals}
-                handleOpenConfirmationModal={handleOpenConfirmationModal}
-                handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
-                requestId={requestId}
-              />
-              {openConfirmationModal && (
-                <ConfirmationModal
-                  title="Voulez-vous vraiment quitter votre enregistrement ?"
-                  textButtonLeft="Revenir à mon enregistrement"
-                  textButtonRight="Quitter"
-                  handleRightButtonClick={() => {
-                    handleCloseModals();
-                  }}
-                  handleLeftButtonClick={() => {
-                    handleReOpenRequestModal();
-                  }}
-                />
-              )}
-            </Box>
-          </Modal>
-
+          </div>{" "}
+          {openModalAboutRequest && (
+            <ModalFormRequest
+              title="Enregistrer"
+              text="Enregistrer"
+              projectId={projectId}
+              handleClose={handleCloseModals}
+              handleOpenConfirmationModal={handleOpenConfirmationModal}
+              handleCreateOrUpdateRequest={handleCreateOrUpdateRequest}
+              requestId={requestId}
+              openModalAboutRequest={openModalAboutRequest}
+              handleReOpenRequestModal={handleReOpenRequestModal}
+              openConfirmationModal={openConfirmationModal}
+              handleCloseModals={handleCloseModals}
+            />
+          )}
           <div className={styles.head_btn_filters}>
             <DropDownMenu
               buttonText="Filtres"
@@ -366,9 +405,9 @@ export default function RequestList() {
             }}
           />
         )}
-        {filteredRequestList.length === 0 && haveFiltersBeenUsed ? (
+        {filteredRequestList.length === 0 && requestList.length !== 0 ? (
           <p className={styles.no_content_text}>
-            Aucune demande de PR ne correspond à votre recherche
+            Aucune demande de PR ne correspond aux filtres sélectionnés
           </p>
         ) : null}
         {requestList.length === 0 && !haveFiltersBeenUsed ? (

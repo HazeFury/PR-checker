@@ -1,27 +1,19 @@
 .nav_container {
+  width: 80svw;
   height: 100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 auto;
   border-bottom: solid white 1px;
 }
 
 .logo {
-  height: 40px;
-  margin-left: 10px;
+  height: 50px;
 }
 
-.Tooltip {
+.buttons {
   display: flex;
-}
-
-@media screen and (min-width: 600px) {
-  .logo {
-    height: 60px;
-    margin-left: 40px;
-  }
-  .Tooltip {
-    align-items: center;
-    text-align: center;
-  }
+  align-items: center;
+  column-gap: 1rem;
 }

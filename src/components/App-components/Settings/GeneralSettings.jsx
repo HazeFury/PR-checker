@@ -107,17 +107,15 @@ export default function GeneralSettings({
   /* ___________ Handle functions ___________ */
 
   /* --- Copy to clipboard function --- */
-  const handleCopy = (e) => {
-    navigator.clipboard
-      .writeText(e.target.parentElement.parentElement.children[0].value)
-      .then(
-        () => {
-          toast.success("L'ID du projet a bien été copié !");
-        },
-        () => {
-          toast.error("Erreur lors de la copie, rééssayez plus tard !");
-        }
-      );
+  const handleCopy = async () => {
+    const contentToCopy = projectData.id;
+    try {
+      await navigator.clipboard.writeText(contentToCopy);
+      toast.success("L'ID a bien été copié !");
+    } catch (error) {
+      console.error("Failed to copy: ", error);
+      toast.error("Erreur lors de la copie, rééssayez plus tard !");
+    }
   };
 
   const handleNameUpdate = () => {
