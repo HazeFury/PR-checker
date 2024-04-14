@@ -41,6 +41,7 @@ export default function App() {
       }
     });
     const disconnectUserOnClosing = () => {
+      supabase.removeAllChannels(); // unsubscribe from channels when unmounting the component
       localStorage.removeItem(supabaseStorageKey);
     };
 
