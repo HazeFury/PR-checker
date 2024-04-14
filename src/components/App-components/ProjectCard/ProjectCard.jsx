@@ -112,7 +112,6 @@ export default function ProjectCard({ project }) {
 ProjectCard.propTypes = {
   project: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    user_uuid: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     status: PropTypes.bool.isRequired,
     totalUsers: PropTypes.number,

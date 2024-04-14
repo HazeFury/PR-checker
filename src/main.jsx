@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import ReactDOM from "react-dom/client";
 // eslint-disable-next-line import/no-unresolved
 import { Toaster } from "sonner";
@@ -62,10 +62,8 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-      <Toaster richColors />
-    </ThemeProvider>
-  </React.StrictMode>
+  <ThemeProvider theme={theme}>
+    <RouterProvider router={router} />
+    <Toaster richColors />
+  </ThemeProvider>
 );
