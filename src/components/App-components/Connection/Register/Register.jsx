@@ -11,15 +11,15 @@ import supabase from "../../../../services/client";
 export default function Register() {
   const formik = useFormik({
     initialValues: {
-      lastname: "",
       firstname: "",
+      lastname: "",
       mail: "",
       password: "",
       confirm: "",
     },
     validationSchema: Yup.object({
-      lastname: Yup.string().required("Veuillez entrer votre nom"),
       firstname: Yup.string().required("Veuillez entrer votre prénom"),
+      lastname: Yup.string().required("Veuillez entrer votre nom"),
       mail: Yup.string()
         .email("Adresse mail invalide")
         .required("Veuillez entrer votre adresse mail"),
@@ -62,25 +62,6 @@ export default function Register() {
         <div className={styles.inputGroup}>
           <div className={styles.input}>
             <TextInput
-              label="Nom"
-              type="text"
-              id="lastname"
-              placeholder="Entrez votre nom"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.lastname}
-            />
-            {formik.touched.lastname && formik.errors.lastname ? (
-              <TooltipIcon
-                tooltip={formik.errors.lastname}
-                top="0"
-                left="50px"
-                color="var(--error)"
-              />
-            ) : null}
-          </div>
-          <div className={styles.input}>
-            <TextInput
               label="Prénom"
               type="text"
               id="firstname"
@@ -94,6 +75,25 @@ export default function Register() {
                 tooltip={formik.errors.firstname}
                 top="0"
                 left="80px"
+                color="var(--error)"
+              />
+            ) : null}
+          </div>
+          <div className={styles.input}>
+            <TextInput
+              label="Nom"
+              type="text"
+              id="lastname"
+              placeholder="Entrez votre nom"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.lastname}
+            />
+            {formik.touched.lastname && formik.errors.lastname ? (
+              <TooltipIcon
+                tooltip={formik.errors.lastname}
+                top="0"
+                left="50px"
                 color="var(--error)"
               />
             ) : null}
