@@ -105,8 +105,12 @@ export default function ProjectPage() {
             Vous ne faites partie d&#39;aucun projet pour l&#39;instant
           </p>
         )}
-        {screenSize > 970 && <div className={styles.hidden} />}
-        {screenSize > 1486 && <div className={styles.hidden} />}
+        {projects.length > 0 && screenSize > 970 && (
+          <div className={styles.hidden} />
+        )}
+        {projects.length > 0 && screenSize > 1486 && (
+          <div className={styles.hidden} />
+        )}
       </div>
     </div>
   );
