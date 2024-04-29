@@ -9,6 +9,7 @@ export default function TextArea({
   onChange,
   onBlur,
   value,
+  maxLength,
 }) {
   return (
     <div className={styles.textInput}>
@@ -23,6 +24,7 @@ export default function TextArea({
         onChange={onChange}
         onBlur={onBlur}
         value={value}
+        maxLength={maxLength}
       />
     </div>
   );
@@ -36,4 +38,5 @@ TextArea.propTypes = {
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
+  maxLength: PropTypes.number.isRequired,
 };

@@ -54,11 +54,14 @@ export default function ModalDescriptionPR({
         <div className={styles.container}>
           <h2 className={styles.moreInfos}>Plus d'infos</h2>
           <h3 className={styles.descriptionTitle}>Titre de l'US :</h3>
-
           <p className={styles.descriptionText}>{request.title}</p>
           <h3 className={styles.descriptionTitle}>Description de l'US :</h3>
-
-          <p className={styles.descriptionText}>{request.description}</p>
+          {request.description.split("\n").map((line) => (
+            <p className={styles.descriptionText} key={line}>
+              {line}
+              <br />
+            </p>
+          ))}
         </div>
       </Box>
     </Modal>
