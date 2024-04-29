@@ -163,6 +163,14 @@ export default function ModalFormRequest({
     },
   };
 
+  const [remainingChars, setremainingChars] = useState(500);
+
+  const handleTextAreaChange = (event) => {
+    const inputValue = event.target.value;
+    const remaining = 500 - inputValue.length;
+    setremainingChars(remaining);
+    formik.handleChange(event);
+  };
   return (
     <Modal
       open={openModalAboutRequest}
@@ -220,10 +228,16 @@ export default function ModalFormRequest({
                   type="text"
                   id="description"
                   placeholder="Décrivez votre PR"
-                  onChange={formik.handleChange}
+                  onChange={handleTextAreaChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.description}
+                  maxLength={500}
                 />
+                <p className={styles.remainingChars}>
+                  <span className={styles.charsLeft}>{remainingChars}</span>
+                  <span className={styles.separator}> / 500</span>
+                </p>
+
                 {formik.touched.description && formik.errors.description ? (
                   <TooltipIcon
                     tooltip={formik.errors.description}
