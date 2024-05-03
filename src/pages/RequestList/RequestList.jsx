@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { Add, Refresh } from "@mui/icons-material";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 // eslint-disable-next-line import/no-unresolved
@@ -67,10 +67,9 @@ export default function RequestList() {
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   // states for filters
   const [selectedFilters, setSelectedFilters] = useState(null);
-  const [filteredRequestList, setFilteredRequestList] = useState([]);
   const [groupIds, setGroupIds] = useState(null);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
-  const [sortBy, setSortBy] = useState("old");
+  const [sortBy, setSortBy] = useState(userRole === "owner" ? "old" : "new");
   // for styling
   const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
@@ -222,52 +221,49 @@ export default function RequestList() {
   }, [refreshData]);
   // ----------------------------
 
-  // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
-  useEffect(() => {
-    if (userRole !== null) {
-      setSortBy(userRole === "owner" ? "old" : "new");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userRole]);
-  // ----- Used for filtering PR requests everytime a new filter is selected -----
-  useEffect(() => {
-    let requestsToDisplay = requestList;
-    // Creates a copy of requestLis, then tries to filters on PR status first
-    if (selectedFilters?.Statut?.join("") !== "0") {
-      requestsToDisplay = requestsToDisplay.filter(
-        (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
-      );
-    }
-    // If user is contributor, tries to filter on PR creator id
-    if (
-      userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "2"
-    ) {
-      requestsToDisplay = requestsToDisplay.filter(
-        (el) => el.user_uuid === userId
-      );
-    }
+  // ----- Function for filtering PR requests everytime a new filter is selected -----
+  const filterRequests = useCallback(
+    (requests, filter, order) => {
+      let requestsToDisplay = requests;
+      // first filter is based on request creators
+      if (userRole === "contributor") {
+        // filter for group requests, looks for request creator's uuids matching those of the user's group
+        if (filter?.Demandes.join("") === "1") {
+          requestsToDisplay = requestsToDisplay.filter((el) =>
+            groupIds?.some((user) => user.user_uuid === el.user_uuid)
+          );
+        }
+        // filter for user requets, looks for request creator's uuid matching user's
+        if (filter?.Demandes.join("") === "2") {
+          requestsToDisplay = requestsToDisplay.filter(
+            (el) => el.user_uuid === userId
+          );
+        }
+      }
 
-    if (
-      userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "1"
-    ) {
-      requestsToDisplay = requestsToDisplay.filter((el) =>
-        groupIds?.some((user) => user.user_uuid === el.user_uuid)
-      );
-    }
+      // then tries to filters on PR status if "Tous" is not selected
+      if (filter?.Statut.join("") !== "0") {
+        requestsToDisplay = requestsToDisplay.filter(
+          (el) => filter?.Statut.indexOf(`${el.status}`) !== -1
+        );
+      }
 
-    // Sort is happening after content has been filtered
-    requestsToDisplay.sort((a, b) =>
-      sortBy === "old"
-        ? new Date(a.created_at) - new Date(b.created_at)
-        : new Date(b.created_at) - new Date(a.created_at)
-    );
-    // Once it's all filtered and sorted, we can pass it to our state in order to display the results
-    setFilteredRequestList(requestsToDisplay);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, requestList, sortBy]);
-  // ----------------------------
+      // Sort is happening after content has been filtered
+      requestsToDisplay.sort((a, b) =>
+        order === "old"
+          ? new Date(a.created_at) - new Date(b.created_at)
+          : new Date(b.created_at) - new Date(a.created_at)
+      );
+      // Once it's all filtered and sorted, we return the results
+      return requestsToDisplay;
+    },
+    [groupIds, userId, userRole]
+  );
+
+  const filteredRequests = useMemo(
+    () => filterRequests(requestList, selectedFilters, sortBy),
+    [selectedFilters, requestList, sortBy, filterRequests]
+  );
 
   // ---------------------- (5) SUBSCRIBE TO DATABASE CHANGES --------------------
   // Subscribe to database changes to refresh data when it's necessary
@@ -378,8 +374,8 @@ export default function RequestList() {
         </div>
       </div>
       <div className={styles.requests_container}>
-        {filteredRequestList.length > 0
-          ? filteredRequestList.map((request) => (
+        {filteredRequests.length > 0
+          ? filteredRequests.map((request) => (
               <RequestCard
                 key={request.id}
                 userRole={userRole}
@@ -405,7 +401,7 @@ export default function RequestList() {
             }}
           />
         )}
-        {filteredRequestList.length === 0 && requestList.length !== 0 ? (
+        {requestList.length !== 0 && filteredRequests.length === 0 ? (
           <p className={styles.no_content_text}>
             Aucune demande de PR ne correspond aux filtres sélectionnés
           </p>
