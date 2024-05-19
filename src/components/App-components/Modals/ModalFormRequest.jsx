@@ -15,6 +15,7 @@ import TextArea from "../../UI-components/TextArea/TextArea";
 import supabase from "../../../services/client";
 import TooltipIcon from "../../UI-components/MUIRemix/TooltipIcon";
 import ConfirmationModal from "./ConfirmationModal";
+import editPrRequestDisplayedId from "../../../services/utilities/editPrRequestDisplayedId";
 
 export default function ModalFormRequest({
   projectId,
@@ -86,12 +87,15 @@ export default function ModalFormRequest({
         const userId = data.session.user.id;
         const userFirstName = data.session.user.user_metadata.first_name;
 
+        const displayedId = await editPrRequestDisplayedId(projectId);
+
         // Add project_uuid to the form data
         const formData = {
           ...values,
           project_uuid: projectId,
           user_uuid: userId,
           opened_by: userFirstName,
+          displayed_id: displayedId,
         };
         if (requestData) {
           // update data to pr_request table with supabase

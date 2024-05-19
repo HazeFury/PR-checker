@@ -1,47 +1,51 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link, useOutletContext } from "react-router-dom";
 import supabase from "../../../services/client";
 import styles from "./ProjectCard.module.css";
+import RefreshUser from "../../../contexts/RefreshUser";
+import refreshContext from "../../../contexts/RefreshContext";
 
 export default function ProjectCard({ project }) {
   const [userId] = useOutletContext();
-
+  const { refreshUser } = useContext(RefreshUser);
+  const { refreshData } = useContext(refreshContext);
   const [projectUserRole, setProjectUserRole] = useState(null);
 
-  useEffect(() => {
-    async function fetchProjectUsers() {
-      try {
-        const { data: isCreatorId, error } = await supabase
-          .from("project_users")
-          .select("*")
-          .match({ project_uuid: project.id, role: "owner" })
-          .order("id", { ascending: true })
-          .limit(1);
+  async function fetchProjectUsers() {
+    try {
+      const { data: isCreatorId, error } = await supabase
+        .from("project_users")
+        .select("*")
+        .match({ project_uuid: project.id, role: "owner" })
+        .order("id", { ascending: true })
+        .limit(1);
 
-        if (error) {
-          throw error;
-        } else {
-          const projectUsers = isCreatorId[0].user_uuid;
-          if (userId !== undefined && projectUsers !== null) {
-            if (isCreatorId[0].role === "owner" && projectUsers === userId) {
-              setProjectUserRole("Propriétaire");
-            } else if (
-              project.project_users[0].role === "owner" &&
-              projectUsers !== userId
-            ) {
-              setProjectUserRole("Admin");
-            }
+      if (error) {
+        throw error;
+      } else {
+        const projectUsers = isCreatorId[0].user_uuid;
+        if (userId !== undefined && projectUsers !== null) {
+          if (isCreatorId[0].role === "owner" && projectUsers === userId) {
+            setProjectUserRole("Propriétaire");
+          } else if (
+            project.project_users[0].role === "owner" &&
+            projectUsers !== userId
+          ) {
+            setProjectUserRole("Admin");
+          } else {
+            setProjectUserRole("Contributeur");
           }
         }
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
-
+  }
+  useEffect(() => {
     fetchProjectUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.id, userId]);
+  }, [project.id, userId, refreshData, refreshUser]);
 
   const userIsPending = project.project_users[0].pending === true;
   return (
@@ -73,7 +77,13 @@ export default function ProjectCard({ project }) {
               </span>
             </div>
             {projectUserRole && (
-              <div className={styles.projectRoles}>
+              <div
+                className={`${styles.projectRoles} ${
+                  projectUserRole === "Contributeur"
+                    ? styles.contributorBackground
+                    : styles.adminBackground
+                }`}
+              >
                 <span>{projectUserRole}</span>
               </div>
             )}

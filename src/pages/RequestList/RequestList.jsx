@@ -1,8 +1,10 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import { Add, Refresh } from "@mui/icons-material";
 import { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
@@ -60,6 +62,9 @@ export default function RequestList() {
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState(null);
+  const [projectInvitation, setProjectInvitation] = useState(null);
+  // state to know what role to display in header
+  const [projectUserRole, setProjectUserRole] = useState(null);
   // state to save the Id of the PR that will be used
   const [requestId, setRequestId] = useState(null);
   // state for open request and confirmation modals
@@ -87,6 +92,20 @@ export default function RequestList() {
     return userAccess; // the response will be either "null" or an object containing user information
   }
 
+  // Function to fetch the creator id of this project
+  async function fetchCreatorOfThisProject() {
+    // try {
+    const { data: isCreatorId } = await supabase
+      .from("project_users")
+      .select("*")
+      .match({ project_uuid: projectId, role: "owner" })
+      .order("id", { ascending: true })
+      .limit(1);
+
+    const creatorId = isCreatorId[0].user_uuid;
+    return creatorId;
+  }
+
   // Function to get all own pull request
   async function getAllPr() {
     const { data } = await supabase
@@ -102,12 +121,13 @@ export default function RequestList() {
   async function getProjectData() {
     const { data } = await supabase
       .from("projects")
-      .select("name, status")
+      .select("name, status, invitation")
       .eq("id", projectId)
       .single();
 
     setProjectName(data.name);
     setProjectStatus(data.status);
+    setProjectInvitation(data.invitation);
   }
   // function to delete a PR
   const deleteRequest = async (id) => {
@@ -132,6 +152,7 @@ export default function RequestList() {
       console.error(error);
     }
   };
+
   // --------------------------------------------------------------------------------
 
   // ---------------------------- (3) handle function ------------------------------
@@ -189,17 +210,32 @@ export default function RequestList() {
   useEffect(() => {
     const fetchVerifiedUser = async () => {
       if (userId !== null) {
+        setProjectUserRole(null);
         const verifiedUser = await verifyUser();
+        if (verifiedUser === null) {
+          // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
+          navigate("/error");
+        }
         if (verifiedUser !== null && verifiedUser.pending === false) {
           // if the user exist and the pending === false, we can fetch all the request and we set the role
           setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
           getProjectData();
           getAllPr();
           getGroupIds(verifiedUser.group);
-        }
-        if (verifiedUser === null) {
-          // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
-          navigate("/error");
+          const creatorId = await fetchCreatorOfThisProject();
+          if (
+            creatorId === verifiedUser.user_uuid &&
+            verifiedUser.role === "owner"
+          ) {
+            setProjectUserRole("Propriétaire");
+          } else if (
+            creatorId !== verifiedUser.id &&
+            verifiedUser.role === "owner"
+          ) {
+            setProjectUserRole("Admin");
+          } else {
+            setProjectUserRole("Contributeur");
+          }
         }
       }
     };
@@ -317,7 +353,53 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <h3>{projectName}</h3>
+        <div className={styles.project_infos_header}>
+          {projectUserRole && (
+            <div
+              className={`${styles.projectRoles} ${
+                projectUserRole === "Contributeur"
+                  ? styles.contributorBackground
+                  : styles.adminBackground
+              }`}
+            >
+              <span>{projectUserRole}</span>
+            </div>
+          )}
+
+          <div
+            className={`${styles.projectRoles} ${
+              projectStatus === true
+                ? styles.blueBackground
+                : styles.redBackground
+            }`}
+          >
+            <span>{projectStatus === true ? "En cours" : "Terminé"}</span>
+          </div>
+        </div>
+        <h3 className={styles.project_title_box}>
+          <Tooltip
+            title={
+              projectInvitation === true
+                ? "Invitations ouvertes"
+                : "Invitations fermées"
+            }
+            placement="top"
+            arrow
+          >
+            <span
+              className={`${
+                projectInvitation === true ? styles.blueColor : styles.redColor
+              }`}
+            >
+              {projectInvitation === true ? (
+                <LockOpenOutlinedIcon />
+              ) : (
+                <LockOutlinedIcon />
+              )}
+            </span>
+          </Tooltip>
+          {projectName}
+        </h3>
         <div className={styles.head_btn}>
           <div className={styles.head_btn_new}>
             <Button
@@ -342,7 +424,7 @@ export default function RequestList() {
               </Button>
             )}
           </div>{" "}
-          {openModalAboutRequest && (
+          {openModalAboutRequest && userRole && (
             <ModalFormRequest
               title="Enregistrer"
               text="Enregistrer"
@@ -358,23 +440,25 @@ export default function RequestList() {
             />
           )}
           <div className={styles.head_btn_filters}>
-            <DropDownMenu
-              buttonText="Filtres"
-              menuItems={userRole === "contributor" ? filters : [filters[0]]}
-              user={userRole}
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-              disabled={!requestList.length}
-              haveFiltersBeenUsed={haveFiltersBeenUsed}
-              setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-            />
+            {userRole && (
+              <DropDownMenu
+                buttonText="Filtres"
+                menuItems={userRole === "contributor" ? filters : [filters[0]]}
+                user={userRole}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                disabled={!requestList.length}
+                haveFiltersBeenUsed={haveFiltersBeenUsed}
+                setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+              />
+            )}
           </div>
         </div>
       </div>
       <div className={styles.requests_container}>
-        {filteredRequests.length > 0
+        {userRole && filteredRequests.length > 0
           ? filteredRequests.map((request) => (
               <RequestCard
                 key={request.id}

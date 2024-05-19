@@ -74,7 +74,58 @@
   align-items: center;
 }
 
-@media screen and (max-width: 1024px) {
+.projectRoles {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.4rem;
+  text-align: center;
+  color: white;
+  margin: 5px 10px 0 0;
+}
+
+.contributorBackground {
+  background-color: #7a4f1d;
+}
+
+.adminBackground {
+  background-color: #a146ab;
+}
+
+.project_infos_header {
+  display: flex;
+}
+
+.blueBackground {
+  background-color: #3883ba;
+}
+
+.redBackground {
+  background-color: #ba3838;
+}
+
+.project_title_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.project_title_box span {
+  padding-top: 4px;
+  margin-right: 5px;
+  scale: 1;
+}
+
+.blueColor {
+  color: #3883ba;
+}
+
+.redColor {
+  color: #ba3838;
+}
+
+@media screen and (max-width: 1250px) {
   .request_list_container {
     padding-block: 1.5rem 2rem;
   }
@@ -92,5 +143,8 @@
     justify-content: center;
     align-items: center;
     align-content: space-between;
+  }
+  .project_infos_header {
+    flex-direction: row;
   }
 }
