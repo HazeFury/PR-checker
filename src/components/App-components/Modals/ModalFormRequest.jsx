@@ -15,6 +15,7 @@ import TextArea from "../../UI-components/TextArea/TextArea";
 import supabase from "../../../services/client";
 import TooltipIcon from "../../UI-components/MUIRemix/TooltipIcon";
 import ConfirmationModal from "./ConfirmationModal";
+import editPrRequestDisplayedId from "../../../services/utilities/editPrRequestDisplayedId";
 
 export default function ModalFormRequest({
   projectId,
@@ -86,12 +87,15 @@ export default function ModalFormRequest({
         const userId = data.session.user.id;
         const userFirstName = data.session.user.user_metadata.first_name;
 
+        const displayedId = await editPrRequestDisplayedId(projectId);
+
         // Add project_uuid to the form data
         const formData = {
           ...values,
           project_uuid: projectId,
           user_uuid: userId,
           opened_by: userFirstName,
+          displayed_id: displayedId,
         };
         if (requestData) {
           // update data to pr_request table with supabase
@@ -163,6 +167,14 @@ export default function ModalFormRequest({
     },
   };
 
+  const [remainingChars, setremainingChars] = useState(500);
+
+  const handleTextAreaChange = (event) => {
+    const inputValue = event.target.value;
+    const remaining = 500 - inputValue.length;
+    setremainingChars(remaining);
+    formik.handleChange(event);
+  };
   return (
     <Modal
       open={openModalAboutRequest}
@@ -220,10 +232,16 @@ export default function ModalFormRequest({
                   type="text"
                   id="description"
                   placeholder="Décrivez votre PR"
-                  onChange={formik.handleChange}
+                  onChange={handleTextAreaChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.description}
+                  maxLength={500}
                 />
+                <p className={styles.remainingChars}>
+                  <span className={styles.charsLeft}>{remainingChars}</span>
+                  <span className={styles.separator}> / 500</span>
+                </p>
+
                 {formik.touched.description && formik.errors.description ? (
                   <TooltipIcon
                     tooltip={formik.errors.description}

@@ -6,6 +6,7 @@ import ProjectCard from "../../components/App-components/ProjectCard/ProjectCard
 import supabase from "../../services/client";
 import styles from "./ProjectPage.module.css";
 import refreshContext from "../../contexts/RefreshContext";
+import RefreshUser from "../../contexts/RefreshUser";
 import useScreenSize from "../../hooks/useScreenSize";
 import subscribeToNewChannel from "../../services/utilities/subscribingToChannel";
 
@@ -15,10 +16,20 @@ export default function ProjectPage() {
   const [arrayOfProjectsToWatch, setArrayOfProjectsToWatch] = useState([]);
   const [userId] = useOutletContext();
   const { refreshData, setRefreshData } = useContext(refreshContext);
+  const { refreshUser, setRefreshUser } = useContext(RefreshUser);
   const screenSize = useScreenSize();
 
   const handleRefresh = () => {
     setRefreshData(!refreshData);
+  };
+
+  const handleRefreshUser = () => {
+    setRefreshUser(!refreshUser);
+  };
+
+  const handleRefreshAll = () => {
+    handleRefresh();
+    handleRefreshUser();
   };
 
   useEffect(() => {
@@ -37,7 +48,7 @@ export default function ProjectPage() {
       }
     }
     getProjects();
-  }, [userId, refreshData]);
+  }, [userId, refreshData, refreshUser]);
 
   // ---------------------- SUBSCRIBE TO DATABASE CHANGES --------------------
   // Subscribe to database changes to refresh data when it's necessary
@@ -49,7 +60,7 @@ export default function ProjectPage() {
     "user_uuid",
     "eq",
     userId,
-    handleRefresh
+    handleRefreshUser
   );
 
   // changes on projects :
@@ -90,7 +101,7 @@ export default function ProjectPage() {
             my: 2,
             "&.MuiButtonBase-root": { mr: 0 },
           }}
-          onClick={handleRefresh}
+          onClick={handleRefreshAll}
         >
           {screenSize > 440 ? "Actualiser" : <Refresh />}
         </Button>
@@ -105,8 +116,12 @@ export default function ProjectPage() {
             Vous ne faites partie d&#39;aucun projet pour l&#39;instant
           </p>
         )}
-        {screenSize > 970 && <div className={styles.hidden} />}
-        {screenSize > 1486 && <div className={styles.hidden} />}
+        {projects.length > 0 && screenSize > 970 && (
+          <div className={styles.hidden} />
+        )}
+        {projects.length > 0 && screenSize > 1486 && (
+          <div className={styles.hidden} />
+        )}
       </div>
     </div>
   );

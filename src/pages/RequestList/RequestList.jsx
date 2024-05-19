@@ -1,8 +1,10 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import { Add, Refresh } from "@mui/icons-material";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo, useCallback } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 // eslint-disable-next-line import/no-unresolved
 import { toast } from "sonner";
 import RequestCard from "../../components/App-components/RequestCard/RequestCard";
@@ -60,6 +62,9 @@ export default function RequestList() {
   const [requestList, setRequestList] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState(null);
+  const [projectInvitation, setProjectInvitation] = useState(null);
+  // state to know what role to display in header
+  const [projectUserRole, setProjectUserRole] = useState(null);
   // state to save the Id of the PR that will be used
   const [requestId, setRequestId] = useState(null);
   // state for open request and confirmation modals
@@ -67,10 +72,9 @@ export default function RequestList() {
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   // states for filters
   const [selectedFilters, setSelectedFilters] = useState(null);
-  const [filteredRequestList, setFilteredRequestList] = useState([]);
   const [groupIds, setGroupIds] = useState(null);
   const [haveFiltersBeenUsed, setHaveFiltersBeenUsed] = useState(false);
-  const [sortBy, setSortBy] = useState("old");
+  const [sortBy, setSortBy] = useState(userRole === "owner" ? "old" : "new");
   // for styling
   const screenSize = useScreenSize();
   // -------------------------------------------------------------------------------
@@ -88,6 +92,20 @@ export default function RequestList() {
     return userAccess; // the response will be either "null" or an object containing user information
   }
 
+  // Function to fetch the creator id of this project
+  async function fetchCreatorOfThisProject() {
+    // try {
+    const { data: isCreatorId } = await supabase
+      .from("project_users")
+      .select("*")
+      .match({ project_uuid: projectId, role: "owner" })
+      .order("id", { ascending: true })
+      .limit(1);
+
+    const creatorId = isCreatorId[0].user_uuid;
+    return creatorId;
+  }
+
   // Function to get all own pull request
   async function getAllPr() {
     const { data } = await supabase
@@ -103,12 +121,13 @@ export default function RequestList() {
   async function getProjectData() {
     const { data } = await supabase
       .from("projects")
-      .select("name, status")
+      .select("name, status, invitation")
       .eq("id", projectId)
       .single();
 
     setProjectName(data.name);
     setProjectStatus(data.status);
+    setProjectInvitation(data.invitation);
   }
   // function to delete a PR
   const deleteRequest = async (id) => {
@@ -133,6 +152,7 @@ export default function RequestList() {
       console.error(error);
     }
   };
+
   // --------------------------------------------------------------------------------
 
   // ---------------------------- (3) handle function ------------------------------
@@ -190,17 +210,32 @@ export default function RequestList() {
   useEffect(() => {
     const fetchVerifiedUser = async () => {
       if (userId !== null) {
+        setProjectUserRole(null);
         const verifiedUser = await verifyUser();
+        if (verifiedUser === null) {
+          // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
+          navigate("/error");
+        }
         if (verifiedUser !== null && verifiedUser.pending === false) {
           // if the user exist and the pending === false, we can fetch all the request and we set the role
           setUserRole(verifiedUser.role); // userRole can only be "owner" or "contributor"
           getProjectData();
           getAllPr();
           getGroupIds(verifiedUser.group);
-        }
-        if (verifiedUser === null) {
-          // if the user doesn't exist on this project (or if pending = true), he is returned to the error page
-          navigate("/error");
+          const creatorId = await fetchCreatorOfThisProject();
+          if (
+            creatorId === verifiedUser.user_uuid &&
+            verifiedUser.role === "owner"
+          ) {
+            setProjectUserRole("Propriétaire");
+          } else if (
+            creatorId !== verifiedUser.id &&
+            verifiedUser.role === "owner"
+          ) {
+            setProjectUserRole("Admin");
+          } else {
+            setProjectUserRole("Contributeur");
+          }
         }
       }
     };
@@ -222,52 +257,49 @@ export default function RequestList() {
   }, [refreshData]);
   // ----------------------------
 
-  // ----- Used for updating the sort priority when component is first rendered depending on owner or contributor status -----
-  useEffect(() => {
-    if (userRole !== null) {
-      setSortBy(userRole === "owner" ? "old" : "new");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userRole]);
-  // ----- Used for filtering PR requests everytime a new filter is selected -----
-  useEffect(() => {
-    let requestsToDisplay = requestList;
-    // Creates a copy of requestLis, then tries to filters on PR status first
-    if (selectedFilters?.Statut?.join("") !== "0") {
-      requestsToDisplay = requestsToDisplay.filter(
-        (el) => selectedFilters?.Statut?.indexOf(`${el.status}`) !== -1
-      );
-    }
-    // If user is contributor, tries to filter on PR creator id
-    if (
-      userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "2"
-    ) {
-      requestsToDisplay = requestsToDisplay.filter(
-        (el) => el.user_uuid === userId
-      );
-    }
+  // ----- Function for filtering PR requests everytime a new filter is selected -----
+  const filterRequests = useCallback(
+    (requests, filter, order) => {
+      let requestsToDisplay = requests;
+      // first filter is based on request creators
+      if (userRole === "contributor") {
+        // filter for group requests, looks for request creator's uuids matching those of the user's group
+        if (filter?.Demandes.join("") === "1") {
+          requestsToDisplay = requestsToDisplay.filter((el) =>
+            groupIds?.some((user) => user.user_uuid === el.user_uuid)
+          );
+        }
+        // filter for user requets, looks for request creator's uuid matching user's
+        if (filter?.Demandes.join("") === "2") {
+          requestsToDisplay = requestsToDisplay.filter(
+            (el) => el.user_uuid === userId
+          );
+        }
+      }
 
-    if (
-      userRole === "contributor" &&
-      selectedFilters?.Demandes?.join("") === "1"
-    ) {
-      requestsToDisplay = requestsToDisplay.filter((el) =>
-        groupIds?.some((user) => user.user_uuid === el.user_uuid)
-      );
-    }
+      // then tries to filters on PR status if "Tous" is not selected
+      if (filter?.Statut.join("") !== "0") {
+        requestsToDisplay = requestsToDisplay.filter(
+          (el) => filter?.Statut.indexOf(`${el.status}`) !== -1
+        );
+      }
 
-    // Sort is happening after content has been filtered
-    requestsToDisplay.sort((a, b) =>
-      sortBy === "old"
-        ? new Date(a.created_at) - new Date(b.created_at)
-        : new Date(b.created_at) - new Date(a.created_at)
-    );
-    // Once it's all filtered and sorted, we can pass it to our state in order to display the results
-    setFilteredRequestList(requestsToDisplay);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, requestList, sortBy]);
-  // ----------------------------
+      // Sort is happening after content has been filtered
+      requestsToDisplay.sort((a, b) =>
+        order === "old"
+          ? new Date(a.created_at) - new Date(b.created_at)
+          : new Date(b.created_at) - new Date(a.created_at)
+      );
+      // Once it's all filtered and sorted, we return the results
+      return requestsToDisplay;
+    },
+    [groupIds, userId, userRole]
+  );
+
+  const filteredRequests = useMemo(
+    () => filterRequests(requestList, selectedFilters, sortBy),
+    [selectedFilters, requestList, sortBy, filterRequests]
+  );
 
   // ---------------------- (5) SUBSCRIBE TO DATABASE CHANGES --------------------
   // Subscribe to database changes to refresh data when it's necessary
@@ -321,7 +353,53 @@ export default function RequestList() {
   return (
     <div className={styles.request_list_container}>
       <div className={styles.head}>
-        <h3>{projectName}</h3>
+        <div className={styles.project_infos_header}>
+          {projectUserRole && (
+            <div
+              className={`${styles.projectRoles} ${
+                projectUserRole === "Contributeur"
+                  ? styles.contributorBackground
+                  : styles.adminBackground
+              }`}
+            >
+              <span>{projectUserRole}</span>
+            </div>
+          )}
+
+          <div
+            className={`${styles.projectRoles} ${
+              projectStatus === true
+                ? styles.blueBackground
+                : styles.redBackground
+            }`}
+          >
+            <span>{projectStatus === true ? "En cours" : "Terminé"}</span>
+          </div>
+        </div>
+        <h3 className={styles.project_title_box}>
+          <Tooltip
+            title={
+              projectInvitation === true
+                ? "Invitations ouvertes"
+                : "Invitations fermées"
+            }
+            placement="top"
+            arrow
+          >
+            <span
+              className={`${
+                projectInvitation === true ? styles.blueColor : styles.redColor
+              }`}
+            >
+              {projectInvitation === true ? (
+                <LockOpenOutlinedIcon />
+              ) : (
+                <LockOutlinedIcon />
+              )}
+            </span>
+          </Tooltip>
+          {projectName}
+        </h3>
         <div className={styles.head_btn}>
           <div className={styles.head_btn_new}>
             <Button
@@ -346,7 +424,7 @@ export default function RequestList() {
               </Button>
             )}
           </div>{" "}
-          {openModalAboutRequest && (
+          {openModalAboutRequest && userRole && (
             <ModalFormRequest
               title="Enregistrer"
               text="Enregistrer"
@@ -362,24 +440,26 @@ export default function RequestList() {
             />
           )}
           <div className={styles.head_btn_filters}>
-            <DropDownMenu
-              buttonText="Filtres"
-              menuItems={userRole === "contributor" ? filters : [filters[0]]}
-              user={userRole}
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-              disabled={!requestList.length}
-              haveFiltersBeenUsed={haveFiltersBeenUsed}
-              setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-            />
+            {userRole && (
+              <DropDownMenu
+                buttonText="Filtres"
+                menuItems={userRole === "contributor" ? filters : [filters[0]]}
+                user={userRole}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+                disabled={!requestList.length}
+                haveFiltersBeenUsed={haveFiltersBeenUsed}
+                setHaveFiltersBeenUsed={setHaveFiltersBeenUsed}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+              />
+            )}
           </div>
         </div>
       </div>
       <div className={styles.requests_container}>
-        {filteredRequestList.length > 0
-          ? filteredRequestList.map((request) => (
+        {userRole && filteredRequests.length > 0
+          ? filteredRequests.map((request) => (
               <RequestCard
                 key={request.id}
                 userRole={userRole}
@@ -405,7 +485,7 @@ export default function RequestList() {
             }}
           />
         )}
-        {filteredRequestList.length === 0 && requestList.length !== 0 ? (
+        {requestList.length !== 0 && filteredRequests.length === 0 ? (
           <p className={styles.no_content_text}>
             Aucune demande de PR ne correspond aux filtres sélectionnés
           </p>

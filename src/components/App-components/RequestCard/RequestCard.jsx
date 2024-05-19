@@ -100,7 +100,7 @@ export default function RequestCard({
           />
         }
       >
-        <p className={styles.status_pr_id}>#{request.id}</p>
+        <p className={styles.status_pr_id}>#{request.displayed_id}</p>
         <p className={styles.status_name}>{nameStatus(request.status)}</p>
       </Stack>
       <Stack
@@ -164,6 +164,7 @@ RequestCard.propTypes = {
   userRole: PropTypes.string.isRequired,
   request: PropTypes.shape({
     id: PropTypes.number.isRequired,
+    displayed_id: PropTypes.number.isRequired,
     status: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,

@@ -228,6 +228,7 @@ export default function ContributorManageButton({
               userRole === "owner"
                 ? {
                     color: hover.promote ? "var(--light)" : "var(--error)",
+                    transform: "rotate(180deg)",
                   }
                 : {
                     color: hover.promote ? "var(--light)" : "button.main",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import { CircularProgress } from "@mui/material";
 import NotificationCard from "./NotificationCard";
@@ -10,19 +11,20 @@ export default function NotificationBox({ userId }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const { refreshData, setRefreshData } = useContext(refreshContext);
+  const getProjectId = useParams();
+  const projectId = getProjectId.uuid;
 
   const handleRefresh = () => {
     setRefreshData(!refreshData);
   };
-
-  // Fetch all the notifications that the user are eligible to see
   async function getNotifications() {
     if (userId !== null) {
       const { data: notificationsData } = await supabase
         .from("notification")
-        .select("*, notification_user!inner(*)")
+        .select("*, notification_user!inner(*), pr_request!inner(*)")
         .match({
           "notification_user.user_uuid": userId,
+          "pr_request.project_uuid": projectId,
         })
         .order("created_at", { ascending: false }) // Tri par date, du plus récent au plus ancien
         .range(0, 19);
@@ -31,6 +33,7 @@ export default function NotificationBox({ userId }) {
       setLoading(false);
     }
   }
+
   // mark notifications as read when unmounting the component
   async function notificationsAreRead() {
     const { error } = await supabase
