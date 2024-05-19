@@ -83,6 +83,12 @@ export default function Connection() {
           </div>
         </div>
         <footer className={styles.footer}>
+          <p>
+            Un problème à nous signaler ? Contactez-nous par mail à l'adresse
+            <a href="mailto:contact.pr.checker@gmail.com">
+              contact.pr.checker@gmail.com
+            </a>
+          </p>
           <div className={styles.separator} />
           <p>
             {" "}
