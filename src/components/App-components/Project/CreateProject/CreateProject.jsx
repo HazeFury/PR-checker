@@ -75,7 +75,7 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
 
         // To get the picture
         const newPictureForProject = await axios
-          .get("https://picsum.photos/1920/1080") // https://source.unsplash.com/random?wallpapers
+          .get("https://picsum.photos/1920/1080")
           .then((res) => {
             return res.request.responseURL;
           })
