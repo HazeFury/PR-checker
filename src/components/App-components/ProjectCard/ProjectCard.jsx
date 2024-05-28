@@ -5,6 +5,7 @@ import supabase from "../../../services/client";
 import styles from "./ProjectCard.module.css";
 import RefreshUser from "../../../contexts/RefreshUser";
 import refreshContext from "../../../contexts/RefreshContext";
+import DefaultBackground from "../../../assets/pr-background.png";
 
 export default function ProjectCard({ project }) {
   const [userId] = useOutletContext();
@@ -60,7 +61,13 @@ export default function ProjectCard({ project }) {
       >
         <img
           className={styles.projectCardPicture}
-          src={project.picture}
+          src={
+            project.picture === "" ||
+            project.picture === null ||
+            project.picture === undefined
+              ? DefaultBackground
+              : project.picture
+          }
           alt={project.name}
         />
         <div className={styles.projectCardContent}>

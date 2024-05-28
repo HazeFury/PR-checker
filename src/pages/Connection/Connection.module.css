@@ -95,8 +95,13 @@ h2,
   font: 300 0.7em var(--global-font);
 }
 
-.footer a {
+.contact_mail_link {
   margin-left: 8px;
+}
+.footer a {
+  margin-left: 4px;
+  text-decoration: none;
+  color: rgb(141, 196, 240);
 }
 
 @media screen and (max-width: 560px) {

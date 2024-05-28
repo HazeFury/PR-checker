@@ -85,14 +85,21 @@ export default function Connection() {
         <footer className={styles.footer}>
           <p>
             Un problème à nous signaler ? Contactez-nous par mail à l'adresse
-            <a href="mailto:contact.pr.checker@gmail.com">
+            <a
+              className={styles.contact_mail_link}
+              href="mailto:contact.pr.checker@gmail.com"
+            >
               contact.pr.checker@gmail.com
             </a>
           </p>
           <div className={styles.separator} />
           <p>
             {" "}
-            🧑🏼‍💻Réalisé avec passion par Marco, Anthony, Guillaume and Vanessa{" "}
+            🧑🏼‍💻Réalisé avec passion par
+            <a href="https://github.com/HazeFury">Marco</a>,
+            <a href="https://github.com/anthonydscrs">Anthony</a>,
+            <a href="https://github.com/Wraethh">Guillaume</a> and{" "}
+            <a href="https://github.com/VanessaGrd">Vanessa</a>
           </p>
         </footer>
       </section>

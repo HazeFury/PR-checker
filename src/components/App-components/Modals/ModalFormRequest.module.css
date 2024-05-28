@@ -50,3 +50,11 @@
   padding-top: 5px;
   font-size: 0.9rem;
 }
+
+@media screen and (max-width: 440px) {
+  .formStyle {
+    width: 80vw;
+    min-width: 250px;
+    overflow: scroll;
+  }
+}

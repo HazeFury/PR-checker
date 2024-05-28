@@ -307,7 +307,7 @@ export default function ModalFormRequest({
           {openConfirmationModal && (
             <ConfirmationModal
               title="Voulez-vous vraiment quitter votre enregistrement ?"
-              textButtonLeft="Revenir à mon enregistrement"
+              textButtonLeft="Rester"
               textButtonRight="Quitter"
               handleRightButtonClick={() => {
                 handleCloseModals();
