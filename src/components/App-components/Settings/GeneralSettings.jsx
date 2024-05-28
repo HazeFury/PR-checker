@@ -131,6 +131,10 @@ export default function GeneralSettings({
   };
 
   const handleNameChange = (e) => {
+    if (e.target.value.length >= 30) {
+      toast.error("Le nom du projet peut faire au maximum 30 caractères");
+      return;
+    }
     setNewData({ ...newData, name: e.target.value });
   };
 
@@ -140,13 +144,20 @@ export default function GeneralSettings({
 
   const handleGetNewPic = async () => {
     const newPicUrl = await axios
-      .get("https://source.unsplash.com/random?wallpapers")
+      .get("https://picsum.photos/1920/1080")
       .then((res) => {
         return res.request.responseURL;
       })
       .catch((err) => {
         console.error(err);
+        toast.error("Impossible de récupérer une nouvelle image");
       });
+    if (newPicUrl === "" || newPicUrl === null || newPicUrl === undefined) {
+      toast.error(
+        "Le service d'image est indisponible pour le moment. Veuillez réessayer plus tard"
+      );
+      return;
+    }
     setNewData({ ...newData, picture: newPicUrl });
     setShowPic(true);
   };

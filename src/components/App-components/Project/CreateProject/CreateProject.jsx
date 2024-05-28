@@ -40,25 +40,59 @@ export default function CreateProject({ openModalCreate, onCloseModalCreate }) {
         const userFirstName = userData.session.user.user_metadata.first_name;
         const userLastName = userData.session.user.user_metadata.last_name;
 
-        const existingProject = await supabase
+        if (formik.values.name.length >= 30) {
+          toast.error("Le nom du projet peut faire au maximum 30 caractères");
+          return;
+        }
+
+        // To verify if the user already have an project named like this
+        let cantCreateProject;
+        const { data: existingProjectName, error } = await supabase
           .from("projects")
-          .select("name, project_users(*)")
-          .eq("name", formik.values.name)
+          .select("name, project_users!inner(role)")
           .eq("project_users.user_uuid", userId);
 
-        if (existingProject.data.length > 0) {
+        if (error) {
+          console.error(error);
+          toast.error(
+            "Une erreur s'est produite, veuillez réessayer plus tard"
+          );
+          return;
+        }
+
+        existingProjectName.forEach((project) => {
+          if (
+            project.name === formik.values.name &&
+            project.project_users[0].role === "owner"
+          ) {
+            cantCreateProject = true;
+          }
+        });
+        if (cantCreateProject === true) {
           toast.error("Vous avez déjà un projet avec ce nom !");
           return;
         }
+
         // To get the picture
         const newPictureForProject = await axios
-          .get("https://source.unsplash.com/random?wallpapers")
+          .get("https://picsum.photos/1920/1080") // https://source.unsplash.com/random?wallpapers
           .then((res) => {
             return res.request.responseURL;
           })
           .catch(() => {
-            console.error("impossible de récupérer une image");
+            console.error("Impossible de récupérer une image");
+            toast.error("Impossible de récupérer une image");
           });
+
+        if (
+          newPictureForProject === "" ||
+          newPictureForProject === null ||
+          newPictureForProject === undefined
+        ) {
+          toast.error(
+            "Le service d'image est indisponible pour le moment. Veuillez réessayer plus tard"
+          );
+        }
 
         // To create the project with name and picture
         const { data: newProject } = await supabase
