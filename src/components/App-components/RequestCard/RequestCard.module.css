@@ -31,6 +31,13 @@
   flex: 3;
 }
 
+.last_reviewer {
+  color: black;
+  text-align: center;
+  border: none;
+  font-size: 0.6rem;
+}
+
 .pr {
   width: 75%;
   display: flex;

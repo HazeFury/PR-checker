@@ -53,10 +53,12 @@ export default function ManageRequestButton({
   /* --- Function to update the status in the database --- */
   const handleStatusUpdate = async (e) => {
     try {
+      const { data } = await supabase.auth.getSession();
+      const reviewerName = data?.session.user.user_metadata.first_name;
       const newStatus = e.target.value;
       const { error } = await supabase
         .from("pr_request")
-        .update({ status: newStatus })
+        .update({ status: newStatus, last_reviewer: reviewerName })
         .eq("id", request.id);
 
       if (error) throw error;

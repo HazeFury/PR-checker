@@ -101,7 +101,18 @@ export default function RequestCard({
         }
       >
         <p className={styles.status_pr_id}>#{request.displayed_id}</p>
-        <p className={styles.status_name}>{nameStatus(request.status)}</p>
+        <p className={styles.status_name}>
+          {nameStatus(request.status)}
+          <span>
+            {request.last_reviewer !== null &&
+              request.last_reviewer !== undefined &&
+              request.status !== 1 && (
+                <p className={styles.last_reviewer}>
+                  par {request.last_reviewer}
+                </p>
+              )}
+          </span>
+        </p>
       </Stack>
       <Stack
         className={styles.pr}
@@ -165,6 +176,7 @@ RequestCard.propTypes = {
   request: PropTypes.shape({
     id: PropTypes.number.isRequired,
     displayed_id: PropTypes.number.isRequired,
+    last_reviewer: PropTypes.string.isRequired,
     status: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     github: PropTypes.string.isRequired,
